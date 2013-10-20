@@ -1,0 +1,20 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "limit_adjuster_gta3vcsa", "limit_adjuster_gta3vcsa\limit_adjuster_gta3vcsa.vcxproj", "{C048A1AA-AD6E-40F3-A2D4-27E4E51B896A}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{C048A1AA-AD6E-40F3-A2D4-27E4E51B896A}.Debug|Win32.ActiveCfg = Debug|Win32
+		{C048A1AA-AD6E-40F3-A2D4-27E4E51B896A}.Debug|Win32.Build.0 = Debug|Win32
+		{C048A1AA-AD6E-40F3-A2D4-27E4E51B896A}.Release|Win32.ActiveCfg = Release|Win32
+		{C048A1AA-AD6E-40F3-A2D4-27E4E51B896A}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
