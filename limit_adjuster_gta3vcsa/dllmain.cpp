@@ -23,13 +23,7 @@ using namespace std;
 int Thread()
 {
 
-  CIniReader iniReader(".\\limit_adjuster_gta3vcsa.ini");
-	if((!iniReader.ReadInteger("SALIMITS", "PtrNodeSingle", 0))) {
-		iniReader = CIniReader::CIniReader(".\\mss\\limit_adjuster_gta3vcsa.ini");
-		if((!iniReader.ReadInteger("SALIMITS", "PtrNodeSingle", 0))) {
-			return 0;
-		}
-	}
+	CIniReader iniReader("");
 	
 		switch(gGameVersion)
 		{
@@ -90,6 +84,7 @@ int Thread()
 				CPatch::SetChar(0x55124D+0x1, iniReader.ReadInteger("SALIMITS", "TaskAllocator", 16));
 				CPatch::SetInt(0x551282+0x1, iniReader.ReadInteger("SALIMITS", "PedIntelligence", 140));
 				CPatch::SetChar(0x5512BB+0x1, iniReader.ReadInteger("SALIMITS", "PedAttractors", 64));
+				CPatch::SetInt(0x54F3A0 + 0x1, iniReader.ReadInteger("SALIMITS", "StaticMatrices", 900));
 			break;	
 
 			case GTA_SA_1_1:
