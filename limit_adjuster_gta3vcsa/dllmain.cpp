@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "CPatch.h"
 #include <stdio.h>
+#include <stdint.h>
 #include <string>
 #include <Windows.h>
 #include "CIniReader\IniReader.h"
@@ -17,8 +18,10 @@ using namespace std;
 #define GTA_SA_1_1     0x0
 #define GTA_SA_STEAM     0x1
 
-
-
+void asm_patch();
+int limit;
+uint16_t* aX;
+uint16_t* aY;
 
 int Thread()
 {
@@ -85,6 +88,22 @@ int Thread()
 				CPatch::SetInt(0x551282+0x1, iniReader.ReadInteger("SALIMITS", "PedIntelligence", 140));
 				CPatch::SetChar(0x5512BB+0x1, iniReader.ReadInteger("SALIMITS", "PedAttractors", 64));
 				CPatch::SetInt(0x54F3A0 + 0x1, iniReader.ReadInteger("SALIMITS", "StaticMatrices", 900));
+
+				limit = iniReader.ReadInteger("SALIMITS", "OutsideWorldWaterBlocks", 70);
+
+				aX = new uint16_t[limit];
+				aY = new uint16_t[limit];
+
+				CPatch::RedirectJump(0x6E6CE9, asm_patch);
+				
+				CPatch::SetPointer(0x6E6CEE + 0x4, aX);
+				CPatch::SetPointer(0x6EF6E0 + 0x4, aX);
+				CPatch::SetPointer(0x6EFE82 + 0x4, aX);
+
+				CPatch::SetPointer(0x6E6CF6 + 0x4, aY);
+				CPatch::SetPointer(0x6EF6E8 + 0x4, aY);
+				CPatch::SetPointer(0x6EFE95 + 0x4, aY);
+				CPatch::SetPointer(0x6EFEAF + 0x4, aY);
 			break;	
 
 			case GTA_SA_1_1:
@@ -107,4 +126,16 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD reason, LPVOID lpReserved)
 		Thread();
     }
     return TRUE;
+}
+
+
+void __declspec(naked)asm_patch()
+{
+	__asm cmp     eax, limit
+	__asm jge     _Full
+	__asm push    0x6E6CEE
+	__asm ret
+_Full :
+	__asm push    0x6E6D04
+	__asm ret
 }
