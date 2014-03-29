@@ -1,3 +1,14 @@
+# Source Files
+set(SOURCE_FILES
+
+dllmain.cpp
+Pools.cpp
+WaterBlocks.cpp
+StaticMatrices.cpp
+
+)
+
+
 # The current directory shall be used for #include <file>
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
@@ -30,13 +41,6 @@ if(MINGW)
 
 endif(MINGW)
 
-
-set(SOURCE_FILES
-
-dllmain.cpp
-WaterBlocks.cpp
-
-)
 
 add_library(limit_adjuster_gta3vcsa SHARED ${SOURCE_FILES})
 set_target_properties(limit_adjuster_gta3vcsa PROPERTIES SUFFIX ".asi")

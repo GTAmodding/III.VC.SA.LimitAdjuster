@@ -41,7 +41,7 @@ struct OutsideWorldWaterBlocks : public SimpleAdjuster
     {
         using namespace injector;
     
-        auto limit = LIMIT_OutsideWorldWaterBlocks = std::stoi(value);
+        auto limit = std::stoi(value);
         
         // This maximum value for the limit is related to the maximum number of vertices/indices the temporary vertices/indices array
         // for immediate mode can handle...
@@ -52,6 +52,7 @@ struct OutsideWorldWaterBlocks : public SimpleAdjuster
         this->a  = new uint16_t[limit * 2];
 	    this->aX = &a[0];
 		this->aY = &a[limit];
+		LIMIT_OutsideWorldWaterBlocks = limit;
 
         // Patch the necessary references
         MakeJMP(0x6E6CE9, raw_ptr(ASM_OutsideWorldWaterBlocks));

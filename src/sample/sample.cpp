@@ -41,8 +41,7 @@ class Sample2 : public Adjuster
             };
             
             // This Sample Adjuster can handle only San Andreas game
-            auto& gmv = this->GetGVM();
-            if(gvm.IsSA()) return limits;
+            if(GetGVM().IsSA()) return limits;
             return nullptr;
         }
         

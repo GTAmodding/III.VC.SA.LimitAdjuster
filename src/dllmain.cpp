@@ -15,7 +15,15 @@ void AdjustLimits(const std::map<std::string, std::string>&);
 extern "C"
 BOOL APIENTRY DllMain(HMODULE hModule, DWORD reason, LPVOID lpReserved)
 {
-    if(reason == DLL_PROCESS_ATTACH) AdjustLimits();
+    if(reason == DLL_PROCESS_ATTACH)
+    {
+        auto& gvm = injector::address_manager::singleton();
+        
+        if(gvm.IsUnknown()) // Game could not be detected?
+            gvm.RaiseCouldNotDetect();  // Ops...
+        else
+            AdjustLimits();             // Run the limit adjuster
+    }
     return TRUE;
 }
 

@@ -33,6 +33,11 @@ class Adjuster
         {
             const char* name;       // Name of the limit (INI Key)
             int         id;         // Id for the limit, this is Adjuster specific
+            void*       udata;      // User data
+            
+            Limit() {}
+            Limit(const char* name, int id, void* udata = 0) : name(name), id(id), udata(udata)
+            {}
         };
     
     public:
@@ -53,6 +58,7 @@ class Adjuster
         /*
          *  Here you should return an array of limits that can be adjusted by this Adjuster.
          *  The array should have an null element at the end of it, that's, and element which Limit::name is equal to null
+         *  The array should live long enought to be used
          *
          *  PS: The function can return a null pointer to tell that it won't handle any limit.
          *      This is useful when the game version is not supported by the Adjuster
@@ -107,7 +113,10 @@ class SimpleAdjuster : public Adjuster
 
 
 // Some maybe helpful macro
-#define DEFINE_LIMIT(limit) { #limit, limit }
-#define FINISH_LIMITS()     { 0, 0 }
+#define CREATE_NULL_LIMIT()             Limit( nullptr, 0 )
+#define CREATE_LIMIT(limit)             Limit( #limit, limit )
+#define CREATE_LIMIT_U(limit, udata)    Limit( #limit, limit, udata )
+#define DEFINE_LIMIT(limit)             { #limit, limit }
+#define FINISH_LIMITS()                 { 0, 0 }
 
 
