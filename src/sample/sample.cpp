@@ -4,8 +4,19 @@
  */
 #include "LimitAdjuster.h"
  
-// Sample Adjuster
-class Sample : public Adjuster
+// Sample Simple Adjuster
+class Sample1 : public SimpleAdjuster
+{
+    public:
+        const char* GetLimitName() { return GetGVM().IsSA()? "FoodLimit" : nullptr; }
+        void ChangeLimit(int, const std::string& value) { injector::WriteMemory(0xF00D, std::stof(value)); }
+        
+// Instantiate the adjuster on the global scope
+} simple_adjuster_sample;
+ 
+ 
+// Sample "Complex" Adjuster
+class Sample2 : public Adjuster
 {
     public:
         // ID enum, those ids are local between each Adjuster, you shouldn't worry about conflicts with other adjusters
@@ -17,14 +28,14 @@ class Sample : public Adjuster
         };
     
         // Get the limit table that we're going to handle
-        virtual const Limit* GetLimits()
+        const Limit* GetLimits()
         {
             static Limit limits[] = 
             {
                 // You could use DEFINE_LIMIT(CoffeeLimit) instead of {...}
-                { "CoffeeLimit",        CoffeeLimit         },
-                { "FoodLimit", FoodLimit  },
-                { "IceLimit",   IceLimit    },
+                { "CoffeeLimit",    CoffeeLimit },
+                { "FoodLimit",      FoodLimit   },
+                { "IceLimit",       IceLimit    },
                 // You could also use FINISH_LIMITS()
                 { nullptr, 0 }
             };
@@ -36,7 +47,7 @@ class Sample : public Adjuster
         }
         
         // Change an specific limit
-        virtual void ChangeLimit(int id, const std::string& value)
+        void ChangeLimit(int id, const std::string& value)
         {
             switch(id)
             {
@@ -56,5 +67,5 @@ class Sample : public Adjuster
 
 
  // Instantiate the adjuster on the global scope
-} adjuster_sample;
+} complex_adjuster_sample;
 

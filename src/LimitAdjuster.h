@@ -1,7 +1,7 @@
 /*
  *  Limit Adjuster Base Header
  *
- *      Each "Adjuster" should inherit from the Adjuster class
+ *      Each "Adjuster" should inherit from the Adjuster class or the SimpleAdjuster class
  *      An Adjuster should be instantiated at global scope and it'll be automatically added to the adjusters list.
  *      This list then will be taken and used while parsing the adjuster ini file.
  *
@@ -15,6 +15,10 @@
 #include <string>                   // for std::string
 #include <vector>                   // for std::vector
 
+
+/*
+ *  You can use the following interface for your limit adjuster if it adjusts more than one limit
+ */
 class Adjuster
 {
     public:
@@ -25,12 +29,13 @@ class Adjuster
             return adjusters;
         }
     
-    public:
         struct Limit
         {
             const char* name;       // Name of the limit (INI Key)
             int         id;         // Id for the limit, this is Adjuster specific
         };
+    
+    public:
 
         //
         Adjuster()              { GetAdjusters().push_back(this); }
@@ -63,7 +68,45 @@ class Adjuster
 };
 
 
-// Some helpful macro
+/*
+ *  You can use the following interface for your limit adjuster if it adjusts only one limit
+ */
+class SimpleAdjuster : public Adjuster
+{
+    private:
+        Limit lm[2];
+
+    public:
+    
+        /*
+         *  Here you should return the name of the limit this adjuster will handle
+         *  Just like the old 'GetLimits' the function may return a null pointer to tell it won't handle any limit
+         */
+        virtual const char* GetLimitName()=0;
+        
+        /*
+         *  Just like the ChangeLimit from the base Adjuster class, the first parameter should be ignored
+         *  
+         */
+        virtual void ChangeLimit(int, const std::string& value)=0;
+
+
+
+
+        // Wrapping the old virtual methods into the new ones
+        const Limit* GetLimits()
+        {
+            lm[0].name = GetLimitName();
+            lm[1].name = nullptr;
+            return lm;
+        }
+};
+
+
+
+
+
+// Some maybe helpful macro
 #define DEFINE_LIMIT(limit) { #limit, limit }
 #define FINISH_LIMITS()     { 0, 0 }
 

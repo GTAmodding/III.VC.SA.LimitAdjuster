@@ -1,3 +1,9 @@
+/*
+ *  Grand Theft Auto Limit Adjuster - Base Code
+ *      Copyright (C) 2013-2014 ThirteenAG <>
+ *      Copyright (C) 2014 LINK/2012 <dma_2012@hotmail.com>
+ *      Licensed under the MIT License (http://opensource.org/licenses/MIT)
+ */
 #include <windows.h>
 #include "ini_parser/ini_parser.hpp"
 #include "LimitAdjuster.h"
@@ -37,7 +43,7 @@ int AdjustLimits()
     if(gvm.IsSA()) secname = "SALIMITS";
     else if(gvm.IsVC()) secname = "VCLIMITS";
     else if(gvm.IsIII()) secname = "GTA3LIMITS";
-    
+
     if(secname)
     {
         // Find the section we should read
@@ -85,9 +91,9 @@ void FindHandlers(std::map<std::string, LimitHandler>& handlers)
  */
 void AdjustLimits(const std::map<std::string, std::string>& section)
 {
-    std::map<std::string, LimitHandler> handlers;       // Map of name of limit and adjuster to handle that limit
-    
-    
+    // Map of name of limit and adjuster to handle that limit
+    std::map<std::string, LimitHandler> handlers;
+
     // Find the handler for each limit
     FindHandlers(handlers);
     
@@ -97,9 +103,23 @@ void AdjustLimits(const std::map<std::string, std::string>& section)
         auto pair = handlers.find(it->first);   // Find this limit handler
         if(pair != handlers.end())
         {
-            LimitHandler& handler = pair->second;
-            handler.adjuster->ChangeLimit(handler.id, it->second);  // Change the limit
+            try
+            {
+                // Change the limit
+                LimitHandler& handler = pair->second;
+                handler.adjuster->ChangeLimit(handler.id, it->second);
+            }
+            catch(const std::exception& ex)
+            {
+                // ...ops... something wrong happened at ChangeLimit, failed to convert from string to int?
+                // Dunno, let's report it to the user
+                char buf[512];
+                sprintf(buf, "Failed to change limit for '%s' with value '%s'.\nReason: %s\n",
+                                it->first.c_str(), it->second.c_str(), ex.what());
+                MessageBoxA(0, buf, "Limit Adjuster", MB_ICONERROR);
+            }
         }
     }
 }
+
 
