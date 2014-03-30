@@ -1,0 +1,14 @@
+To create your own adjuster it's fairly simple if you already know where to patch.
+
+--> How to?
+    To create your own adjuster you need to instantiate a new object derived from the class 'Adjuster' or 'SimpleAdjuster' from LimitAdjuster.h
+    The difference between them is that 'Adjuster' allows you to make the object handle many limits while the SimpleAdjuster will allow the object to
+    handle only a single limit. As you may have noticed, SimpleAdjuster interface is cleaner and simpler.
+
+    You can see samples of how to create the adjuster at "src/sample/sample.cpp"
+    To see pratical adjusters, see the many .cpp files in the src folder.
+    
+    Yes, you only need to create an single .cpp file and make your patches there, you don't need to modify any other source file!
+    After you have your .cpp file, please don't forget to add it to the CMakeLists.txt script!
+
+
