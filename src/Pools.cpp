@@ -242,24 +242,24 @@ struct PoolsAdjusterSA : public Adjuster
         {
             static Limit lm[] =
             {
-                DEFINE_LIMIT(PtrNodeSingle),
-                DEFINE_LIMIT(PtrNodeDouble),
-                DEFINE_LIMIT(EntryInfoNode),
-                DEFINE_LIMIT(Peds),
-                DEFINE_LIMIT(Vehicles),
-                DEFINE_LIMIT(Buildings),
-                DEFINE_LIMIT(Objects),
-                DEFINE_LIMIT(Dummys),
-                DEFINE_LIMIT(ColModel),
-                DEFINE_LIMIT(Task),
-                DEFINE_LIMIT(Event),
-                DEFINE_LIMIT(PointRoute),
-                DEFINE_LIMIT(PatrolRoute),
-                DEFINE_LIMIT(NodeRoute),
-                DEFINE_LIMIT(TaskAllocator),
-                DEFINE_LIMIT(PedIntelligence),
-                DEFINE_LIMIT(PedAttractors),
-                FINISH_LIMITS()
+				DEFINE_LIMIT(PtrNodeSingle),
+				DEFINE_LIMIT(PtrNodeDouble),
+				DEFINE_LIMIT(EntryInfoNode),
+				DEFINE_LIMIT(Peds),
+				DEFINE_LIMIT(Vehicles),
+				DEFINE_LIMIT(Buildings),
+				DEFINE_LIMIT(Objects),
+				DEFINE_LIMIT(Dummys),
+				DEFINE_LIMIT(ColModel),
+				DEFINE_LIMIT(Task),
+				DEFINE_LIMIT(Event),
+				DEFINE_LIMIT(PointRoute),
+				DEFINE_LIMIT(PatrolRoute),
+				DEFINE_LIMIT(NodeRoute),
+				DEFINE_LIMIT(TaskAllocator),
+				DEFINE_LIMIT(PedIntelligence),
+				DEFINE_LIMIT(PedAttractors),
+				FINISH_LIMITS()
             };
             return lm;
         }

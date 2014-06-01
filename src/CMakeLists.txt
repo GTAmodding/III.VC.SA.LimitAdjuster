@@ -5,6 +5,7 @@ dllmain.cpp
 Pools.cpp
 WaterBlocks.cpp
 StaticMatrices.cpp
+AlphaEntityList.cpp
 
 )
 

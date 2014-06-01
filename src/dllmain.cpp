@@ -65,6 +65,7 @@ int AdjustLimits()
             }
         }
     }
+	return 0;
 }
 
 
