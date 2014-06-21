@@ -20,8 +20,8 @@ public:
 		injector::WriteMemory(0x527E6B + 1, std::stoi(value), true);
 		if (*(DWORD*)0x943098 == 0x4CBEBC20)
 		{
-			int* Shutdown = CVisibilityPlugins__Shutdown3();
-			int* Initialise = CVisibilityPlugins__Initialise3();
+			CVisibilityPlugins__Shutdown3();
+			CVisibilityPlugins__Initialise3();
 		}
 	}
 
@@ -37,8 +37,8 @@ public:
 			
 			if (*(DWORD*)0x97F30C == 0x4CBEBC20)
 			{
-				int* Shutdown = CVisibilityPlugins__Shutdown();
-				int* Initialise = CVisibilityPlugins__Initialise();
+				CVisibilityPlugins__Shutdown();
+				CVisibilityPlugins__Initialise();
 			}
 		}
 
