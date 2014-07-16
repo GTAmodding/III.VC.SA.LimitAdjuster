@@ -1,0 +1,64 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ALL_BUILD", "ALL_BUILD.vcxproj", "{D052278D-10E3-46B8-B6C5-97C8F8961DEE}"
+	ProjectSection(ProjectDependencies) = postProject
+		{B1F6D6C3-CA6C-4557-A241-071D3BEA210D} = {B1F6D6C3-CA6C-4557-A241-071D3BEA210D}
+		{A3B4F05D-0C69-4429-A724-DD06D1F2A020} = {A3B4F05D-0C69-4429-A724-DD06D1F2A020}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "INSTALL", "INSTALL.vcxproj", "{8DC0A609-9C99-4123-B6FD-DD5F9E2870CC}"
+	ProjectSection(ProjectDependencies) = postProject
+		{D052278D-10E3-46B8-B6C5-97C8F8961DEE} = {D052278D-10E3-46B8-B6C5-97C8F8961DEE}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ZERO_CHECK", "ZERO_CHECK.vcxproj", "{B1F6D6C3-CA6C-4557-A241-071D3BEA210D}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "limit_adjuster_gta3vcsa", "src\limit_adjuster_gta3vcsa.vcxproj", "{A3B4F05D-0C69-4429-A724-DD06D1F2A020}"
+	ProjectSection(ProjectDependencies) = postProject
+		{B1F6D6C3-CA6C-4557-A241-071D3BEA210D} = {B1F6D6C3-CA6C-4557-A241-071D3BEA210D}
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+		MinSizeRel|Win32 = MinSizeRel|Win32
+		RelWithDebInfo|Win32 = RelWithDebInfo|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D052278D-10E3-46B8-B6C5-97C8F8961DEE}.Debug|Win32.ActiveCfg = Debug|Win32
+		{D052278D-10E3-46B8-B6C5-97C8F8961DEE}.Debug|Win32.Build.0 = Debug|Win32
+		{D052278D-10E3-46B8-B6C5-97C8F8961DEE}.Release|Win32.ActiveCfg = Release|Win32
+		{D052278D-10E3-46B8-B6C5-97C8F8961DEE}.Release|Win32.Build.0 = Release|Win32
+		{D052278D-10E3-46B8-B6C5-97C8F8961DEE}.MinSizeRel|Win32.ActiveCfg = MinSizeRel|Win32
+		{D052278D-10E3-46B8-B6C5-97C8F8961DEE}.MinSizeRel|Win32.Build.0 = MinSizeRel|Win32
+		{D052278D-10E3-46B8-B6C5-97C8F8961DEE}.RelWithDebInfo|Win32.ActiveCfg = RelWithDebInfo|Win32
+		{D052278D-10E3-46B8-B6C5-97C8F8961DEE}.RelWithDebInfo|Win32.Build.0 = RelWithDebInfo|Win32
+		{8DC0A609-9C99-4123-B6FD-DD5F9E2870CC}.Debug|Win32.ActiveCfg = Debug|Win32
+		{8DC0A609-9C99-4123-B6FD-DD5F9E2870CC}.Release|Win32.ActiveCfg = Release|Win32
+		{8DC0A609-9C99-4123-B6FD-DD5F9E2870CC}.MinSizeRel|Win32.ActiveCfg = MinSizeRel|Win32
+		{8DC0A609-9C99-4123-B6FD-DD5F9E2870CC}.RelWithDebInfo|Win32.ActiveCfg = RelWithDebInfo|Win32
+		{B1F6D6C3-CA6C-4557-A241-071D3BEA210D}.Debug|Win32.ActiveCfg = Debug|Win32
+		{B1F6D6C3-CA6C-4557-A241-071D3BEA210D}.Debug|Win32.Build.0 = Debug|Win32
+		{B1F6D6C3-CA6C-4557-A241-071D3BEA210D}.Release|Win32.ActiveCfg = Release|Win32
+		{B1F6D6C3-CA6C-4557-A241-071D3BEA210D}.Release|Win32.Build.0 = Release|Win32
+		{B1F6D6C3-CA6C-4557-A241-071D3BEA210D}.MinSizeRel|Win32.ActiveCfg = MinSizeRel|Win32
+		{B1F6D6C3-CA6C-4557-A241-071D3BEA210D}.MinSizeRel|Win32.Build.0 = MinSizeRel|Win32
+		{B1F6D6C3-CA6C-4557-A241-071D3BEA210D}.RelWithDebInfo|Win32.ActiveCfg = RelWithDebInfo|Win32
+		{B1F6D6C3-CA6C-4557-A241-071D3BEA210D}.RelWithDebInfo|Win32.Build.0 = RelWithDebInfo|Win32
+		{A3B4F05D-0C69-4429-A724-DD06D1F2A020}.Debug|Win32.ActiveCfg = Debug|Win32
+		{A3B4F05D-0C69-4429-A724-DD06D1F2A020}.Debug|Win32.Build.0 = Debug|Win32
+		{A3B4F05D-0C69-4429-A724-DD06D1F2A020}.Release|Win32.ActiveCfg = Release|Win32
+		{A3B4F05D-0C69-4429-A724-DD06D1F2A020}.Release|Win32.Build.0 = Release|Win32
+		{A3B4F05D-0C69-4429-A724-DD06D1F2A020}.MinSizeRel|Win32.ActiveCfg = MinSizeRel|Win32
+		{A3B4F05D-0C69-4429-A724-DD06D1F2A020}.MinSizeRel|Win32.Build.0 = MinSizeRel|Win32
+		{A3B4F05D-0C69-4429-A724-DD06D1F2A020}.RelWithDebInfo|Win32.ActiveCfg = RelWithDebInfo|Win32
+		{A3B4F05D-0C69-4429-A724-DD06D1F2A020}.RelWithDebInfo|Win32.Build.0 = RelWithDebInfo|Win32
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+	EndGlobalSection
+	GlobalSection(ExtensibilityAddIns) = postSolution
+	EndGlobalSection
+EndGlobal

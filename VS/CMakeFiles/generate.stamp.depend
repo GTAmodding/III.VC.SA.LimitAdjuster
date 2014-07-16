@@ -1,8 +1,9 @@
 # CMake generation dependency list for this directory.
-E:/Games/Rockstar Games/Grand Theft Auto Trilogy/SDK/Light_projects/limit_adjuster_gta3vcsa/src/CMakeLists.txt
+E:/Games/Rockstar Games/Grand Theft Auto Trilogy/SDK/Light_projects/limit_adjuster_gta3vcsa/CMakeLists.txt
+D:/Program Files (x86)/CMake 2.8/share/cmake-2.8/Modules/CMakeVS12FindMake.cmake
 D:/Program Files (x86)/CMake 2.8/share/cmake-2.8/Modules/CMakeDetermineSystem.cmake
 D:/Program Files (x86)/CMake 2.8/share/cmake-2.8/Modules/CMakeSystem.cmake.in
-E:/Games/Rockstar Games/Grand Theft Auto Trilogy/SDK/Light_projects/limit_adjuster_gta3vcsa/win32/CMakeFiles/2.8.12.2/CMakeSystem.cmake
+E:/Games/Rockstar Games/Grand Theft Auto Trilogy/SDK/Light_projects/limit_adjuster_gta3vcsa/VS/CMakeFiles/2.8.12.2/CMakeSystem.cmake
 D:/Program Files (x86)/CMake 2.8/share/cmake-2.8/Modules/CMakeDetermineCCompiler.cmake
 D:/Program Files (x86)/CMake 2.8/share/cmake-2.8/Modules/CMakeDetermineCompiler.cmake
 D:/Program Files (x86)/CMake 2.8/share/cmake-2.8/Modules/CMakeDetermineCompilerId.cmake
@@ -10,7 +11,7 @@ D:/Program Files (x86)/CMake 2.8/share/cmake-2.8/Modules/CompilerId/VS-10.vcxpro
 D:/Program Files (x86)/CMake 2.8/share/cmake-2.8/Modules/CMakeClDeps.cmake
 D:/Program Files (x86)/CMake 2.8/share/cmake-2.8/Modules/CMakeFindBinUtils.cmake
 D:/Program Files (x86)/CMake 2.8/share/cmake-2.8/Modules/CMakeCCompiler.cmake.in
-E:/Games/Rockstar Games/Grand Theft Auto Trilogy/SDK/Light_projects/limit_adjuster_gta3vcsa/win32/CMakeFiles/2.8.12.2/CMakeCCompiler.cmake
+E:/Games/Rockstar Games/Grand Theft Auto Trilogy/SDK/Light_projects/limit_adjuster_gta3vcsa/VS/CMakeFiles/2.8.12.2/CMakeCCompiler.cmake
 D:/Program Files (x86)/CMake 2.8/share/cmake-2.8/Modules/CMakeDetermineCXXCompiler.cmake
 D:/Program Files (x86)/CMake 2.8/share/cmake-2.8/Modules/CMakeDetermineCompiler.cmake
 D:/Program Files (x86)/CMake 2.8/share/cmake-2.8/Modules/Platform/Windows-CXX.cmake
@@ -19,7 +20,7 @@ D:/Program Files (x86)/CMake 2.8/share/cmake-2.8/Modules/CompilerId/VS-10.vcxpro
 D:/Program Files (x86)/CMake 2.8/share/cmake-2.8/Modules/CMakeClDeps.cmake
 D:/Program Files (x86)/CMake 2.8/share/cmake-2.8/Modules/CMakeFindBinUtils.cmake
 D:/Program Files (x86)/CMake 2.8/share/cmake-2.8/Modules/CMakeCXXCompiler.cmake.in
-E:/Games/Rockstar Games/Grand Theft Auto Trilogy/SDK/Light_projects/limit_adjuster_gta3vcsa/win32/CMakeFiles/2.8.12.2/CMakeCXXCompiler.cmake
+E:/Games/Rockstar Games/Grand Theft Auto Trilogy/SDK/Light_projects/limit_adjuster_gta3vcsa/VS/CMakeFiles/2.8.12.2/CMakeCXXCompiler.cmake
 D:/Program Files (x86)/CMake 2.8/share/cmake-2.8/Modules/CMakeSystemSpecificInformation.cmake
 D:/Program Files (x86)/CMake 2.8/share/cmake-2.8/Modules/CMakeGenericSystem.cmake
 D:/Program Files (x86)/CMake 2.8/share/cmake-2.8/Modules/Platform/Windows.cmake
@@ -29,7 +30,7 @@ D:/Program Files (x86)/CMake 2.8/share/cmake-2.8/Modules/Platform/Windows-MSVC-C
 D:/Program Files (x86)/CMake 2.8/share/cmake-2.8/Modules/Platform/Windows-MSVC.cmake
 D:/Program Files (x86)/CMake 2.8/share/cmake-2.8/Modules/CMakeDetermineRCCompiler.cmake
 D:/Program Files (x86)/CMake 2.8/share/cmake-2.8/Modules/CMakeRCCompiler.cmake.in
-E:/Games/Rockstar Games/Grand Theft Auto Trilogy/SDK/Light_projects/limit_adjuster_gta3vcsa/win32/CMakeFiles/2.8.12.2/CMakeRCCompiler.cmake
+E:/Games/Rockstar Games/Grand Theft Auto Trilogy/SDK/Light_projects/limit_adjuster_gta3vcsa/VS/CMakeFiles/2.8.12.2/CMakeRCCompiler.cmake
 D:/Program Files (x86)/CMake 2.8/share/cmake-2.8/Modules/CMakeRCInformation.cmake
 D:/Program Files (x86)/CMake 2.8/share/cmake-2.8/Modules/CMakeTestRCCompiler.cmake
 D:/Program Files (x86)/CMake 2.8/share/cmake-2.8/Modules/CMakeCommonLanguageInclude.cmake
@@ -39,7 +40,7 @@ D:/Program Files (x86)/CMake 2.8/share/cmake-2.8/Modules/CMakeDetermineCompilerA
 D:/Program Files (x86)/CMake 2.8/share/cmake-2.8/Modules/CMakeParseImplicitLinkInfo.cmake
 D:/Program Files (x86)/CMake 2.8/share/cmake-2.8/Modules/CMakeCCompilerABI.c
 D:/Program Files (x86)/CMake 2.8/share/cmake-2.8/Modules/CMakeCCompiler.cmake.in
-E:/Games/Rockstar Games/Grand Theft Auto Trilogy/SDK/Light_projects/limit_adjuster_gta3vcsa/win32/CMakeFiles/2.8.12.2/CMakeCCompiler.cmake
+E:/Games/Rockstar Games/Grand Theft Auto Trilogy/SDK/Light_projects/limit_adjuster_gta3vcsa/VS/CMakeFiles/2.8.12.2/CMakeCCompiler.cmake
 D:/Program Files (x86)/CMake 2.8/share/cmake-2.8/Modules/CMakeCXXInformation.cmake
 D:/Program Files (x86)/CMake 2.8/share/cmake-2.8/Modules/Platform/Windows-MSVC-CXX.cmake
 D:/Program Files (x86)/CMake 2.8/share/cmake-2.8/Modules/Platform/Windows-MSVC.cmake
@@ -50,4 +51,4 @@ D:/Program Files (x86)/CMake 2.8/share/cmake-2.8/Modules/CMakeDetermineCompilerA
 D:/Program Files (x86)/CMake 2.8/share/cmake-2.8/Modules/CMakeParseImplicitLinkInfo.cmake
 D:/Program Files (x86)/CMake 2.8/share/cmake-2.8/Modules/CMakeCXXCompilerABI.cpp
 D:/Program Files (x86)/CMake 2.8/share/cmake-2.8/Modules/CMakeCXXCompiler.cmake.in
-E:/Games/Rockstar Games/Grand Theft Auto Trilogy/SDK/Light_projects/limit_adjuster_gta3vcsa/win32/CMakeFiles/2.8.12.2/CMakeCXXCompiler.cmake
+E:/Games/Rockstar Games/Grand Theft Auto Trilogy/SDK/Light_projects/limit_adjuster_gta3vcsa/VS/CMakeFiles/2.8.12.2/CMakeCXXCompiler.cmake

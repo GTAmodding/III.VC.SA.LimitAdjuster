@@ -1,6 +1,6 @@
 /*
 * Alpha Entity List Adjuster
-* Copyright (c) 2014 ThirteenAG <>
+* Copyright (c) 2014 ThirteenAG <thirteenag@gmail.com>
 * Copyright (c) 2014 Silent <zdanio95@gmail.com>
 * Licensed under the MIT License (http://opensource.org/licenses/MIT)
 */
@@ -52,7 +52,10 @@ public:
 
 	void ChangeLimit(int, const std::string& value)
 	{
-		injector::WriteMemory(0x733B05, std::stoi(value), true);
-		injector::WriteMemory(0x733B55, std::stoi(value), true);
+		if (!GetModuleHandle("samp"))
+		{
+			injector::WriteMemory(0x733B05, std::stoi(value), true);
+			injector::WriteMemory(0x733B55, std::stoi(value), true);
+		}
 	}
 } AlphaEntityListSA;
