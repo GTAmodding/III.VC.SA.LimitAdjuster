@@ -7,6 +7,7 @@ WaterBlocks.cpp
 StaticMatrices.cpp
 AlphaEntityList.cpp
 InVisibleEntityPtrs.cpp
+StreamingObjectInstancesListSize.cpp
 
 )
 

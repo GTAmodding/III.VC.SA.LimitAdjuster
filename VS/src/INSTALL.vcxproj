@@ -19,7 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGUID>{8DC0A609-9C99-4123-B6FD-DD5F9E2870CC}</ProjectGUID>
+    <ProjectGUID>{D1F57EC0-8199-4DE4-B3C3-296D7DFD6B9B}</ProjectGUID>
     <Keyword>Win32Proj</Keyword>
     <Platform>Win32</Platform>
     <ProjectName>INSTALL</ProjectName>
@@ -208,7 +208,7 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="E:/Games/Rockstar Games/Grand Theft Auto Trilogy/SDK/Light_projects/limit_adjuster_gta3vcsa/VS/ALL_BUILD.vcxproj">
-      <Project>D052278D-10E3-46B8-B6C5-97C8F8961DEE</Project>
+      <Project>FDF69FAB-3EDF-4976-9475-4A1B82726E92</Project>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

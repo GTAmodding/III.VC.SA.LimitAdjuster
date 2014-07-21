@@ -1,7 +1,6 @@
 /*
 * Alpha Entity List Adjuster
 * Copyright (c) 2014 ThirteenAG <thirteenag@gmail.com>
-* Copyright (c) 2014 Silent <zdanio95@gmail.com>
 * Licensed under the MIT License (http://opensource.org/licenses/MIT)
 */
 #include "LimitAdjuster.h"
@@ -11,7 +10,7 @@ std::vector<char> aVisibleEntityPtrs;
 class InVisibleEntityPtrsIII : public SimpleAdjuster
 {
 public:
-	const char* GetLimitName() { return GetGVM().IsIII() ? "InVisibleEntityPtrs" : nullptr; }\
+	const char* GetLimitName() { return GetGVM().IsIII() ? "InVisibleEntityPtrs" : nullptr; }
 
 	void ChangeLimit(int, const std::string& value)
 	{
@@ -31,7 +30,7 @@ public:
 class VisibleEntityPtrsIII : public SimpleAdjuster
 {
 public:
-	const char* GetLimitName() { return GetGVM().IsIII() ? "VisibleEntityPtrs" : nullptr; }\
+	const char* GetLimitName() { return GetGVM().IsIII() ? "VisibleEntityPtrs" : nullptr; }
 
 		void ChangeLimit(int, const std::string& value)
 		{

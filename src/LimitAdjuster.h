@@ -116,7 +116,7 @@ class SimpleAdjuster : public Adjuster
 #define CREATE_NULL_LIMIT()             Limit( nullptr, 0 )
 #define CREATE_LIMIT(limit)             Limit( #limit, limit )
 #define CREATE_LIMIT_U(limit, udata)    Limit( #limit, limit, udata )
-#define DEFINE_LIMIT(limit)             { #limit, limit }
-#define FINISH_LIMITS()                 { 0, 0 }
+#define DEFINE_LIMIT(limit)             CREATE_LIMIT(limit)
+#define FINISH_LIMITS()                 CREATE_NULL_LIMIT()
 
 

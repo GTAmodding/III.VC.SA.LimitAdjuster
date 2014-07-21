@@ -19,13 +19,16 @@
     <ClCompile Include="..\..\src\InVisibleEntityPtrs.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\StreamingObjectInstancesListSize.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="..\..\src\CMakeLists.txt" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Source Files">
-      <UniqueIdentifier>{3F56929C-3650-40C4-88B9-AC3EC4068AF9}</UniqueIdentifier>
+      <UniqueIdentifier>{E3EE828E-91E6-4872-AE3F-8B71B6CBE235}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

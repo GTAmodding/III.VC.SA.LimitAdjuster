@@ -21,7 +21,7 @@ struct StaticMatrices : public SimpleAdjuster
     // Sets the limit
     void ChangeLimit(int, const std::string& value)
     {
-        injector::WriteMemory(0x54F3A0 + 0x1, std::stoi(value));
+        injector::WriteMemory(0x54F3A0 + 0x1, std::stoi(value), true);
     }
 
 // Instantiate the adjuster on the global scope

@@ -19,7 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGUID>{A3B4F05D-0C69-4429-A724-DD06D1F2A020}</ProjectGUID>
+    <ProjectGUID>{3D21F5C5-5066-4792-A2D5-90C888510DB4}</ProjectGUID>
     <Keyword>Win32Proj</Keyword>
     <Platform>Win32</Platform>
     <ProjectName>limit_adjuster_gta3vcsa</ProjectName>
@@ -35,7 +35,7 @@
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseOfMfc>false</UseOfMfc>
     <CharacterSet>MultiByte</CharacterSet>
-    <PlatformToolset>v120</PlatformToolset>
+    <PlatformToolset>v100</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
@@ -322,10 +322,11 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     <ClCompile Include="..\..\src\StaticMatrices.cpp" />
     <ClCompile Include="..\..\src\AlphaEntityList.cpp" />
     <ClCompile Include="..\..\src\InVisibleEntityPtrs.cpp" />
+    <ClCompile Include="..\..\src\StreamingObjectInstancesListSize.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="E:/Games/Rockstar Games/Grand Theft Auto Trilogy/SDK/Light_projects/limit_adjuster_gta3vcsa/VS/ZERO_CHECK.vcxproj">
-      <Project>B1F6D6C3-CA6C-4557-A241-071D3BEA210D</Project>
+      <Project>55AD67D0-C62B-4127-B8FB-B66E4872BBBD</Project>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
