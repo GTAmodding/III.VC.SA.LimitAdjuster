@@ -1,5 +1,5 @@
 /*
-* TimeModelInfo Adjuster for GTA VC
+* TimeModelInfo Adjuster for GTA 3/VC/SA
 * Copyright (c) 2014 ThirteenAG <thirteenag@gmail.com>
 * Licensed under the MIT License (http://opensource.org/licenses/MIT)
 */
@@ -34,11 +34,11 @@ void __declspec(naked) asm_50B9C0()
 class TimeModelInfoIII : public SimpleAdjuster
 {
 public:
-	const char* GetLimitName() { return GetGVM().IsIII() ? "TimeModelInfo" : nullptr; }
+	const char* GetLimitName() { return GetGVM().IsIII() ? "TimeModels" : nullptr; }
 	void ChangeLimit(int, const std::string& value)
 	{
 		IIIvalue = std::stoi(value);
-		stTimeModelInfo.resize(IIIvalue * 88 * 4 * 10);
+		stTimeModelInfo.resize((IIIvalue * 88) + 4);
 		injector::MakeJMP(0x50BC78, asm_50BC78, true);  //injector::WriteMemory(0x50BC7B + 1, std::stoi(value), true);
 
 		injector::MakeJMP(0x50B9C0, asm_50B9C0, true);
@@ -67,16 +67,15 @@ public:
 			CModelInfo_CModelInfo();
 		}
 	}
-
 } TimeModelInfoIII;
 
 class TimeModelInfoVC : public SimpleAdjuster
 {
 public:
-	const char* GetLimitName() { return GetGVM().IsVC() ? "TimeModelInfo" : nullptr; }
+	const char* GetLimitName() { return GetGVM().IsVC() ? "TimeModels" : nullptr; }
 	void ChangeLimit(int, const std::string& value)
 	{
-		stTimeModelInfo.resize(std::stoi(value) * 80 * 4);
+		stTimeModelInfo.resize((std::stoi(value) * 80) + 4);
 		injector::WriteMemory(0x5828DB + 0x1, std::stoi(value), true);
 
 		injector::WriteMemory(0x55FEFF + 0x1, std::stoi(value), true);
@@ -104,17 +103,16 @@ public:
 			CModelInfo_CModelInfo();
 		}
 	}
-
 } TimeModelInfoVC;
 
 class TimeModelInfoSA : public SimpleAdjuster
 {
 public:
-	const char* GetLimitName() { return GetGVM().IsSA() ? "TimeModelInfo" : nullptr; }
+	const char* GetLimitName() { return GetGVM().IsSA() ? "TimeModels" : nullptr; }
 
 	void ChangeLimit(int, const std::string& value)
 	{
-		stTimeModelInfo.resize(std::stoi(value) * 36 * 4 * 10);
+		stTimeModelInfo.resize((std::stoi(value) * 36) + 4);
 
 		injector::WriteMemory(0x4C5DDB + 0x1, std::stoi(value), true);
 
