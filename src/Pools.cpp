@@ -75,6 +75,9 @@ struct PoolsAdjusterBase : public Adjuster
         if(id == EntryInfoNode || id == Buildings || id == ColModel)
             if(this->IsSA() && GetModuleHandleA("samp")) return;    // Bugzz
 
+		if (id == PtrNode || id == Buildings)
+			if (this->IsVC() && (injector::ReadMemory<int>(0x4C0284) > 50000 || injector::ReadMemory<int>(0x4C0309) > 50000)) return;    // Vice Cry 1.8 compat
+
         return GetUserData(id)->ChangeLimit(std::stoul(value));
 	}
 

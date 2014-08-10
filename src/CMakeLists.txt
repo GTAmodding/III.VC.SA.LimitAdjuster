@@ -8,6 +8,7 @@ StaticMatrices.cpp
 AlphaEntityList.cpp
 InVisibleEntityPtrs.cpp
 StreamingObjectInstancesListSize.cpp
+TimeModelInfo.cpp
 
 LimitAdjuster.h
 utility/PoolAdjuster.hpp
