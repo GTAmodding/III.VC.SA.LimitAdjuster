@@ -9,7 +9,7 @@
 class AlphaEntityListIII : public SimpleAdjuster
 {
 public:
-	const char* GetLimitName() { return GetGVM().IsIII() ? "AlphaEntityListSize" : nullptr; }
+	const char* GetLimitName() { return GetGVM().IsIII() ? "AlphaEntityList" : nullptr; }
 	void ChangeLimit(int, const std::string& value)
 	{
 		injector::WriteMemory(0x527E6B + 1, std::stoi(value), true);
@@ -28,7 +28,7 @@ public:
 class AlphaEntityListVC : public SimpleAdjuster
 {
 public:
-	const char* GetLimitName() { return GetGVM().IsVC() ? "AlphaEntityListSize" : nullptr; }
+	const char* GetLimitName() { return GetGVM().IsVC() ? "AlphaEntityList" : nullptr; }
 	void ChangeLimit(int, const std::string& value)
 		{
 			injector::WriteMemory(0x5828DB+1, std::stoi(value), true);
@@ -48,12 +48,13 @@ public:
 class AlphaEntityListSA : public SimpleAdjuster
 {
 public:
-	const char* GetLimitName() { return GetGVM().IsSA() ? "AlphaEntityListSize" : nullptr; }
+	const char* GetLimitName() { return GetGVM().IsSA() ? "AlphaEntityList" : nullptr; }
 
 	void ChangeLimit(int, const std::string& value)
 	{
-			injector::WriteMemory(0x733B05, std::stoi(value), true);
-			injector::WriteMemory(0x733B55, std::stoi(value), true);
+        auto size = std::stoi(value) * 20;
+	    injector::WriteMemory(0x733B05, size, true);
+	    injector::WriteMemory(0x733B55, size, true);
 	}
 
     // TODO GetUsage

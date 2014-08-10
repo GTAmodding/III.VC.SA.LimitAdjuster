@@ -4,11 +4,11 @@ set(SOURCE_FILES
 dllmain.cpp
 Pools.cpp
 WaterBlocks.cpp
-StaticMatrices.cpp
+MatrixList.cpp
 AlphaEntityList.cpp
 InVisibleEntityPtrs.cpp
-StreamingObjectInstancesListSize.cpp
-TimeModelInfo.cpp
+StreamingObjectInstancesList.cpp
+TimeModels.cpp
 
 LimitAdjuster.h
 utility/PoolAdjuster.hpp

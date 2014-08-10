@@ -16,6 +16,7 @@ struct LimitHandler
     Adjuster*   adjuster;   // Adjuster to handle the key
 };
 
+static int vkDebugText = VK_F5; // 0x74
 int AdjustLimits();
 void AdjustLimits(const std::map<std::string, std::string>&);
 void PatchDrawer();
@@ -63,6 +64,22 @@ int AdjustLimits()
     else if(Adjuster::IsVC()) secname = "VCLIMITS";
     else if(Adjuster::IsIII()) secname = "GTA3LIMITS";
 
+    // Configurable options such as debug text key
+    for(auto& pair : ini["OPTIONS"])
+    {
+        try {
+            
+            if(!pair.first.compare("DebugTextKey"))
+                vkDebugText = std::stoi(pair.second, nullptr, 0);
+
+        } catch(const std::logic_error& ex) {
+            char buf[512];
+            sprintf(buf, "Invalid value on option %s\n%s\n", pair.first.c_str(), ex.what());
+            MessageBoxA(0, buf, "Limit Adjuster", MB_ICONERROR);
+        }
+    }
+
+    // Parse section in search of limits
     if(secname)
     {
         // Find the section we should read
@@ -138,8 +155,6 @@ void AdjustLimits(const std::map<std::string, std::string>& section)
         }
     }
 }
-
-
 
 
 
@@ -243,11 +258,11 @@ void DrawLimit(const char* name, const char* usage)
 bool TestShouldDraw()
 {
     static bool should_draw = false;    // Should draw flag
-    static bool prevF5 = false;         // Prev state of the F5 key
-    static bool currF5 = false;         // Curr state of the F5 key
+    static bool prevF5 = false;         // Prev state of the debug text key
+    static bool currF5 = false;         // Curr state of the debug text key
     
     // Update key states and find if hot key pressed
-    currF5 = (GetKeyState(VK_F5) & 0x8000) != 0;
+    currF5 = (GetKeyState(vkDebugText) & 0x8000) != 0;
     if(currF5 && !prevF5)   // Hotkey pressed?!?
     {
         if(!should_draw)

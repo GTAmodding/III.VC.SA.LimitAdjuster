@@ -15,8 +15,7 @@ struct StaticMatrices : public SimpleAdjuster
     // Limit Name
     const char* GetLimitName()
     {
-        return (GetGVM().IsSA()? "StaticMatrices" : nullptr);   // Name is wrong, should be Matrices, or MatrixArray, or something
-                                                                // Can we change it or...?
+        return (IsSA()? "MatrixList" : nullptr);
     }
 
     // Sets the limit
