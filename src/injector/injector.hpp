@@ -2,6 +2,7 @@
  *  Injectors - Base Header
  *
  *  Copyright (C) 2012-2014 LINK/2012 <dma_2012@hotmail.com>
+ *  Copyright (C) 2014 Deji <the_zone@hotmail.co.uk>
  *
  *  This software is provided 'as-is', without any express or implied
  *  warranty. In no event will the authors be held liable for any damages
@@ -53,205 +54,45 @@
         If defined, the game_version_manager should be implemented by the user before including this library.
         By default it provides a nice gvm for Grand Theft Auto series
 */
+#include "gvm/gvm.hpp"
+
 
 
 namespace injector
 {
 
-#if 1       // GVM and Address Translator, Not very interesting for the users, so skip reading those...
-    
-/*
- *  game_version_manager
- *      Detects the game, the game version and the game region
- *      This assumes the executable is decrypted, so, Silent's ASI Loader is recommended.
- */
-#ifndef INJECTOR_OWN_GVM 
-#ifndef INJECTOR_GVM_DUMMY
-class game_version_manager
-{
-	public:
-		// Set this if you would like that MessagesBox contain PluginName as caption
-		const char* PluginName;
-        
-	private:
-        char game, region, major, minor, cracker, steam;
-
-	public:
-		game_version_manager()
-		{
-		    #ifdef INJECTOR_GVM_PLUGIN_NAME
-		        PluginName = INJECTOR_GVM_PLUGIN_NAME;
-		    #else
-                PluginName = "Unknown Plugin Name";
-            #endif
-			
-			this->Clear();
-		}
-        
-
-	    // Clear any information about game version
-	    void Clear()
-	    {
-	        game = region = major = minor = cracker = steam = 0;
-	    }
-        
-		// Checks if I don't know the game we are attached to
-		bool IsUnknown()		{ return game == 0; }
-		// Checks if this is the steam version
-		bool IsSteam()			{ return steam != 0; }
-		// Gets the game we are attached to (0, '3', 'V', 'S')
-		char GetGame()			{ return game; }
-		// Gets the region from the game we are attached to (0, 'U', 'E');
-		char GetRegion()		{ return region; }
-		// Get major and minor version of the game (e.g. [major = 1, minor = 0] = 1.0)
-		int GetMajorVersion()	{ return major; }
-		int GetMinorVersion()	{ return minor; }
-        
-        bool IsHoodlum()        { return cracker == 'H'; }
-        
-        // Region conditions
-        bool IsUS() { return region == 'U'; }
-        bool IsEU() { return region == 'E'; }
-
-        // Game Conditions
-        bool IsIII() { return game == '3'; }
-        bool IsVC () { return game == 'V'; }
-        bool IsSA () { return game == 'S'; }
-
-		// Detects game, region and version; returns false if could not detect it
-		bool Detect();
-        
-		// Gets the game version as text, the buffer must contain at least 32 bytes of space.
-        char* GetVersionText(char* buffer)
-        {
-            const char* g = this->IsIII()? "III" : this->IsVC()? "VC" : this->IsSA()? "SA" : "UNK";
-            const char* r = this->IsUS()? "US" : this->IsEU()? "EURO" : "UNK_REGION";
-            const char* s = this->IsSteam()? "Steam" : "";
-            sprintf(buffer, "GTA %s %d.%d %s%s", g, major, minor, r, s);
-            return buffer;
-        }
-
-
-	public:
-		// Raises a error saying that you could not detect the game version
-		void RaiseCouldNotDetect()
-		{
-			MessageBoxA(0,
-				"Could not detect the game version\nContact the mod creator!",
-				PluginName, MB_ICONERROR
-			);
-		}
-
-		// Raises a error saying that the exe version is incompatible (and output the exe name)
-		void RaiseIncompatibleVersion()
-		{
-			char buf[128], v[32];
-			sprintf(buf,
-				"An incompatible exe version has been detected! (%s)\nContact the mod creator!",
-				GetVersionText(v)
-				);
-			MessageBoxA(0, buf, PluginName, MB_ICONERROR);
-		}
-};
-#else   // INJECTOR_GVM_DUMMY
-class game_version_manager
-{
-    public:
-        bool Detect() { return true; }
-};
-#endif  // INJECTOR_GVM_DUMMY
-#endif  // INJECTOR_OWN_GVM
-
 
 /*
- *  address_manager
- *      Address translator from 1.0 executables to other executables offsets
- *      Inherits from game_version_manager ;)
- */
-class address_manager : public game_version_manager
-{
-    private:
-        address_manager()
-        {
-            this->Detect();
-        }
-        
-        // You could implement your translator for the address your plugin uses
-        // If not implemented, the translator won't translate anything, just return the samething as before
-        #ifdef INJECTOR_GVM_HAS_TRANSLATOR
-                void* translator(void* p);
-        #else
-                void* translator(void* p) { return p; }
-        #endif
-
-    public:
-        // Translates address p to the running executable pointer
-        void* translate(void* p)
-        {
-            return translator(p);
-        }
-        
-        
-    public:
-        // Address manager singleton
-        static address_manager& singleton()
-        {
-            static address_manager m;
-            return m;
-        }
-        
-        // Static version of translate()
-        static void* translate_address(void* p)
-        {
-            return singleton().translate(p);
-        }
-        
-        //
-        static void set_name(const char* modname)
-        {
-            singleton().PluginName = modname;
-        }
-        
-    public:
-        // Functors for memory translation:
-        
-        // Translates nothing translator
-        struct fn_mem_translator_nop
-        {
-            void* operator()(void* p) const
-            { return p; }
-        };
-        
-        // Real translator
-        struct fn_mem_translator
-        {
-            void* operator()(void* p) const
-            { return translate_address(p); }
-        };
-};
-
-#endif  // #if 1
-
-
-
-/*
- *  auto_ptr_cast 
+ *  auto_pointer 
  *      Casts itself to another pointer type in the lhs
  */
-union auto_ptr_cast
+union auto_pointer
 {
-	void*	 p;
-	uintptr_t a;
+    protected:
+        friend union memory_pointer_tr;
+        template<class T> friend union basic_memory_pointer;
+        
+	    void*	 p;
+	    uintptr_t a;
 
-	auto_ptr_cast() : p(0)                          {}
-    auto_ptr_cast(const auto_ptr_cast& x) : p(x.p)  {}
-	explicit auto_ptr_cast(void* x)    : p(x)       {}
-	explicit auto_ptr_cast(uint32_t x) : a(x)       {}
+    public:
+	    auto_pointer() : p(0)                          {}
+        auto_pointer(const auto_pointer& x) : p(x.p)  {}
+	    explicit auto_pointer(void* x)    : p(x)       {}
+	    explicit auto_pointer(uint32_t x) : a(x)       {}
 
-	template<class T>
-	operator T*() { return reinterpret_cast<T*>(p); }
-	/*template<class T>
-	operator const T*() { return reinterpret_cast<const T*>(p); }*/
+        bool is_null() { return this->p != nullptr; }
+
+    #if __cplusplus >= 201103L || _MSC_VER >= 1800
+        explicit operator bool() { return is_null(); }
+    #endif
+
+        auto_pointer get() const               { return *this; }
+        template<class T> T* get() const       { return (T*) this->p; }
+        template<class T> T* get_raw() const   { return (T*) this->p; }
+
+	    template<class T>
+	    operator T*() { return reinterpret_cast<T*>(p); }
 };
 
 /*
@@ -262,34 +103,37 @@ union auto_ptr_cast
 template<class MemTranslator>
 union basic_memory_pointer
 {
-    private:
+    protected:
         void*	  p;
         uintptr_t a;
         
         // Translates address p to the running executable pointer
-        static auto_ptr_cast memory_translate(void* p)
+        static auto_pointer memory_translate(void* p)
         {
-            return auto_ptr_cast(MemTranslator()(p));
+            return auto_pointer(MemTranslator()(p));
         }
 
     public:
-        basic_memory_pointer()            : p(0)                           {}
-        basic_memory_pointer(void* x)     : p(x)                           {}
-        basic_memory_pointer(uintptr_t x) : a(x)                           {}
-        basic_memory_pointer(const auto_ptr_cast& x) : p(x.p)              {}
+        basic_memory_pointer()                      : p(nullptr)    {}
+        basic_memory_pointer(std::nullptr_t)        : p(nullptr)    {}
+        basic_memory_pointer(uintptr_t x)           : a(x)          {}
+        basic_memory_pointer(const auto_pointer& x) : p(x.p)        {}
         basic_memory_pointer(const basic_memory_pointer& rhs) : p(rhs.p)  {}
 
         template<class T>
-        explicit basic_memory_pointer(T* x) : p((void*)x) {}
+        basic_memory_pointer(T* x) : p((void*)x) {}
+
+        
+
         
         // Gets the translated pointer (plus automatic casting to lhs)
-        auto_ptr_cast get() const               { return memory_translate(p); }
+        auto_pointer get() const               { return memory_translate(p); }
         
         // Gets the translated pointer (casted to T*)
         template<class T> T* get() const        { return get(); }
         
         // Gets the raw pointer, without translation (casted to T*)
-        template<class T> T* get_raw() const    { return auto_ptr_cast(p); }
+        template<class T> T* get_raw() const    { return auto_pointer(p); }
         
         // This type can get assigned from void* and uintptr_t
         basic_memory_pointer& operator=(void* x)		{ return p = x, *this; }
@@ -328,29 +172,25 @@ union basic_memory_pointer
         bool operator>=(const basic_memory_pointer& rhs) const
         { return this->a >=rhs.a; }
         
-#if __cplusplus >= 201103L
+        bool is_null() { return this->p != nullptr; }
+
+#if __cplusplus >= 201103L || _MSC_VER >= 1800  // MSVC 2013
         /* Conversion to other types */
         explicit operator uintptr_t()
         { return this->a; }
         explicit operator bool()
         { return this->p != nullptr; }
 #else
-        operator bool()
-        { return this->p != nullptr; }
+        //operator bool() -------------- Causes casting problems because of implicitness, use !is_null()
+        //{ return this->p != nullptr; }
 #endif
 
 };
 
-// Typedefs including memory translator for the above type
+ // Typedefs including memory translator for the above type
 typedef basic_memory_pointer<address_manager::fn_mem_translator>       memory_pointer;
 typedef basic_memory_pointer<address_manager::fn_mem_translator_nop>   memory_pointer_raw;
 
-// Makes a memory_pointer_raw from another random type
-template<class T>
-inline memory_pointer_raw  raw_ptr(T p)
-{
-    return memory_pointer_raw(p);
-}
 
 
 
@@ -360,7 +200,7 @@ inline memory_pointer_raw  raw_ptr(T p)
  */
 union memory_pointer_tr
 {
-    private:
+    protected:
         void*     p;
         uintptr_t a;
     
@@ -370,9 +210,9 @@ union memory_pointer_tr
             : p(ptr.get())
         {}      // Constructs from a basic_memory_pointer
       
-        memory_pointer_tr(const auto_ptr_cast& ptr)
+        memory_pointer_tr(const auto_pointer& ptr)
             : p(ptr.p)
-        {}  // Constructs from a auto_ptr_cast, probably comming from basic_memory_pointer::get
+        {}  // Constructs from a auto_pointer, probably comming from basic_memory_pointer::get
         
         memory_pointer_tr(const memory_pointer_tr& rhs)
             : p(rhs.p)
@@ -387,7 +227,7 @@ union memory_pointer_tr
         {}  // Constructs from a void pointer, translating the address
         
         // Just to be method-compatible with basic_memory_pointer ...
-        auto_ptr_cast        get()      { return auto_ptr_cast(p);     }
+        auto_pointer         get()      { return auto_pointer(p);     }
         template<class T> T* get()      { return get(); }
         template<class T> T* get_raw()  { return get(); }
 
@@ -403,14 +243,13 @@ union memory_pointer_tr
         memory_pointer_tr operator/(const uintptr_t& rhs) const
         { return memory_pointer_raw(this->a / rhs); }
         
-#if __cplusplus >= 201103L && 1
+#if __cplusplus >= 201103L
        explicit operator uintptr_t()
        { return this->a; }
 #else
 #endif
 
 };
-
 
 
 
@@ -625,7 +464,7 @@ inline memory_pointer_raw GetBranchDestination(memory_pointer_tr at, bool vp = t
  *      Creates a JMP instruction at address @at that jumps into address @dest
  *      If there was already a branch instruction there, returns the previosly destination of the branch
  */
-inline memory_pointer_raw MakeJMP(memory_pointer_tr at, memory_pointer_tr dest, bool vp = true)
+inline memory_pointer_raw MakeJMP(memory_pointer_tr at, memory_pointer_raw dest, bool vp = true)
 {
 	auto p = GetBranchDestination(at, vp);
 	WriteMemory<uint8_t>(at, 0xE9, vp);
@@ -638,7 +477,7 @@ inline memory_pointer_raw MakeJMP(memory_pointer_tr at, memory_pointer_tr dest, 
  *      Creates a CALL instruction at address @at that jumps into address @dest
  *      If there was already a branch instruction there, returns the previosly destination of the branch
  */
-inline memory_pointer_raw MakeCALL(memory_pointer_tr at, memory_pointer_tr dest, bool vp = true)
+inline memory_pointer_raw MakeCALL(memory_pointer_tr at, memory_pointer_raw dest, bool vp = true)
 {
 	auto p = GetBranchDestination(at, vp);
 	WriteMemory<uint8_t>(at, 0xE8, vp);
@@ -651,7 +490,7 @@ inline memory_pointer_raw MakeCALL(memory_pointer_tr at, memory_pointer_tr dest,
  *      Creates a JA instruction at address @at that jumps if above into address @dest
  *      If there was already a branch instruction there, returns the previosly destination of the branch
  */
-inline void MakeJA(memory_pointer_tr at, memory_pointer_tr dest, bool vp = true)
+inline void MakeJA(memory_pointer_tr at, memory_pointer_raw dest, bool vp = true)
 {
 	WriteMemory<uint16_t>(at, 0x87F0, vp);
 	MakeRelativeOffset(at+2, dest, 4, vp);
@@ -676,6 +515,79 @@ inline void MakeRET(memory_pointer_tr at, uint16_t pop = 0, bool vp = true)
     WriteMemory(at, pop? 0xC2 : 0xC3, vp);
     if(pop) WriteMemory(at+1, pop, vp);
 }
+
+
+
+
+
+/*
+  *  lazy_pointer
+  *      Lazy pointer, where it's final value will get evaluated only once when finally needed.
+  */
+ template<uintptr_t addr>
+ struct lazy_pointer
+ {
+    public:
+         // Returns the final raw pointer
+         static auto_pointer get()
+         {
+             return xget().get();
+         }
+
+         template<class T>
+         static T* get()
+         {
+             return get().get<T>();
+         }
+
+    private:
+        // Returns the final pointer
+        static memory_pointer_raw xget()
+        {
+            static void* ptr = nullptr;
+            if(!ptr) ptr = memory_pointer(addr).get();
+            return memory_pointer_raw(ptr);
+        }
+};
+
+ /*
+  *  lazy_object
+  *      Lazy object, where it's final object will get evaluated only once when finally needed.
+  */
+ template<uintptr_t addr, class T>
+ struct lazy_object
+ {
+     static T& get()
+     {
+         static T data;
+         static bool has_data = false;
+         if(!has_data)
+         {
+             ReadObject<T>(addr, data, true);
+             has_data = true;
+         }
+         return data;
+     }
+ };
+
+
+ /*
+    Helpers
+ */
+
+template<class T>
+inline memory_pointer_raw  raw_ptr(T p)
+{
+    return memory_pointer_raw(p);
+}
+
+template<uintptr_t addr>
+inline memory_pointer_raw  lazy_ptr()
+{
+    return lazy_pointer<addr>::get();
+}
+
+
 
 
 
@@ -754,8 +666,6 @@ inline bool game_version_manager::Detect()
 }
 
 #endif
-
-
 
 
 } // namespace 

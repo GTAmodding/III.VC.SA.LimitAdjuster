@@ -11,7 +11,7 @@
  */
 #pragma once
 
-#include "injector/injector.hpp"    // 100% sure the derived Adjuster will use this
+#include <injector/injector.hpp>    // 100% sure the derived Adjuster will use this
 #include <string>                   // for std::string
 #include <vector>                   // for std::vector
 
@@ -38,6 +38,9 @@ class Adjuster
             Limit() {}
             Limit(const char* name, int id, void* udata = 0) : name(name), id(id), udata(udata)
             {}
+
+            template<class T>
+            T GetUserData() const { return reinterpret_cast<T>(udata); }
         };
     
     public:
@@ -47,10 +50,14 @@ class Adjuster
         virtual ~Adjuster()     { /* No need to remove for now */ }
 
         // Get Game Version Manager
-        injector::address_manager& GetGVM()
+        static injector::address_manager& GetGVM()
         {
             return injector::address_manager::singleton();
         }
+
+        static bool IsIII() { return GetGVM().IsIII(); }
+        static bool IsVC()  { return GetGVM().IsVC(); }
+        static bool IsSA()  { return GetGVM().IsSA(); }
 
 
         // Virtual Methods
@@ -71,6 +78,25 @@ class Adjuster
          *  The value argument is equal to the value part of the key-value pair on the ini file.
          */
         virtual void ChangeLimit(int id, const std::string& value)=0;
+
+        /*
+         *  Gets the current usage of the limit id in a string.
+         *  The output string should contain only the "Usage / Max" part
+         *  Returns true if could get the usage and false otherwise
+         */
+        virtual bool GetUsage(int id, std::string& usagebuf) { return false; }
+
+
+    public:
+
+        // Helper to GetUsage()
+        template<class T>
+        static bool GetUsage(std::string& str, const T& usage, const T& max)
+        {
+            str = std::to_string(usage);
+            str.append(" / ").append(std::to_string(max));
+            return true;
+        }
 };
 
 
@@ -92,12 +118,13 @@ class SimpleAdjuster : public Adjuster
         
         /*
          *  Just like the ChangeLimit from the base Adjuster class, the first parameter should be ignored
-         *  
          */
         virtual void ChangeLimit(int, const std::string& value)=0;
 
-
-
+        /*
+         *  Just like the GetUsage from the base Adjuster class, the first parameter should be ignored
+         */
+        virtual bool GetUsage(int, std::string& usagebuf) { return false; }
 
         // Wrapping the old virtual methods into the new ones
         const Limit* GetLimits()
@@ -117,6 +144,7 @@ class SimpleAdjuster : public Adjuster
 #define CREATE_LIMIT(limit)             Limit( #limit, limit )
 #define CREATE_LIMIT_U(limit, udata)    Limit( #limit, limit, udata )
 #define DEFINE_LIMIT(limit)             CREATE_LIMIT(limit)
+#define DEFINE_LIMIT_U(limit, udata)    CREATE_LIMIT_U(limit, udata)
 #define FINISH_LIMITS()                 CREATE_NULL_LIMIT()
 
 
