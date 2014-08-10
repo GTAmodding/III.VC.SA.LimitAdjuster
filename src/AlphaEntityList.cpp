@@ -55,4 +55,7 @@ public:
 			injector::WriteMemory(0x733B05, std::stoi(value), true);
 			injector::WriteMemory(0x733B55, std::stoi(value), true);
 	}
+
+    // TODO GetUsage
+
 } AlphaEntityListSA;

@@ -32,4 +32,5 @@ if(CMAKE_BUILD_TYPE STREQUAL "Debug")
 else()
     install(FILES "${CONFIGS_DIR}/limit_adjuster_gta3vcsa.ini" DESTINATION "./")
 endif()
-
+ 
+ 

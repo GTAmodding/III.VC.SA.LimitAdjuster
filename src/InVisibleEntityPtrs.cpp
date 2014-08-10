@@ -1,5 +1,5 @@
 /*
-* Alpha Entity List Adjuster
+* (In)Visibible Entities List Adjuster
 * Copyright (c) 2014 ThirteenAG <thirteenag@gmail.com>
 * Licensed under the MIT License (http://opensource.org/licenses/MIT)
 */
@@ -88,6 +88,9 @@ public:
 		injector::WriteMemory(0x553920 + 0x3, &aInVisibleEntityPtrs[0], true);
 		injector::WriteMemory(0x553CB0 + 0x3, &aInVisibleEntityPtrs[0], true);
 	}
+
+    // TODO GetUsage
+
 } InVisibleEntityPtrsSA;
 
 class VisibleEntityPtrsSA : public SimpleAdjuster
@@ -104,4 +107,7 @@ public:
 		injector::WriteMemory(0x553A50 + 0x3, &aVisibleEntityPtrs[0], true);
 		injector::WriteMemory(0x553B00 + 0x3, &aVisibleEntityPtrs[0], true);
 	}
+
+    // TODO GetUsage
+
 } VisibleEntityPtrsSA;

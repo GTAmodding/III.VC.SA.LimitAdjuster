@@ -9,11 +9,15 @@ AlphaEntityList.cpp
 InVisibleEntityPtrs.cpp
 StreamingObjectInstancesListSize.cpp
 
+LimitAdjuster.h
+utility/PoolAdjuster.hpp
+
 )
 
 
 # The current directory shall be used for #include <file>
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/structs)
 
 # Visual Studio specific stuff
 if(MSVC)

@@ -1,6 +1,6 @@
 /*
- *  Static Matrices Limit Adjuster
- *  Copyright (C) 2014 LINK/2012 <dma_2012@hotmail.com>
+ *  Streaming Object Instance List Limit Adjuster
+ *  Copyright (C) 2014 ThirteenAG <thirteenag@gmail.com>
  *  Licensed under the MIT License (http://opensource.org/licenses/MIT)
  */
 #include "LimitAdjuster.h"
@@ -24,6 +24,8 @@ struct StreamingObjectInstancesListSize : public SimpleAdjuster
 		injector::WriteMemory(0x5B8E55, std::stoi(value), true);
 		injector::WriteMemory(0x5B8EB0, std::stoi(value), true);
 	}
+
+    // TODO GetUsage
 
 // Instantiate the adjuster on the global scope
 } adjuster_StreamingObjectInstancesListSize;
