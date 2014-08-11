@@ -52,10 +52,34 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD reason, LPVOID lpReserved)
  */
 
 /*
+ *  Reads all key-value pairs from the 'ini' section 'secname' and add them to the 'output' pair
+ *  If pair already exists on the output pair it's overriden
+ */
+void ReadSection(const linb::ini& ini, const char* secname, std::map<std::string, std::string>& output)
+{
+    if(secname)
+    {
+        for(auto sec = ini.begin(); sec != ini.end(); ++sec)
+        {
+            // Find section named secname
+            if(!strcmp(sec->first.c_str(), secname))
+            {
+                // Push all kv pairs to the output map
+                auto& section = sec->second;
+                for(auto it = section.begin(); it != section.end(); ++it)
+                    output[it->first] = it->second;
+                break;
+            }
+        }
+    }
+}
+
+/*
  *  Adjust the limits asked by the ini file
  */
 int AdjustLimits()
 {
+    std::map<std::string, std::string> keys;
     linb::ini ini("limit_adjuster_gta3vcsa.ini");           // Open the ini
     const char* secname = 0;
 
@@ -65,8 +89,10 @@ int AdjustLimits()
     else if(Adjuster::IsIII()) secname = "GTA3LIMITS";
 
     // Configurable options such as debug text key
-    for(auto& pair : ini["OPTIONS"])
+    auto& options = ini["OPTIONS"];
+    for(auto it = options.begin(); it != options.end(); ++it)
     {
+        auto& pair = *it;
         try {
             
             if(!pair.first.compare("DebugTextKey"))
@@ -82,17 +108,11 @@ int AdjustLimits()
     // Parse section in search of limits
     if(secname)
     {
-        // Find the section we should read
-        for(auto sec = ini.begin(); sec != ini.end(); ++sec)
-        {
-            if(!strcmp(sec->first.c_str(), secname))
-            {
-                // Found it, let's read that section :)
-                AdjustLimits(sec->second);
-                break;
-            }
-        }
+        ReadSection(ini, "LIMITS", keys);
+        ReadSection(ini, secname, keys);
+        AdjustLimits(keys);
     }
+
 	return 0;
 }
 
