@@ -127,7 +127,10 @@ public:
 		injector::WriteMemory(0x84BC50 + 0x1, &stTimeModelInfo[0], true);
 		injector::WriteMemory(0x856260 + 0x1, &stTimeModelInfo[0], true);
 
-		auto CModelInfo_CModelInfo = (void(__cdecl *)()) 0x84BC50;
-		CModelInfo_CModelInfo();
+		if (*(DWORD*)0xB1C964 != 0)
+		{
+			auto CModelInfo_CModelInfo = (void(__cdecl *)()) 0x84BC50;
+			CModelInfo_CModelInfo();
+		}
 	}
 } TimeModelInfoSA;
