@@ -76,7 +76,6 @@ public:
 	void ChangeLimit(int, const std::string& value)
 	{
 		stTimeModelInfo.resize((std::stoi(value) * 80) + 4);
-		injector::WriteMemory(0x5828DB + 0x1, std::stoi(value), true);
 
 		injector::WriteMemory(0x55FEFF + 0x1, std::stoi(value), true);
 		injector::WriteMemory(0x55F6E0 + 0x6, std::stoi(value), true);
@@ -127,5 +126,8 @@ public:
 		injector::WriteMemory(0x4C6810 + 0x29 + 0x2, &stTimeModelInfo[0], true);
 		injector::WriteMemory(0x84BC50 + 0x1, &stTimeModelInfo[0], true);
 		injector::WriteMemory(0x856260 + 0x1, &stTimeModelInfo[0], true);
+
+		auto CModelInfo_CModelInfo = (void(__cdecl *)()) 0x84BC50;
+		CModelInfo_CModelInfo();
 	}
 } TimeModelInfoSA;
