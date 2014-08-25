@@ -6,6 +6,7 @@
  */
 #include <LimitAdjuster.h>
 #include <utility/PoolAdjuster.hpp>
+#include <utility/PoolAdjusterDynamic.hpp>
 using namespace injector;
 
 
@@ -178,6 +179,8 @@ struct PoolsAdjusterVC : public PoolsAdjusterBase
  */
 struct PoolsAdjusterSA : public PoolsAdjusterBase
 {
+    // B744A4
+
     PoolAdjuster<0x550FC0, 0xB7448C> m_EntryInfoNode;
     PoolAdjuster<0x550FF8, 0xB74490> m_Peds;
     PoolAdjuster<0x55102D, 0xB74494> m_Vehicles;
@@ -185,7 +188,7 @@ struct PoolsAdjusterSA : public PoolsAdjusterBase
     PoolAdjuster<0x55109D, 0xB7449C> m_Objects;
     PoolAdjuster<0x5510D5, 0xB744A0> m_Dummys;
     PoolAdjuster<0x55110D, 0xB744A4> m_ColModel;
-    PoolAdjuster<0x550F4C, 0xB74484> m_PtrNodeSingle;
+    //PoolAdjuster<0x550F4C, 0xB74484> m_PtrNodeSingle;
     PoolAdjuster<0x550F88, 0xB74488> m_PtrNodeDouble;
     PoolAdjuster<0x551145, 0xB744A8> m_Task;
     PoolAdjuster<0x55117D, 0xB744AC> m_Event;
@@ -195,6 +198,9 @@ struct PoolsAdjusterSA : public PoolsAdjusterBase
     PoolAdjuster<0x551251, 0xB744BC> m_TaskAllocator;
     PoolAdjuster<0x551289, 0xB744C0> m_PedIntelligence;
     PoolAdjuster<0x5512BF, 0xB744C4> m_PedAttractors;
+
+    //PoolAdjusterDynamic<0x55110D, 0xB744A4, 48, 0x551116 + 1, 0x40FC30, 0x40FC40> m_ColModel;
+    PoolAdjusterDynamic<0x550F4C, 0xB74484, 8,  0x550F26 + 1, 0x552380, 0x552390> m_PtrNodeSingle;
 
 	// Limit Names
 	const Limit* GetLimits()
@@ -229,4 +235,6 @@ struct PoolsAdjusterSA : public PoolsAdjusterBase
 
 // Instantiate the adjuster on the global scope
 } adjuster_Pools_SA;
+
+
 

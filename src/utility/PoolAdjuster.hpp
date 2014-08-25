@@ -65,13 +65,13 @@ struct PoolAdjuster : PoolAdjusterBase
 
 
     // Change pool limit
-    void ChangeLimit(size_t limit)
+    virtual void ChangeLimit(size_t limit)
     {
         return Patch(limit);
     }
     
     // Get pool usage
-    bool GetUsage(std::string& output)
+    virtual bool GetUsage(std::string& output)
     {
         if(auto pool = this->pool())
         {
