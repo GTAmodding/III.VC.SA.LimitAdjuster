@@ -10,6 +10,7 @@
 
 struct PoolAdjusterBase
 {
+    virtual void MakeUnlimited() = 0;
     virtual void ChangeLimit(size_t) = 0;
     virtual bool GetUsage(std::string& output) = 0;
 };
@@ -20,9 +21,8 @@ struct PoolAdjusterBase
 		a custom one, defined by the ini file.
 		
 		@addr_call is the address of the 'call CPool::CPool'
-        @addr_ppool is the address of the pointer to the CPool<>
 */
-template<uintptr_t addr_call, uintptr_t addr_ppool>
+template<uintptr_t addr_call>
 struct PoolAdjuster : PoolAdjusterBase
 {
 	typedef void* (__fastcall *func_type)(void* self, int dummy, size_t size, const char* name);
@@ -30,11 +30,10 @@ struct PoolAdjuster : PoolAdjusterBase
 	typedef injector::hook_back<func_type> hook_back;
     typedef CPool<char, char> pool_type;
 
-    static pool_type* pool() // Pointer to this pool
+    static pool_type*& pool() // Pointer to this pool
     { 
-        if(!addr_ppool) return nullptr;
-        pool_type** x = injector::lazy_pointer<addr_ppool>::get();
-        return *x;
+        static pool_type* x = nullptr;
+        return x;
     }
 
     static size_t& limit() { static size_t x; return x; }           // The new limit, as defined by the ini file
@@ -54,24 +53,26 @@ struct PoolAdjuster : PoolAdjusterBase
 	// This will be called instead of the standard CPool constructor
 	static void* __fastcall HookedConstructor(pool_type* self, int, size_t, const char* name)
 	{
+        pool() = self;
 		return hb().fun(self, 0, limit(), name);
 	}
 	
 	// This will be called instead of the standard CPool constructor, GTA3 do not have an name parameter
 	static void* __fastcall HookedConstructor3(pool_type* self, int, size_t)
 	{
+        pool() = self;
 		return ((func_type3)(hb().fun))(self, 0, limit());
 	}
 
 
     // Change pool limit
-    void ChangeLimit(size_t limit)
+    virtual void ChangeLimit(size_t limit)
     {
         return Patch(limit);
     }
     
     // Get pool usage
-    bool GetUsage(std::string& output)
+    virtual bool GetUsage(std::string& output)
     {
         if(auto pool = this->pool())
         {
@@ -83,14 +84,10 @@ struct PoolAdjuster : PoolAdjusterBase
         }
         return false;
     }
-};
 
-#if 1
-// Adjusts the pool at address @addr1 to the limit @newLimit
-template<uintptr_t addr1>
-inline void AdjustPool(size_t newLimit)
-{
-	PoolAdjuster<addr1, 0x0>::Patch(newLimit);
-}
-#endif
+    virtual void MakeUnlimited()
+    {
+        throw std::runtime_error("Cannot set this pool to be unlimited");
+    }
+};
 

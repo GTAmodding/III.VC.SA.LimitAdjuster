@@ -172,7 +172,8 @@ union basic_memory_pointer
         bool operator>=(const basic_memory_pointer& rhs) const
         { return this->a >=rhs.a; }
         
-        bool is_null() { return this->p != nullptr; }
+        bool is_null()      { return this->p != nullptr; }
+        uintptr_t as_int()  { return this->a; }
 
 #if __cplusplus >= 201103L || _MSC_VER >= 1800  // MSVC 2013
         /* Conversion to other types */
@@ -242,6 +243,9 @@ union memory_pointer_tr
         
         memory_pointer_tr operator/(const uintptr_t& rhs) const
         { return memory_pointer_raw(this->a / rhs); }
+
+        bool is_null()      { return this->p != nullptr; }
+        uintptr_t as_int()  { return this->a; }
         
 #if __cplusplus >= 201103L
        explicit operator uintptr_t()
@@ -506,6 +510,16 @@ inline void MakeNOP(memory_pointer_tr at, size_t count = 1, bool vp = true)
 }
 
 /*
+ *  MakeRangedNOP
+ *      Creates a bunch of NOP instructions at address @at until address @until
+ */
+inline void MakeRangedNOP(memory_pointer_tr at, memory_pointer_tr until, bool vp = true)
+{
+    return MakeNOP(at, size_t(until.get_raw<char>() - at.get_raw<char>()), vp);
+}
+
+
+/*
  *  MakeRET
  *      Creates a RET instruction at address @at popping @pop values from the stack
  *      If @pop is equal to 0 it will use the 1 byte form of the instruction
@@ -574,6 +588,12 @@ inline void MakeRET(memory_pointer_tr at, uint16_t pop = 0, bool vp = true)
  /*
     Helpers
  */
+
+ template<class T>
+inline memory_pointer  mem_ptr(T p)
+{
+    return memory_pointer(p);
+}
 
 template<class T>
 inline memory_pointer_raw  raw_ptr(T p)

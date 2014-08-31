@@ -12,6 +12,8 @@ TimeModels.cpp
 
 LimitAdjuster.h
 utility/PoolAdjuster.hpp
+utility/PoolAdjusterDynamic.hpp
+utility/DynamicPool.hpp
 
 )
 

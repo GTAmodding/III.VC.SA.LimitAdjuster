@@ -97,6 +97,13 @@ class Adjuster
             str.append(" / ").append(std::to_string(max));
             return true;
         }
+
+        // Helper to check if string is 'unlimited'
+        static bool IsUnlimited(const std::string& str)
+        {
+            return str.compare("unlimited") == 0;
+        }
+
 };
 
 

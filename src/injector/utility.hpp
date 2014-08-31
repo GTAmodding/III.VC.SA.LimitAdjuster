@@ -33,6 +33,14 @@ namespace injector
         return value;
     }
     
+    template<class T>
+    void* force_ptr(const T& fun)
+    {
+        auto ptr = fun;
+        return *(void**)&ptr;
+    }
+
+
     // Helper structure to help calling back what was there before a hook
     // e.g. hb.fun = MakeCALL(0x0, raw_ptr(my_hook));
     template<class FuncType>
