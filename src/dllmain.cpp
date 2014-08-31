@@ -238,8 +238,8 @@ void DrawText(const char* text, float x, float y, float scalex, float scaley)
     static void (*PrintString)(float x, float y, const char *text)          = injector::lazy_pointer<0x71A700>::get();   // CFont method
 
     // Transformer from global screen space to local screen space
-    float screenx((float)(signed int)*(pRsGlobal + 2) * 0.00223f);
-    float screeny((float)(signed int)*(pRsGlobal + 1) * 0.00156f);
+    float screenx((float)((signed int)*(pRsGlobal + 1)) / 640.0f);
+    float screeny((float)((signed int)*(pRsGlobal + 2)) / 448.0f);
 
     // Setup the font style
     SetFontStyle(1); 
