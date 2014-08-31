@@ -2,33 +2,7 @@
 #include <CPool.h>
 #include <algorithm>
 #include <limits>
-
-
-// What needs to be done to integrate into each pool:
-// NodeSingle
-// NodeDouble       -- needs uninlining
-// EntryInfoNode    -- needs uninlining
-// ColModel
-// TaskPool         -- needs uninlining ------ CTask__IsTaskPtr
-// PointRoute
-// PatrolRoute
-// NodeRoute
-// TaskAllocator    -- needs uninlining
-// PedIntelligence
-// PedAttractor     -- needs uninlining
-
-// Other pools:
-// QuadTree
-// EnvMap           -- needs uninlining
-// 
-
-// Needs to override:
-// allocate
-// release
-// new
-// delete
-// clear
-//
+#include <cassert>
 
 /*
  *  CDynamicPool
@@ -180,6 +154,7 @@ class CDynamicPool
 	    void Delete(T* pObject)
 	    {
 		    auto index = GetIndexFromElement(pObject);
+            assert(index >= 0);
             SetFreeAt(index, true);
             m_nFirstFree = index < m_nFirstFree? index : m_nFirstFree;
 	    }
@@ -197,6 +172,21 @@ class CDynamicPool
 		    int nSlotIndex = handle >> 8;
 		    return nSlotIndex >= 0 && nSlotIndex < m_Size && m_ByteMap[nSlotIndex].b == (handle & 0xFF)? GetElementAt(nSlotIndex) : nullptr;
 	    }
+
+        // Checks if the object is in the range of this pool
+        bool Contains(T* obj)
+        {
+            return (obj && GetIndexFromElement(obj) != -1);
+        }
+
+        // Checks if the object is in a block bound
+        bool IsExactlyContained(T* obj)
+        {
+            return ((uintptr_t(obj) % sizeof(U)) == 0) && Contains(obj);
+        }
+
+
+
 
     private:    // Hard work goes here
 
@@ -243,6 +233,7 @@ class CDynamicPool
             }
             return -1;
         }
+
 
 
         // Grows the pool, so it can allocate more objects
