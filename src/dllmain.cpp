@@ -238,8 +238,8 @@ void DrawText(const char* text, float x, float y, float scalex, float scaley)
     static void (*PrintString)(float x, float y, const char *text)          = injector::lazy_pointer<0x71A700>::get();   // CFont method
 
     // Transformer from global screen space to local screen space
-    float screenx((float)(signed int)*(pRsGlobal + 2) * 0.00223f);
-    float screeny((float)(signed int)*(pRsGlobal + 1) * 0.00156f);
+    float screenx((float)((signed int)*(pRsGlobal + 1)) / 640.0f);
+    float screeny((float)((signed int)*(pRsGlobal + 2)) / 448.0f);
 
     // Setup the font style
     SetFontStyle(1); 
@@ -313,22 +313,18 @@ void DrawLimits()
 
         for(auto& pair : limits)
         {
-            // Check if are already in the limit we should start drawing from
-            if(i >= current_limit)
+            // Check if are already in the limit we should start drawing from and also 
+            // if we are still in the limits per page range OR we didn't draw enought stuff to complete limits per page
+            if(i >= current_limit && (i < current_limit + limits_per_page || drawn < limits_per_page))
             {
                 if(pair.second.adjuster->GetUsage(pair.second.id, usage))
                 {
-                    // Check if we are still in the limits per page range
-                    // OR we didn't draw enought stuff to complete limits per page
-                    if(i < current_limit + limits_per_page || drawn < limits_per_page)
-                    {
-                        ++drawn;
-                        DrawLimit(pair.first.c_str(), usage.c_str());
-                    }
+                    ++drawn;
+                    DrawLimit(pair.first.c_str(), usage.c_str());
                 }
             }
 
-            ++i;    // Increase limit index
+            ++i;
         }
 
         EndDraw();
