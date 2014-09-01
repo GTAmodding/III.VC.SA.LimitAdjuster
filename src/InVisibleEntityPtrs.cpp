@@ -4,8 +4,9 @@
 * Licensed under the MIT License (http://opensource.org/licenses/MIT)
 */
 #include "LimitAdjuster.h"
-std::vector<char> aInVisibleEntityPtrs;
-std::vector<char> aVisibleEntityPtrs;
+
+static std::vector<void*> aInVisibleEntityPtrs;
+static std::vector<void*> aVisibleEntityPtrs;
 
 class InVisibleEntityPtrsIII : public SimpleAdjuster
 {
