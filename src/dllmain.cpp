@@ -313,22 +313,18 @@ void DrawLimits()
 
         for(auto& pair : limits)
         {
-            // Check if are already in the limit we should start drawing from
-            if(i >= current_limit)
+            // Check if are already in the limit we should start drawing from and also 
+            // if we are still in the limits per page range OR we didn't draw enought stuff to complete limits per page
+            if(i >= current_limit && (i < current_limit + limits_per_page || drawn < limits_per_page))
             {
                 if(pair.second.adjuster->GetUsage(pair.second.id, usage))
                 {
-                    // Check if we are still in the limits per page range
-                    // OR we didn't draw enought stuff to complete limits per page
-                    if(i < current_limit + limits_per_page || drawn < limits_per_page)
-                    {
-                        ++drawn;
-                        DrawLimit(pair.first.c_str(), usage.c_str());
-                    }
+                    ++drawn;
+                    DrawLimit(pair.first.c_str(), usage.c_str());
                 }
             }
 
-            ++i;    // Increase limit index
+            ++i;
         }
 
         EndDraw();
