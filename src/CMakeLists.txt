@@ -15,6 +15,8 @@ utility/PoolAdjuster.hpp
 utility/PoolAdjusterDynamic.hpp
 utility/DynamicPool.hpp
 
+structs/CPool.h
+structs/CLinkList.h
 )
 
 
