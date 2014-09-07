@@ -2,9 +2,15 @@
 * Alpha Entity List Adjuster
 * Copyright (c) 2014 ThirteenAG <thirteenag@gmail.com>
 * Copyright (c) 2014 Silent <zdanio95@gmail.com>
+* Copyright (c) 2014 LINK/2012 <dma_2012@hotmail.com>
 * Licensed under the MIT License (http://opensource.org/licenses/MIT)
 */
 #include "LimitAdjuster.h"
+#include "utility/LinkListAdjuster.hpp"
+
+typedef std::aligned_storage<0x8,1>::type AlphaObjectInfoVC;
+typedef std::aligned_storage<0xC,1>::type AlphaObjectInfoSA;
+
 
 class AlphaEntityListIII : public SimpleAdjuster
 {
@@ -45,18 +51,33 @@ public:
 
 } AlphaEntityListVC;
 
-class AlphaEntityListSA : public SimpleAdjuster
+
+class AlphaEntityListSA : public LinkListAdjuster<AlphaObjectInfoSA>
 {
-public:
-	const char* GetLimitName() { return GetGVM().IsSA() ? "AlphaEntityList" : nullptr; }
+    public:
+        AlphaEntityListSA()
+            : LinkListAdjuster(injector::lazy_ptr<0xC88120>().get())
+        {}
 
-	void ChangeLimit(int, const std::string& value)
-	{
-        auto size = std::stoi(value) * 20;
-	    injector::WriteMemory(0x733B05, size, true);
-	    injector::WriteMemory(0x733B55, size, true);
-	}
+        const char* GetLimitName()
+        {
+            return IsSA() ? "AlphaEntityList" : nullptr;
+        }
 
-    // TODO GetUsage
+        void ChangeLimit(int, const std::string& value)
+	    {
+            if(Adjuster::IsUnlimited(value))
+            {
+                AddInsertSortedPatch(0x733DF5);
+                AddInsertSortedPatch(0x7345F2);
+            }
+            else
+            {
+                // initializer is inlined in in GTA SA, needs to multiply by sizeof(CLinkList<AlphaObjectInfo>::Link)
+                auto size = std::stoi(value) * 20; 
+	            injector::WriteMemory(0x733B05, size, true);
+	            injector::WriteMemory(0x733B55, size, true);
+            }
+	    }
 
 } AlphaEntityListSA;

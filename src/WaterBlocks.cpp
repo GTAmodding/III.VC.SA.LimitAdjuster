@@ -111,8 +111,6 @@ int LIMIT_OutsideWorldWaterBlocks;
 void* ASM_OutsideWorldWaterBlocks_ret1;
 void* ASM_OutsideWorldWaterBlocks_ret2;
 
-#if defined(_MSC_VER)
-
 void __declspec(naked) ASM_OutsideWorldWaterBlocks()
 {
 	__asm
@@ -126,30 +124,3 @@ void __declspec(naked) ASM_OutsideWorldWaterBlocks()
 			ret
 	}
 }
-
-
-#else
-
-__asm__(R"(
-	.intel_syntax noprefix
-	.globl _ASM_OutsideWorldWaterBlocks
-	.globl _LIMIT_OutsideWorldWaterBlocks
-	.globl _ASM_OutsideWorldWaterBlocks_ret1
-	.globl _ASM_OutsideWorldWaterBlocks_ret2
-	
-
-	_ASM_OutsideWorldWaterBlocks:
-			cmp     eax, _LIMIT_OutsideWorldWaterBlocks
-			jge     _Full
-			push    _ASM_OutsideWorldWaterBlocks_ret1
-			ret
-		_Full:
-			push    _ASM_OutsideWorldWaterBlocks_ret2
-			ret
-	
-	.att_syntax prefix
-)");
-
-#endif
-
-

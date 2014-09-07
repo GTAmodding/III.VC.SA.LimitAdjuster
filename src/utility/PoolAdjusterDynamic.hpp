@@ -211,7 +211,7 @@ struct PoolAdjusterDynamic : PoolAdjuster<addr_call>
 	// This will be called instead of the standard CPool constructor
 	static void* __fastcall HookedConstructor(pool_type* self, int, size_t size, const char* name)
 	{
-#ifdef _DEBUG && 0
+#if defined(_DEBUG) && 0
         size = 1;       // To test if the dynamicity of the pool is working fine
 #endif
         pool() = self;
