@@ -5,6 +5,8 @@ This is a open source limit adjuster for Grand Theft Auto III, Vice City and San
 
 However it does not aim to be just a limit ***adjuster***, but a limit ***purger***, that's, turning whatever previously was limited into unlimited, being only limited by the machine/application capacity.
 
+Not sure how to contribute? Take a look [here](https://guides.github.com/activities/contributing-to-open-source/).
+
 ### Goals
  * Bring limit adjusters back to the scene, but not totally centralized into one person
  * Avoid little limit adjusters here and there
