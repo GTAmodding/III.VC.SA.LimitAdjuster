@@ -3,7 +3,7 @@ Open Limit Adjuster
 
 This is a open source limit adjuster for Grand Theft Auto III, Vice City and San Andreas aiming to bring back limit adjusters to the scene.
 
-But it does not aim to be just a limit ***adjuster***, but a limit ***purger***, that's, turning whatever previosly was limited into unlimited, being only limited by the machine/application capacity.
+However it does not aim to be just a limit ***adjuster***, but a limit ***purger***, that's, turning whatever previously was limited into unlimited, being only limited by the machine/application capacity.
 
 ### Goals
  * Bring limit adjusters back to the scene, but not totally centralized into one person
