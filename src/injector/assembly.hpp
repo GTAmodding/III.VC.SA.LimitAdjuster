@@ -123,8 +123,8 @@ namespace injector
     template<uintptr_t at, uintptr_t end, class FuncT>
     void MakeInline(FuncT func)
     {
-        static FuncT static_func;   // Stores the func object
-        static_func = func;         //
+        static FuncT static_func = func;    // Stores the func object
+        static_func = func;                 //
 
         // Encapsulates the call to static_func
         struct Caps

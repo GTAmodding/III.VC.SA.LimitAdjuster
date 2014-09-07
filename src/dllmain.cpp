@@ -184,7 +184,7 @@ void AdjustLimits(const std::map<std::string, std::string>& section)
 
 static injector::hook_back<void(*)()> DrawHUD;
 static uint32_t current_limit         = 0;  // Index of the first limit we should draw
-static const uint32_t limits_per_page = 20; // Max number of limits in one page
+static const uint32_t limits_per_page = 18; // Max number of limits in one page
 static float currposx;                      // Current drawing position
 static float currposy;                      // Current drawing position
 
@@ -306,6 +306,10 @@ bool TestShouldDraw()
 // Draw the limits on screen
 void DrawLimits()
 {
+    // Perform CHud::Draw
+    DrawHUD.fun? DrawHUD.fun() : void();
+
+    // Draw our list of limits, if it overlaps with the hud (shouldn't) it will be drawn above it
     if(TestShouldDraw() && BeginDraw())
     {
         std::string usage;
@@ -329,9 +333,6 @@ void DrawLimits()
 
         EndDraw();
     }
-
-    // Go to the replaced function, which is CHud::Draw
-    return DrawHUD.fun? DrawHUD.fun() : void();
 }
 
 // Patches CHud::Draw to draw additional stuff (limits details)

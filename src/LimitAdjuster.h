@@ -47,6 +47,7 @@ class Adjuster
 
         //
         Adjuster()              { GetAdjusters().push_back(this); }
+        Adjuster(std::nullptr_t){}  // Do not register adjuster constructor (may be useful?)
         virtual ~Adjuster()     { /* No need to remove for now */ }
 
         // Get Game Version Manager
@@ -91,7 +92,7 @@ class Adjuster
 
         // Helper to GetUsage()
         template<class T>
-        static bool GetUsage(std::string& str, const T& usage, const T& max)
+        static bool GetUsage(std::string& str, T usage, T max)
         {
             str = std::to_string(usage);
             str.append(" / ").append(std::to_string(max));
@@ -117,6 +118,9 @@ class SimpleAdjuster : public Adjuster
 
     public:
     
+        SimpleAdjuster() : Adjuster() {}                        // Register adjuster constructor
+        SimpleAdjuster(std::nullptr_t) : Adjuster(nullptr) {}   // Do not register adjuster constructor (may be useful?)
+
         /*
          *  Here you should return the name of the limit this adjuster will handle
          *  Just like the old 'GetLimits' the function may return a null pointer to tell it won't handle any limit
