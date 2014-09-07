@@ -18,16 +18,16 @@ The interface is simple and event-based:
 * **The Limit Name**
     +  `GetLimitName` in  `SimpleAdjuster` should return the name of the limit (for the ini file) or null if the limit is not supported at this time (i.e. because game is not supported).
     + `GetLimits` in `Adjuster` should return an static and null terminated array of `Limit` objects, each describes one limit, with name and identifier (possibily an user data value for latter use). It can also return null in case of incompatible game
- * **Changing the Limit**
+* **Changing the Limit**
     + When the ini entry for the limit is found, `ChangeLimit` is called with the id of the limit and it's value string, here the limit should be patched
     + `ChangeLimit` is guaranteed to not get called more than once for each limit name.
     + The  `Adjuster::IsUnlimited ` should be used if it's necessary to check if the string has the *unlimited* value.
- * **Pos Processing**
+* **Pos Processing**
     + Optionally `Process` can be implemented to post process the values received at `ChangeLimit`, useful for complex adjusters with many limits where all of them are dependent on each other.
- * **Telling the Limit Usage**
+* **Telling the Limit Usage**
     + Optionally `GetUsage` can be implemented to tell the user how much of the limit has been used
     + The `Adjuster::GetUsage<T>` method can be used to straightly get the string from the usage and max usage integers.
- * **Injector and Game Version Manager**
+* **Injector and Game Version Manager**
     + The basic frontend for patches is the blessed injector library.
     + It includes a game version manager, that can be accessed from `Adjuster::GetGVM` or the shortcuts `Adjuster::IsIII`, `Adjuster::IsVC` and `Adjuster::IsSA`
     + You are not totally required to use the injector library if you are implementing a pre-existing adjuster, but making a biding for the other library that translates into injector calls is recommended.
