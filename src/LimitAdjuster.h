@@ -87,6 +87,11 @@ class Adjuster
          */
         virtual bool GetUsage(int id, std::string& usagebuf) { return false; }
 
+        /*
+         *  Called after all ChangeLimit's have been called, to post process data, etc
+         *  Note this is called even if this ChangeLimit has not been called because there's no ini entry for it
+         */
+        virtual void Process() {}
 
     public:
 

@@ -174,6 +174,14 @@ void AdjustLimits(const std::map<std::string, std::string>& section)
             }
         }
     }
+
+    // Run Process()
+    std::map<Adjuster*, int> adjz;   // list of already processed adjusters (int is dummy, too lazy to use std::set)
+    for(auto it = limits.begin(); it != limits.end(); ++it)
+    {
+        auto* adj = it->second.adjuster;
+        if(adjz[adj]++ == 0) adj->Process();    // Run only once for each Adjuster*
+    }
 }
 
 
