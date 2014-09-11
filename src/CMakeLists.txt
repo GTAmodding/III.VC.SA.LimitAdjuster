@@ -9,13 +9,23 @@ AlphaEntityList.cpp
 InVisibleEntityPtrs.cpp
 StreamingObjectInstancesList.cpp
 TimeModels.cpp
+AtomicModels.cpp
+DamageAtomicModels.cpp
+WeaponModels.cpp
+ClumpModels.cpp
+VehicleModels.cpp
+PedModels.cpp
 
 LimitAdjuster.h
+utility/dummy_object.hpp
 utility/PoolAdjuster.hpp
 utility/PoolAdjusterDynamic.hpp
 utility/DynamicPool.hpp
 utility/LinkListAdjuster.hpp
 utility/StaticArrayAdjuster.hpp
+utility/PointerAdjuster.hpp
+utility/DynamicStore.hpp
+utility/StoreAdjuster.hpp
 
 structs/CPool.h
 structs/CLinkList.h

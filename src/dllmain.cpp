@@ -242,6 +242,7 @@ void DrawText(const char* text, float x, float y, float scalex, float scaley)
     static void (*SetBackground)(bool background, bool backgroundOnlyText)  = injector::lazy_pointer<0x7195C0>::get();   // CFont method
     static void (*SetJustify)(bool on)                                      = injector::lazy_pointer<0x719600>::get();   // CFont method
     static void (*SetRightJustifyWrap)(float value)                         = injector::lazy_pointer<0x7194F0>::get();   // CFont method
+    static void (*SetWrapx)(float value)                                    = injector::lazy_pointer<0x7194D0>::get();   // CFont method
     static void (*SetOrientation)(int alignment)                            = injector::lazy_pointer<0x719610>::get();   // CFont method
     static void (*PrintString)(float x, float y, const char *text)          = injector::lazy_pointer<0x71A700>::get();   // CFont method
 
@@ -256,6 +257,7 @@ void DrawText(const char* text, float x, float y, float scalex, float scaley)
     SetProportional(true);
     SetOrientation(1);
     SetRightJustifyWrap(0);
+    SetWrapx(640.0f * screenx);
     SetEdge(1);
     SetDropColor(CRGBA(0, 0, 0, 0xFF));
     SetColor(GetInterfaceColour(4));

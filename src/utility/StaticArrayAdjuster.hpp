@@ -1,9 +1,11 @@
 /*
-* Utility for adjusting CLinkList s
+* Utility for adjusting static arrays from the game
 * Copyright (c) 2014 LINK/2012 <dma_2012@hotmail.com>
 * Licensed under the MIT License (http://opensource.org/licenses/MIT)
 */
+#pragma once
 #include "LimitAdjuster.h"
+#include "PointerAdjuster.hpp"
 
 /*
     StaticArrayAdjuster
@@ -14,8 +16,8 @@ template<class T>
 class StaticArrayAdjuster : public SimpleAdjuster
 {
     private:
+        PointerAdjuster ptrs;                                           // Pointers to be replaced in rellocations
         std::vector<T>  our_array;                                      // Our rellocated array
-        std::vector<std::pair<injector::memory_pointer_raw, int>> ptrs; // Pointers to be replaced in rellocations
         bool            has_relloc;                                     // Has a relloc happened in any moment? (i.e. we're using our_array)
 
     public:
@@ -31,8 +33,7 @@ class StaticArrayAdjuster : public SimpleAdjuster
         // Displacement is how far (in bytes) this pointer is far from the beggining of the array 
         void AddPointer(uintptr_t addr, int displacement = 0)
         {
-            using namespace injector;
-            ptrs.push_back(std::make_pair(raw_ptr(memory_pointer(addr)), displacement));
+            ptrs.AddPointer(addr, displacement);
         }
 
         // Makes sure the array has enought capacity to hold at least size elements
@@ -63,7 +64,7 @@ class StaticArrayAdjuster : public SimpleAdjuster
         // Grows the array by 100%
         void GrowArray()
         {
-            RellocArray(our_array.size() * 2);
+            RellocArray(GetArraySize() * 2);
         }
 
         // Rellocate all pointers to have size elements
@@ -76,9 +77,20 @@ class StaticArrayAdjuster : public SimpleAdjuster
             // Move the contents of the previous array to the new array if it's the first time we're rellocating
             // Not necessary the second time because std::vector handles that for us
             if(has_relloc == false)
-                std::memcpy(&our_array[0], default_ptr, (size < default_size? size : default_size) * sizeof(T));
+            {
+                ptrs.ApplyReflection(&our_array[0], default_ptr, sizeof(T), size, default_size);
+            }
 
             has_relloc = true;
+        }
+
+        // Makes a reflection of the current dynamic array in the static array (of course only until the max size of the static array)
+        void ApplyReflection()
+        {
+            if(has_relloc)
+            {
+                ptrs.ApplyReflection(default_ptr, &our_array[0], sizeof(T), default_size, our_array.size());
+            }
         }
 
     private:
@@ -86,7 +98,6 @@ class StaticArrayAdjuster : public SimpleAdjuster
         // Performs the rellocation itself
         void ApplyPatches()
         {
-            for(auto it = ptrs.begin(); it != ptrs.end(); ++it)
-                injector::WriteMemory(it->first, (uintptr_t)(&our_array[0]) + it->second, true);
+            ptrs.ApplyPatches(&our_array[0]);
         }
 };

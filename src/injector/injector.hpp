@@ -172,7 +172,7 @@ union basic_memory_pointer
         bool operator>=(const basic_memory_pointer& rhs) const
         { return this->a >=rhs.a; }
         
-        bool is_null()      { return this->p != nullptr; }
+        bool is_null()      { return this->p == nullptr; }
         uintptr_t as_int()  { return this->a; }
 
 #if __cplusplus >= 201103L || _MSC_VER >= 1800  // MSVC 2013
