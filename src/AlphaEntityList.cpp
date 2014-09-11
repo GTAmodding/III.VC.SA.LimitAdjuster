@@ -7,9 +7,10 @@
 */
 #include "LimitAdjuster.h"
 #include "utility/LinkListAdjuster.hpp"
+#include "utility/dummy_object.hpp"
 
-typedef std::aligned_storage<0x8,1>::type AlphaObjectInfoVC;
-typedef std::aligned_storage<0xC,1>::type AlphaObjectInfoSA;
+typedef dummy_object<0x8> AlphaObjectInfoVC;
+typedef dummy_object<0xC> AlphaObjectInfoSA;
 
 
 class AlphaEntityListIII : public SimpleAdjuster

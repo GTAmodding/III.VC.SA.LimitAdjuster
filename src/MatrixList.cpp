@@ -4,8 +4,8 @@
  *  Licensed under the MIT License (http://opensource.org/licenses/MIT)
  */
 #include "LimitAdjuster.h"
+#include "utility/dummy_object.hpp"
 #include <injector/utility.hpp>
-#include <type_traits>
 #include <memory>
 
 
@@ -16,7 +16,7 @@
  */
 struct MatrixList : public SimpleAdjuster
 {
-    typedef std::aligned_storage<0x54,1>::type CMatrixLink;     // dummy CMatrixLink
+    typedef dummy_object<0x54> CMatrixLink;     // dummy CMatrixLink
 
     injector::hook_back<void*(__fastcall*)(void*)> hbRemoveMatrix_1S;
     injector::hook_back<void*(__fastcall*)(void*)> hbRemoveMatrix_1T;

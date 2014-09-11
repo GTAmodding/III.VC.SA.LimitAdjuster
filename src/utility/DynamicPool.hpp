@@ -1,3 +1,8 @@
+/*
+* Dynamic CPool<>
+* Copyright (c) 2014 LINK/2012 <dma_2012@hotmail.com>
+* Licensed under the MIT License (http://opensource.org/licenses/MIT)
+*/
 #pragma once
 #include <CPool.h>
 #include <algorithm>
@@ -19,12 +24,12 @@ class CDynamicPool
         typedef U super_type;
 
         // Interface must be "compatible" with CPool's interface
-	    U* 					_m_Objects;         // Always nullptr
-	    tPoolObjectFlags* 	m_ByteMap;          // Specifies object state at index
-	    int					m_Size;             // The current size of the pool
-	    int 				m_nFirstFree;       // Hint of first free index, might be wrong
-	    bool 				m_bOwnsAllocations; // Do we own our allocations? Of course we do!
-	    bool 				m_Field_11;         // ?
+        U* 					_m_Objects;         // Always nullptr
+        tPoolObjectFlags* 	m_ByteMap;          // Specifies object state at index
+        int					m_Size;             // The current size of the pool
+        int 				m_nFirstFree;       // Hint of first free index, might be wrong
+        bool 				m_bOwnsAllocations; // Do we own our allocations? Of course we do!
+        bool 				m_Field_11;         // ?
 
         // Our additional members
         // Blocks is our way of dynamically allocating more slots
@@ -91,25 +96,25 @@ class CDynamicPool
 	    }
 
         // Gets object at the specified index
-	    T* GetAt(int idx)
+        T* GetAt(int idx)
 	    {
 		    return (idx >= 0 && idx < m_Size && !IsFreeSlotAtIndex(idx))? GetElementAt(idx) : nullptr;
 	    }
 
         // Checks if the slot at the specified index is free
-	    bool IsFreeSlotAtIndex(int idx)
+        bool IsFreeSlotAtIndex(int idx)
 	    {
 		    return m_ByteMap[idx].a.bIsFreeSlot;
 	    }
 
         // Sets the specified index to be free or not
-	    void SetFreeAt(int idx, bool bIsSlotFree)
+        void SetFreeAt(int idx, bool bIsSlotFree)
 	    {
 		    m_ByteMap[idx].a.bIsFreeSlot = bIsSlotFree;
 	    }
 
         // Allocates a new object in the pool.
-	    T* New()
+        T* New()
 	    {
             // !!!! This method is reentrant !!!!
             
@@ -121,27 +126,27 @@ class CDynamicPool
                 m_nFirstFree = 0;
 
             //
-		    bool bReachedTop = false;
+            bool bReachedTop = false;
             auto nStartFree = m_nFirstFree;
 
             // Iterate on the pool until we find a free index
 		    while(!IsFreeSlotAtIndex(m_nFirstFree))
-		    {
+            {
 			    if(++m_nFirstFree >= m_Size)    // Going out of bounds.. ups..
-			    {
+                {
                     // If we reached the top another time, it means there's no free slot, grow the pool.
-				    if(bReachedTop) return GrowAndNew();
+                    if(bReachedTop) return GrowAndNew();
 
                     // First time reaching the top
-				    bReachedTop = true;
+                    bReachedTop = true;
 				    m_nFirstFree = 0;
-			    }
+                }
                 else if(bReachedTop && m_nFirstFree == nStartFree)
                 {
                     // We're back to the index we started searching, grow the pool
                     return GrowAndNew();
                 }
-		    }
+            }
 
             // This slot won't be free anymore, advance first free
             auto index = m_nFirstFree++;
@@ -151,13 +156,13 @@ class CDynamicPool
 	    }
 
         // Deletes a previosly allocated object in the pool
-	    void Delete(T* pObject)
-	    {
-		    auto index = GetIndexFromElement(pObject);
+        void Delete(T* pObject)
+        {
+            auto index = GetIndexFromElement(pObject);
             assert(index >= 0);
             SetFreeAt(index, true);
             m_nFirstFree = index < m_nFirstFree? index : m_nFirstFree;
-	    }
+        }
 
 	    // Returns SCM handle for object
 	    int GetIndex(T* pObject)
