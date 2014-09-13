@@ -124,3 +124,48 @@ void __declspec(naked) ASM_OutsideWorldWaterBlocks()
 			ret
 	}
 }
+
+/////////////////////////////////////////////GTA Vice City/////////////////////////////////////////////
+class OutsideWorldWaterBlocksVC : public SimpleAdjuster
+{
+//Mod for GTA VC versions 1.0 and 1.1 increases visibility of water to 10000x10000
+//Author: xanser
+//e-mail: xanser@mail.ru
+public:
+    const char* GetLimitName() { return GetGVM().IsVC() ? "OutsideWorldWaterBlocks" : nullptr; }
+    void ChangeLimit(int, const std::string& value)
+    {
+        BYTE * WaterRender = (BYTE *)0x5C1710;					// функция рендера воды
+        if (*WaterRender == 0xDE) WaterRender += 0x20;			// VC 1.1
+        BYTE   WaterLines = 40;                                // количество линий внешней воды 5
+        //        *(float *)0x69CC58 = 0;                               // сдвиг всей воды на запад 400
+        *(float *)0x69CD7C = 10000;                             // радиус видимости внутренней воды ниже 60 метров (z-15)*800*0.022+1200
+        *(float *)0x69CD80 = 10000;                             // радиус видимости внутренней воды выше 60 метров 2000
+        *(float *)0x69CDCC = static_cast<float>(WaterLines * 256);                    // сдвиг на количество внешней воды 1280 = 5*256
+        injector::WriteMemory<unsigned char>(WaterRender + 0xDC1, WaterLines, true);				// количество внешней воды севера и юга
+        injector::WriteMemory<unsigned char>(WaterRender + 0xDCB, (WaterLines - 5) * 2 + 26, true);     // расширение внешней воды севера и юга на восток
+        injector::WriteMemory<unsigned char>(WaterRender + 0xDD3, WaterLines, true);             // сдвиг внешней воды запада и востока на север
+        injector::WriteMemory<unsigned char>(WaterRender + 0x11D1, WaterLines, true);				// количество внешней воды запада и востока
+        injector::WriteMemory<unsigned char>(WaterRender + 0x11DB, WaterLines + 16, true);          // расширение внешней воды запада и востока на север
+    }
+} OutsideWorldWaterBlocksVC;
+
+/////////////////////////////////////////////GTA 3/////////////////////////////////////////////////////
+class OutsideWorldWaterBlocksIII : public SimpleAdjuster
+{
+public:
+    const char* GetLimitName() { return GetGVM().IsIII() ? "OutsideWorldWaterBlocks" : nullptr; }
+    void ChangeLimit(int, const std::string& value)
+    {
+        int WaterCount = std::stoi(value);
+
+        injector::WriteMemory<float>(0x602AE8, 10000.0f, true);
+        injector::WriteMemory<float>(0x602AF0, 10000.0f, true);
+        injector::WriteMemory<float>(0x602B48, static_cast<float>(WaterCount)* 256.0f, true);
+        injector::WriteMemory<unsigned char>(0x5564BD + 0x2, static_cast<unsigned char>(WaterCount));
+        injector::WriteMemory<unsigned char>(0x5C24D9 + 0x3, (static_cast<unsigned char>(WaterCount)-5) * 2 + 26);
+        injector::WriteMemory<unsigned char>(0x5564D0 + 0x1, static_cast<unsigned char>(WaterCount));
+        injector::WriteMemory<unsigned char>(0x55676D + 0x2, static_cast<unsigned char>(WaterCount));
+        injector::WriteMemory<unsigned char>(0x556777 + 0x2, static_cast<unsigned char>(WaterCount)+16);
+    }
+} OutsideWorldWaterBlocksIII;

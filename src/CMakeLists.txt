@@ -15,6 +15,8 @@ WeaponModels.cpp
 ClumpModels.cpp
 VehicleModels.cpp
 PedModels.cpp
+Coronas.cpp
+StaticShadows.cpp
 
 LimitAdjuster.h
 utility/dummy_object.hpp

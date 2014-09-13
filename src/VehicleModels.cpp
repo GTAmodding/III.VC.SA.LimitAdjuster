@@ -20,13 +20,17 @@ struct VehicleModelsSA : public StoreAdjuster<CVehicleModelInfo_SA, 0xB1F650, 21
         return IsSA()? "VehicleModels" : nullptr;
     }
 
-	VehicleModelsSA()
-	{
+    void ChangeLimit(int, const std::string& value)
+    {
         // Well, R* forgot to initialize CVehicleModelInfo::m_apDirtMaterials and this directly affects the adjuster
         // since it needs proper constructors. It wasn't noticeable before because the .data seg is initialized with 0's
         // Not doing this fix, the game will crash whenever a vehicle gets rendered
-        hb_ctor.fun = injector::MakeCALL(0x4C75E4 , FixConstructor).get();
+        hb_ctor.fun = injector::MakeCALL(0x4C75E4, FixConstructor).get();
+        return StoreAdjuster::ChangeLimit(0, value);
+    }
 
+	VehicleModelsSA()
+	{
         // -----
         this->SetGrower (0x5B6FD1);
         this->AddPointer(0x4C64ED, 0x0);
