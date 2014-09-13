@@ -278,7 +278,7 @@ void DrawText(const char* text, float x, float y, float scalex, float scaley)
     static void* pGetInterfaceColour                                        = injector::lazy_pointer<0x58FEA0>::get();   // For GetInterfaceColour
     static int*  pRsGlobal                                                  = injector::lazy_pointer<0xC17040>::get();   // To find the resolution
     static void (*SetScale)(float w, float h)                               = injector::lazy_pointer<0x719380>::get();   // CFont method
-    static void (*SetColor)(CRGBA color)                                    = injector::lazy_pointer<0x719430>::get();   // CFont method
+    static void (*SetColor)(void* color)                                    = injector::lazy_pointer<0x719430>::get();   // CFont method // would work because sizeof(CRGBA) == sizeof(void*)
     static void (*SetFontStyle)(short style)                                = injector::lazy_pointer<0x719490>::get();   // CFont method
     static void (*SetDropColor)(CRGBA color)                                = injector::lazy_pointer<0x719510>::get();   // CFont method
     static void (*SetEdge)(short value)                                     = injector::lazy_pointer<0x719590>::get();   // CFont method
@@ -316,7 +316,8 @@ void DrawText(const char* text, float x, float y, float scalex, float scaley)
     SetWrapx(640.0f * screenx);
     SetEdge(1);
     SetDropColor(CRGBA(0, 0, 0, 0xFF));
-    SetColor(GetInterfaceColour(4));
+    auto rgba = GetInterfaceColour(4);
+    SetColor(Adjuster::IsSA() ? *(CRGBA**)&rgba : &rgba);
     SetScale(screenx * scalex, screeny * scaley);
 
     // Print the text
@@ -408,10 +409,7 @@ void DrawLimits()
 // Patches CHud::Draw to draw additional stuff (limits details)
 void PatchDrawer()
 {
-    if(Adjuster::IsSA())
-    {
-        DrawHUD.fun = injector::MakeCALL(0x53E4FF, DrawLimits).get();
-    }
+    DrawHUD.fun = injector::MakeCALL(Adjuster::IsSA() ? 0x53E4FF : Adjuster::IsVC() ? 0x4A64D0 : 0, DrawLimits).get();
 }
 
 
