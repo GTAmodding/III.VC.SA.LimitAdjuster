@@ -31,6 +31,7 @@ structs/CPool.h
 structs/CLinkList.h
 )
 
+add_definitions(-DINJECTOR_GVM_HAS_TRANSLATOR)
 
 # The current directory shall be used for #include <file>
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})

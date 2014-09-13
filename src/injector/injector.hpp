@@ -25,6 +25,7 @@
  *
  */
 #pragma once
+#define INJECTOR_HAS_INJECTOR_HPP
 #include <windows.h>
 #include <cstdint>
 #include <cstdio>

@@ -10,8 +10,7 @@
  *
  */
 #pragma once
-
-#include <injector/injector.hpp>    // 100% sure the derived Adjuster will use this
+#include <injector/injector.hpp>    // base injection library
 #include <string>                   // for std::string
 #include <vector>                   // for std::vector
 

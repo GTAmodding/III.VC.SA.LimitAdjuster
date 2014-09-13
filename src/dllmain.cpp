@@ -8,6 +8,7 @@
 #include <LimitAdjuster.h>
 #include <ini_parser/ini_parser.hpp>
 #include <injector/utility.hpp>
+#include <injector/gvm/translator.hpp>
 
 // Stores an handler for a specific limit
 struct LimitHandler
@@ -196,6 +197,52 @@ static const uint32_t limits_per_page = 18; // Max number of limits in one page
 static float currposx;                      // Current drawing position
 static float currposy;                      // Current drawing position
 
+struct DrawerTranslator : injector::address_translator
+{
+    DrawerTranslator()
+    {
+        if(Adjuster::IsSA())
+        {
+            map[0x719840] = 0x719840;   // CFont::RenderFontBuffer
+            map[0xBAB22C] = 0xBAB22C;   // HudColours
+            map[0x58FEA0] = 0x58FEA0;   // CHudColours::GetRGBA
+            map[0xC17040] = 0xC17040;   // RsGlobal
+            map[0x719380] = 0x719380;   // CFont::SetScale
+            map[0x719430] = 0x719430;   // CFont::SetColor
+            map[0x719490] = 0x719490;   // CFont::SetFontStyle
+            map[0x719510] = 0x719510;   // CFont::SetDropColor
+            map[0x719590] = 0x719590;   // CFont::SetEdge
+            map[0x7195B0] = 0x7195B0;   // SetProportional
+            map[0x7195C0] = 0x7195C0;   // CFont::SetBackground
+            map[0x719600] = 0x719600;   // CFont::SetJustify
+            map[0x7194F0] = 0x7194F0;   // CFont::SetRightJustifyWrap
+            map[0x7194D0] = 0x7194D0;   // CFont::SetWrapx
+            map[0x719610] = 0x719610;   // CFont::SetOrientation
+            map[0x71A700] = 0x71A700;   // CFont::PrintString
+        }
+        else if(Adjuster::IsVC())
+        {
+            map[0x719840] = 0x551A30;   // CFont::RenderFontBuffer
+            map[0xBAB22C] = 0x00000u;   // HudColours
+            map[0x58FEA0] = 0x00000u;   // CHudColours::GetRGBA
+            map[0xC17040] = 0x9B48D8;   // RsGlobal
+            map[0x719380] = 0x550230;   // CFont::SetScale
+            map[0x719430] = 0x550170;   // CFont::SetColor
+            map[0x719490] = 0x54FFE0;   // CFont::SetFontStyle
+            map[0x719510] = 0x54FF20;   // CFont::SetDropColor
+            map[0x719590] = 0x54FF20;   // CFont::SetEdge
+            map[0x7195B0] = 0x550020;   // CFont::SetProportional
+            map[0x7195C0] = 0x5500D0;   // CFont::SetBackground
+            map[0x719600] = 0x550140;   // CFont::SetJustify
+            map[0x7194F0] = 0x54FFD0;   // CFont::SetRightJustifyWrap
+            map[0x7194D0] = 0x550100;   // CFont::SetWrapx
+            map[0x719610] = 0x550120;   // CFont::SetOrientation
+            map[0x71A700] = 0x551040;   // CFont::PrintString
+        }
+    }
+};
+
+
 // Setups variables to start drawing the limits values
 bool BeginDraw()
 {
@@ -224,14 +271,11 @@ void DrawText(const char* text, float x, float y, float scalex, float scaley)
         {}
     };
 
-    // Gets the interface colour an specific interface colour
-    static auto GetInterfaceColour = [](unsigned char index)
-    {
-        CRGBA temp;
-	    return *((CRGBA* (__thiscall *)(void*, CRGBA*, unsigned char))0x58FEA0)((void*)(0xBAB22C), &temp, index);
-    };
+
 
     // Game method pointers
+    static void* pInterfaceColour                                           = injector::lazy_pointer<0xBAB22C>::get();   // For GetInterfaceColour
+    static void* pGetInterfaceColour                                        = injector::lazy_pointer<0x58FEA0>::get();   // For GetInterfaceColour
     static int*  pRsGlobal                                                  = injector::lazy_pointer<0xC17040>::get();   // To find the resolution
     static void (*SetScale)(float w, float h)                               = injector::lazy_pointer<0x719380>::get();   // CFont method
     static void (*SetColor)(CRGBA color)                                    = injector::lazy_pointer<0x719430>::get();   // CFont method
@@ -245,6 +289,18 @@ void DrawText(const char* text, float x, float y, float scalex, float scaley)
     static void (*SetWrapx)(float value)                                    = injector::lazy_pointer<0x7194D0>::get();   // CFont method
     static void (*SetOrientation)(int alignment)                            = injector::lazy_pointer<0x719610>::get();   // CFont method
     static void (*PrintString)(float x, float y, const char *text)          = injector::lazy_pointer<0x71A700>::get();   // CFont method
+
+    // Gets the interface colour an specific interface colour
+    static auto GetInterfaceColour = [](unsigned char index)
+    {
+        CRGBA temp;
+        if(Adjuster::IsSA())
+	        return *((CRGBA* (__thiscall *)(void*, CRGBA*, unsigned char))pGetInterfaceColour)(pInterfaceColour, &temp, index);
+        else if(Adjuster::IsVC())
+            return CRGBA(0x1B, 0x59, 0x82, 0xFF);
+        else
+            return CRGBA(0x00, 0x00, 0x00, 0xFF);
+    };
 
     // Transformer from global screen space to local screen space
     float screenx((float)((signed int)*(pRsGlobal + 1)) / 640.0f);
@@ -322,6 +378,9 @@ void DrawLimits()
     // Draw our list of limits, if it overlaps with the hud (shouldn't) it will be drawn above it
     if(TestShouldDraw() && BeginDraw())
     {
+        static DrawerTranslator dwt;
+        dwt.enable();
+
         std::string usage;
         unsigned int i = 0, drawn = 0;  // Limit index and num drawn limits
 
@@ -342,6 +401,7 @@ void DrawLimits()
         }
 
         EndDraw();
+        dwt.disable();
     }
 }
 
@@ -352,4 +412,26 @@ void PatchDrawer()
     {
         DrawHUD.fun = injector::MakeCALL(0x53E4FF, DrawLimits).get();
     }
+}
+
+
+
+
+
+void* injector::address_manager::translator(void* p)
+{
+    // The following must be at the top
+    auto& t = address_translator_manager::singleton();
+
+    // Then we need a fallback that will return the original address if no address was found for it
+    struct fallbacker : injector::address_translator
+    {
+        virtual void* fallback(void* p) const
+        {
+            return p;
+        }
+    };
+    static fallbacker fb;
+
+    return t.translator(p);
 }
