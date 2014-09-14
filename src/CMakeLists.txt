@@ -17,6 +17,7 @@ VehicleModels.cpp
 PedModels.cpp
 Coronas.cpp
 StaticShadows.cpp
+Searchlights.cpp
 
 LimitAdjuster.h
 utility/dummy_object.hpp
