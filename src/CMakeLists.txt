@@ -18,6 +18,7 @@ PedModels.cpp
 Coronas.cpp
 StaticShadows.cpp
 Searchlights.cpp
+FrameLimit.cpp
 
 LimitAdjuster.h
 utility/dummy_object.hpp
