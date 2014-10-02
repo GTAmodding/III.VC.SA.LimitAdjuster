@@ -336,11 +336,14 @@ public:
     }
 } CoronasSA;
 
+/////////////////////////////////////////////GTA 3|VC/////////////////////////////////////////////
+DWORD _eax;
+DWORD _ebx;
+std::vector<char> aCoronas;
+DWORD jmpAddress;
+int CORONAS_LIMIT;
 
 /////////////////////////////////////////////GTA Vice City/////////////////////////////////////////////
-#define CORONAS_LIMIT 2048
-//#define MAX_CORONAS_LIMIT 65535
-
 void patch_542434();
 void patch_5425B7();
 void patch_5425F4();
@@ -351,162 +354,161 @@ void patch_543E0C();
 void patch_544086();
 void patch_544214();
 
-char aCoronas[CORONAS_LIMIT * 104];
-DWORD jmpAddress;
-
 // 0x0054243A - 0x00815134
 // 0x005425BD - 0x00815134
 // 0x005425FA - 0x00815134
 // 0x00542959 - 0x00815134
 // 0x0054310F - 0x0081515C
 
-void PatchCoronas_VC()
+void PatchCoronasVC()
 {
-    //CPatch::AdjustPointer(0x400000+0x14243A, aCoronas, 0x815128, 0x81518F);
-    CPatch::AdjustPointer(0x400000+0x14244E, aCoronas, 0x815128, 0x81518F);
-    CPatch::AdjustPointer(0x400000+0x14245C, aCoronas, 0x815128, 0x81518F);
-    CPatch::AdjustPointer(0x400000+0x142467, aCoronas, 0x815128, 0x81518F);
-    CPatch::AdjustPointer(0x400000+0x142470, aCoronas, 0x815128, 0x81518F);
-    CPatch::AdjustPointer(0x400000+0x142479, aCoronas, 0x815128, 0x81518F);
-    CPatch::AdjustPointer(0x400000+0x142483, aCoronas, 0x815128, 0x81518F);
-    //CPatch::AdjustPointer(0x400000+0x1425BD, aCoronas, 0x815128, 0x81518F);
-    //CPatch::AdjustPointer(0x400000+0x1425FA, aCoronas, 0x815128, 0x81518F);
-    CPatch::AdjustPointer(0x400000+0x142619, aCoronas, 0x815128, 0x81518F);
-    CPatch::AdjustPointer(0x400000+0x142623, aCoronas, 0x815128, 0x81518F);
-    CPatch::AdjustPointer(0x400000+0x142643, aCoronas, 0x815128, 0x81518F);
-    CPatch::AdjustPointer(0x400000+0x142653, aCoronas, 0x815128, 0x81518F);
-    CPatch::AdjustPointer(0x400000+0x14265A, aCoronas, 0x815128, 0x81518F);
-    CPatch::AdjustPointer(0x400000+0x142661, aCoronas, 0x815128, 0x81518F);
-    CPatch::AdjustPointer(0x400000+0x142668, aCoronas, 0x815128, 0x81518F);
-    CPatch::AdjustPointer(0x400000+0x14266F, aCoronas, 0x815128, 0x81518F);
-    CPatch::AdjustPointer(0x400000+0x142676, aCoronas, 0x815128, 0x81518F);
-    CPatch::AdjustPointer(0x400000+0x142686, aCoronas, 0x815128, 0x81518F);
-    CPatch::AdjustPointer(0x400000+0x14269D, aCoronas, 0x815128, 0x81518F);
-    CPatch::AdjustPointer(0x400000+0x1426C1, aCoronas, 0x815128, 0x81518F);
-    CPatch::AdjustPointer(0x400000+0x1426C7, aCoronas, 0x815128, 0x81518F);
-    CPatch::AdjustPointer(0x400000+0x1426D1, aCoronas, 0x815128, 0x81518F);
-    CPatch::AdjustPointer(0x400000+0x1426DB, aCoronas, 0x815128, 0x81518F);
-    CPatch::AdjustPointer(0x400000+0x1426E5, aCoronas, 0x815128, 0x81518F);
-    CPatch::AdjustPointer(0x400000+0x1426F2, aCoronas, 0x815128, 0x81518F);
-    CPatch::AdjustPointer(0x400000+0x1426FB, aCoronas, 0x815128, 0x81518F);
-    CPatch::AdjustPointer(0x400000+0x142704, aCoronas, 0x815128, 0x81518F);
-    CPatch::AdjustPointer(0x400000+0x14270E, aCoronas, 0x815128, 0x81518F);
-    CPatch::AdjustPointer(0x400000+0x142718, aCoronas, 0x815128, 0x81518F);
-    CPatch::AdjustPointer(0x400000+0x142720, aCoronas, 0x815128, 0x81518F);
-    CPatch::AdjustPointer(0x400000+0x142727, aCoronas, 0x815128, 0x81518F);
-    CPatch::AdjustPointer(0x400000+0x14272D, aCoronas, 0x815128, 0x81518F);
-    CPatch::AdjustPointer(0x400000+0x142737, aCoronas, 0x815128, 0x81518F);
-    CPatch::AdjustPointer(0x400000+0x142741, aCoronas, 0x815128, 0x81518F);
-    CPatch::AdjustPointer(0x400000+0x142747, aCoronas, 0x815128, 0x81518F);
-    CPatch::AdjustPointer(0x400000+0x142784, aCoronas, 0x815128, 0x81518F);
-    CPatch::AdjustPointer(0x400000+0x142884, aCoronas, 0x815128, 0x81518F);
-    CPatch::AdjustPointer(0x400000+0x1428A4, aCoronas, 0x815128, 0x81518F);
-    CPatch::AdjustPointer(0x400000+0x1428DE, aCoronas, 0x815128, 0x81518F);
-    CPatch::AdjustPointer(0x400000+0x1428C1, aCoronas, 0x815128, 0x81518F);
-    CPatch::AdjustPointer(0x400000+0x1428FB, aCoronas, 0x815128, 0x81518F);
-    CPatch::AdjustPointer(0x400000+0x142918, aCoronas, 0x815128, 0x81518F);
-    CPatch::AdjustPointer(0x400000+0x142935, aCoronas, 0x815128, 0x81518F);
-    //CPatch::AdjustPointer(0x400000+0x142959, aCoronas, 0x815128, 0x81518F);
-    CPatch::AdjustPointer(0x400000+0x14301C, aCoronas, 0x815128, 0x81518F);
-    CPatch::AdjustPointer(0x400000+0x143049, aCoronas, 0x815128, 0x81518F);
-    CPatch::AdjustPointer(0x400000+0x14305F, aCoronas, 0x815128, 0x81518F);
-    CPatch::AdjustPointer(0x400000+0x143069, aCoronas, 0x815128, 0x81518F);
-    CPatch::AdjustPointer(0x400000+0x14307F, aCoronas, 0x815128, 0x81518F);
-    CPatch::AdjustPointer(0x400000+0x143089, aCoronas, 0x815128, 0x81518F);
-    CPatch::AdjustPointer(0x400000+0x14309F, aCoronas, 0x815128, 0x81518F);
-    CPatch::AdjustPointer(0x400000+0x1430A9, aCoronas, 0x815128, 0x81518F);
-    CPatch::AdjustPointer(0x400000+0x1430BF, aCoronas, 0x815128, 0x81518F);
-    CPatch::AdjustPointer(0x400000+0x1430C9, aCoronas, 0x815128, 0x81518F);
-    CPatch::AdjustPointer(0x400000+0x1430DF, aCoronas, 0x815128, 0x81518F);
-    CPatch::AdjustPointer(0x400000+0x1430E9, aCoronas, 0x815128, 0x81518F);
-    CPatch::AdjustPointer(0x400000+0x14303F, aCoronas, 0x815128, 0x81518F);
-    CPatch::AdjustPointer(0x400000+0x143102, aCoronas, 0x815128, 0x81518F);
-    //CPatch::AdjustPointer(0x400000+0x14310F, aCoronas, 0x815128, 0x81518F);
-    CPatch::AdjustPointer(0x400000+0x14317E, aCoronas, 0x815128, 0x81518F);
-    CPatch::AdjustPointer(0x400000+0x143190, aCoronas, 0x815128, 0x81518F);
-    CPatch::AdjustPointer(0x400000+0x14319D, aCoronas, 0x815128, 0x81518F);
-    CPatch::AdjustPointer(0x400000+0x1431A6, aCoronas, 0x815128, 0x81518F);
-    CPatch::AdjustPointer(0x400000+0x1431B3, aCoronas, 0x815128, 0x81518F);
-    CPatch::AdjustPointer(0x400000+0x143206, aCoronas, 0x815128, 0x81518F);
-    CPatch::AdjustPointer(0x400000+0x143210, aCoronas, 0x815128, 0x81518F);
-    CPatch::AdjustPointer(0x400000+0x143243, aCoronas, 0x815128, 0x81518F);
-    CPatch::AdjustPointer(0x400000+0x14324D, aCoronas, 0x815128, 0x81518F);
-    CPatch::AdjustPointer(0x400000+0x14326B, aCoronas, 0x815128, 0x81518F);
-    CPatch::AdjustPointer(0x400000+0x14328D, aCoronas, 0x815128, 0x81518F);
-    CPatch::AdjustPointer(0x400000+0x1432B4, aCoronas, 0x815128, 0x81518F);
-    CPatch::AdjustPointer(0x400000+0x143306, aCoronas, 0x815128, 0x81518F);
-    CPatch::AdjustPointer(0x400000+0x1433F4, aCoronas, 0x815128, 0x81518F);
-    CPatch::AdjustPointer(0x400000+0x143428, aCoronas, 0x815128, 0x81518F);
-    CPatch::AdjustPointer(0x400000+0x143439, aCoronas, 0x815128, 0x81518F);
-    CPatch::AdjustPointer(0x400000+0x143459, aCoronas, 0x815128, 0x81518F);
-    CPatch::AdjustPointer(0x400000+0x143573, aCoronas, 0x815128, 0x81518F);
-    CPatch::AdjustPointer(0x400000+0x1435B7, aCoronas, 0x815128, 0x81518F);
-    CPatch::AdjustPointer(0x400000+0x1435C4, aCoronas, 0x815128, 0x81518F);
-    CPatch::AdjustPointer(0x400000+0x1435D5, aCoronas, 0x815128, 0x81518F);
-    CPatch::AdjustPointer(0x400000+0x1435DD, aCoronas, 0x815128, 0x81518F);
-    CPatch::AdjustPointer(0x400000+0x1435E8, aCoronas, 0x815128, 0x81518F);
-    CPatch::AdjustPointer(0x400000+0x1435F1, aCoronas, 0x815128, 0x81518F);
-    CPatch::AdjustPointer(0x400000+0x1435FA, aCoronas, 0x815128, 0x81518F);
-    CPatch::AdjustPointer(0x400000+0x143603, aCoronas, 0x815128, 0x81518F);
-    CPatch::AdjustPointer(0x400000+0x14360C, aCoronas, 0x815128, 0x81518F);
-    CPatch::AdjustPointer(0x400000+0x143615, aCoronas, 0x815128, 0x81518F);
-    CPatch::AdjustPointer(0x400000+0x143626, aCoronas, 0x815128, 0x81518F);
-    CPatch::AdjustPointer(0x400000+0x143636, aCoronas, 0x815128, 0x81518F);
-    CPatch::AdjustPointer(0x400000+0x143642, aCoronas, 0x815128, 0x81518F);
-    CPatch::AdjustPointer(0x400000+0x143649, aCoronas, 0x815128, 0x81518F);
-    CPatch::AdjustPointer(0x400000+0x143656, aCoronas, 0x815128, 0x81518F);
-    CPatch::AdjustPointer(0x400000+0x14365F, aCoronas, 0x815128, 0x81518F);
-    CPatch::AdjustPointer(0x400000+0x143720, aCoronas, 0x815128, 0x81518F);
-    CPatch::AdjustPointer(0x400000+0x143741, aCoronas, 0x815128, 0x81518F);
-    CPatch::AdjustPointer(0x400000+0x1437F5, aCoronas, 0x815128, 0x81518F);
-    CPatch::AdjustPointer(0x400000+0x143810, aCoronas, 0x815128, 0x81518F);
-    CPatch::AdjustPointer(0x400000+0x143817, aCoronas, 0x815128, 0x81518F);
-    CPatch::AdjustPointer(0x400000+0x14381D, aCoronas, 0x815128, 0x81518F);
-    CPatch::AdjustPointer(0x400000+0x143823, aCoronas, 0x815128, 0x81518F);
-    CPatch::AdjustPointer(0x400000+0x143829, aCoronas, 0x815128, 0x81518F);
-    CPatch::AdjustPointer(0x400000+0x14382F, aCoronas, 0x815128, 0x81518F);
-    CPatch::AdjustPointer(0x400000+0x143835, aCoronas, 0x815128, 0x81518F);
-    CPatch::AdjustPointer(0x400000+0x14383B, aCoronas, 0x815128, 0x81518F);
-    CPatch::AdjustPointer(0x400000+0x143842, aCoronas, 0x815128, 0x81518F);
-    CPatch::AdjustPointer(0x400000+0x14384F, aCoronas, 0x815128, 0x81518F);
-    CPatch::AdjustPointer(0x400000+0x143856, aCoronas, 0x815128, 0x81518F);
-    CPatch::AdjustPointer(0x400000+0x14387A, aCoronas, 0x815128, 0x81518F);
-    CPatch::AdjustPointer(0x400000+0x143881, aCoronas, 0x815128, 0x81518F);
-    CPatch::AdjustPointer(0x400000+0x1438AD, aCoronas, 0x815128, 0x81518F);
-    CPatch::AdjustPointer(0x400000+0x1438B4, aCoronas, 0x815128, 0x81518F);
-    CPatch::AdjustPointer(0x400000+0x1438C2, aCoronas, 0x815128, 0x81518F);
-    CPatch::AdjustPointer(0x400000+0x143991, aCoronas, 0x815128, 0x81518F);
-    CPatch::AdjustPointer(0x400000+0x1439CB, aCoronas, 0x815128, 0x81518F);
-    CPatch::AdjustPointer(0x400000+0x143A09, aCoronas, 0x815128, 0x81518F);
-    CPatch::AdjustPointer(0x400000+0x143A14, aCoronas, 0x815128, 0x81518F);
-    CPatch::AdjustPointer(0x400000+0x143A28, aCoronas, 0x815128, 0x81518F);
-    CPatch::AdjustPointer(0x400000+0x143A87, aCoronas, 0x815128, 0x81518F);
-    CPatch::AdjustPointer(0x400000+0x143AC0, aCoronas, 0x815128, 0x81518F);
-    CPatch::AdjustPointer(0x400000+0x143AFA, aCoronas, 0x815128, 0x81518F);
-    CPatch::AdjustPointer(0x400000+0x143B3B, aCoronas, 0x815128, 0x81518F);
-    CPatch::AdjustPointer(0x400000+0x143BA3, aCoronas, 0x815128, 0x81518F);
-    CPatch::AdjustPointer(0x400000+0x143BD8, aCoronas, 0x815128, 0x81518F);
-    CPatch::AdjustPointer(0x400000+0x143C11, aCoronas, 0x815128, 0x81518F);
-    CPatch::AdjustPointer(0x400000+0x143C52, aCoronas, 0x815128, 0x81518F);
-    CPatch::AdjustPointer(0x400000+0x143CA2, aCoronas, 0x815128, 0x81518F);
-    CPatch::AdjustPointer(0x400000+0x143D14, aCoronas, 0x815128, 0x81518F);
-    CPatch::AdjustPointer(0x400000+0x143D28, aCoronas, 0x815128, 0x81518F);
-    CPatch::AdjustPointer(0x400000+0x143D36, aCoronas, 0x815128, 0x81518F);
-    CPatch::AdjustPointer(0x400000+0x143E76, aCoronas, 0x815128, 0x81518F);
-    CPatch::AdjustPointer(0x400000+0x143EB0, aCoronas, 0x815128, 0x81518F);
-    CPatch::AdjustPointer(0x400000+0x143EC8, aCoronas, 0x815128, 0x81518F);
-    CPatch::AdjustPointer(0x400000+0x143F61, aCoronas, 0x815128, 0x81518F);
-    CPatch::AdjustPointer(0x400000+0x143F71, aCoronas, 0x815128, 0x81518F);
-    CPatch::AdjustPointer(0x400000+0x143F81, aCoronas, 0x815128, 0x81518F);
-    CPatch::AdjustPointer(0x400000+0x143F97, aCoronas, 0x815128, 0x81518F);
-    CPatch::AdjustPointer(0x400000+0x143FAD, aCoronas, 0x815128, 0x81518F);
-    CPatch::AdjustPointer(0x400000+0x143FBA, aCoronas, 0x815128, 0x81518F);
-    CPatch::AdjustPointer(0x400000+0x143FF5, aCoronas, 0x815128, 0x81518F);
-    CPatch::AdjustPointer(0x400000+0x14400C, aCoronas, 0x815128, 0x81518F);
-    CPatch::AdjustPointer(0x400000+0x144018, aCoronas, 0x815128, 0x81518F);
-    CPatch::AdjustPointer(0x400000+0x144043, aCoronas, 0x815128, 0x81518F);
-    CPatch::AdjustPointer(0x400000+0x1441FB, aCoronas, 0x815128, 0x81518F);
-    CPatch::AdjustPointer(0x400000+0x144200, aCoronas, 0x815128, 0x81518F);
+    aCoronas.resize(CORONAS_LIMIT * 104);
+
+    //CPatch::AdjustPointer(0x400000+0x14243A, &aCoronas[0], 0x815128, 0x81518F);
+    CPatch::AdjustPointer(0x400000+0x14244E, &aCoronas[0], 0x815128, 0x81518F);
+    CPatch::AdjustPointer(0x400000+0x14245C, &aCoronas[0], 0x815128, 0x81518F);
+    CPatch::AdjustPointer(0x400000+0x142467, &aCoronas[0], 0x815128, 0x81518F);
+    CPatch::AdjustPointer(0x400000+0x142470, &aCoronas[0], 0x815128, 0x81518F);
+    CPatch::AdjustPointer(0x400000+0x142479, &aCoronas[0], 0x815128, 0x81518F);
+    CPatch::AdjustPointer(0x400000+0x142483, &aCoronas[0], 0x815128, 0x81518F);
+    //CPatch::AdjustPointer(0x400000+0x1425BD, &aCoronas[0], 0x815128, 0x81518F);
+    //CPatch::AdjustPointer(0x400000+0x1425FA, &aCoronas[0], 0x815128, 0x81518F);
+    CPatch::AdjustPointer(0x400000+0x142619, &aCoronas[0], 0x815128, 0x81518F);
+    CPatch::AdjustPointer(0x400000+0x142623, &aCoronas[0], 0x815128, 0x81518F);
+    CPatch::AdjustPointer(0x400000+0x142643, &aCoronas[0], 0x815128, 0x81518F);
+    CPatch::AdjustPointer(0x400000+0x142653, &aCoronas[0], 0x815128, 0x81518F);
+    CPatch::AdjustPointer(0x400000+0x14265A, &aCoronas[0], 0x815128, 0x81518F);
+    CPatch::AdjustPointer(0x400000+0x142661, &aCoronas[0], 0x815128, 0x81518F);
+    CPatch::AdjustPointer(0x400000+0x142668, &aCoronas[0], 0x815128, 0x81518F);
+    CPatch::AdjustPointer(0x400000+0x14266F, &aCoronas[0], 0x815128, 0x81518F);
+    CPatch::AdjustPointer(0x400000+0x142676, &aCoronas[0], 0x815128, 0x81518F);
+    CPatch::AdjustPointer(0x400000+0x142686, &aCoronas[0], 0x815128, 0x81518F);
+    CPatch::AdjustPointer(0x400000+0x14269D, &aCoronas[0], 0x815128, 0x81518F);
+    CPatch::AdjustPointer(0x400000+0x1426C1, &aCoronas[0], 0x815128, 0x81518F);
+    CPatch::AdjustPointer(0x400000+0x1426C7, &aCoronas[0], 0x815128, 0x81518F);
+    CPatch::AdjustPointer(0x400000+0x1426D1, &aCoronas[0], 0x815128, 0x81518F);
+    CPatch::AdjustPointer(0x400000+0x1426DB, &aCoronas[0], 0x815128, 0x81518F);
+    CPatch::AdjustPointer(0x400000+0x1426E5, &aCoronas[0], 0x815128, 0x81518F);
+    CPatch::AdjustPointer(0x400000+0x1426F2, &aCoronas[0], 0x815128, 0x81518F);
+    CPatch::AdjustPointer(0x400000+0x1426FB, &aCoronas[0], 0x815128, 0x81518F);
+    CPatch::AdjustPointer(0x400000+0x142704, &aCoronas[0], 0x815128, 0x81518F);
+    CPatch::AdjustPointer(0x400000+0x14270E, &aCoronas[0], 0x815128, 0x81518F);
+    CPatch::AdjustPointer(0x400000+0x142718, &aCoronas[0], 0x815128, 0x81518F);
+    CPatch::AdjustPointer(0x400000+0x142720, &aCoronas[0], 0x815128, 0x81518F);
+    CPatch::AdjustPointer(0x400000+0x142727, &aCoronas[0], 0x815128, 0x81518F);
+    CPatch::AdjustPointer(0x400000+0x14272D, &aCoronas[0], 0x815128, 0x81518F);
+    CPatch::AdjustPointer(0x400000+0x142737, &aCoronas[0], 0x815128, 0x81518F);
+    CPatch::AdjustPointer(0x400000+0x142741, &aCoronas[0], 0x815128, 0x81518F);
+    CPatch::AdjustPointer(0x400000+0x142747, &aCoronas[0], 0x815128, 0x81518F);
+    CPatch::AdjustPointer(0x400000+0x142784, &aCoronas[0], 0x815128, 0x81518F);
+    CPatch::AdjustPointer(0x400000+0x142884, &aCoronas[0], 0x815128, 0x81518F);
+    CPatch::AdjustPointer(0x400000+0x1428A4, &aCoronas[0], 0x815128, 0x81518F);
+    CPatch::AdjustPointer(0x400000+0x1428DE, &aCoronas[0], 0x815128, 0x81518F);
+    CPatch::AdjustPointer(0x400000+0x1428C1, &aCoronas[0], 0x815128, 0x81518F);
+    CPatch::AdjustPointer(0x400000+0x1428FB, &aCoronas[0], 0x815128, 0x81518F);
+    CPatch::AdjustPointer(0x400000+0x142918, &aCoronas[0], 0x815128, 0x81518F);
+    CPatch::AdjustPointer(0x400000+0x142935, &aCoronas[0], 0x815128, 0x81518F);
+    //CPatch::AdjustPointer(0x400000+0x142959, &aCoronas[0], 0x815128, 0x81518F);
+    CPatch::AdjustPointer(0x400000+0x14301C, &aCoronas[0], 0x815128, 0x81518F);
+    CPatch::AdjustPointer(0x400000+0x143049, &aCoronas[0], 0x815128, 0x81518F);
+    CPatch::AdjustPointer(0x400000+0x14305F, &aCoronas[0], 0x815128, 0x81518F);
+    CPatch::AdjustPointer(0x400000+0x143069, &aCoronas[0], 0x815128, 0x81518F);
+    CPatch::AdjustPointer(0x400000+0x14307F, &aCoronas[0], 0x815128, 0x81518F);
+    CPatch::AdjustPointer(0x400000+0x143089, &aCoronas[0], 0x815128, 0x81518F);
+    CPatch::AdjustPointer(0x400000+0x14309F, &aCoronas[0], 0x815128, 0x81518F);
+    CPatch::AdjustPointer(0x400000+0x1430A9, &aCoronas[0], 0x815128, 0x81518F);
+    CPatch::AdjustPointer(0x400000+0x1430BF, &aCoronas[0], 0x815128, 0x81518F);
+    CPatch::AdjustPointer(0x400000+0x1430C9, &aCoronas[0], 0x815128, 0x81518F);
+    CPatch::AdjustPointer(0x400000+0x1430DF, &aCoronas[0], 0x815128, 0x81518F);
+    CPatch::AdjustPointer(0x400000+0x1430E9, &aCoronas[0], 0x815128, 0x81518F);
+    CPatch::AdjustPointer(0x400000+0x14303F, &aCoronas[0], 0x815128, 0x81518F);
+    CPatch::AdjustPointer(0x400000+0x143102, &aCoronas[0], 0x815128, 0x81518F);
+    //CPatch::AdjustPointer(0x400000+0x14310F, &aCoronas[0], 0x815128, 0x81518F);
+    CPatch::AdjustPointer(0x400000+0x14317E, &aCoronas[0], 0x815128, 0x81518F);
+    CPatch::AdjustPointer(0x400000+0x143190, &aCoronas[0], 0x815128, 0x81518F);
+    CPatch::AdjustPointer(0x400000+0x14319D, &aCoronas[0], 0x815128, 0x81518F);
+    CPatch::AdjustPointer(0x400000+0x1431A6, &aCoronas[0], 0x815128, 0x81518F);
+    CPatch::AdjustPointer(0x400000+0x1431B3, &aCoronas[0], 0x815128, 0x81518F);
+    CPatch::AdjustPointer(0x400000+0x143206, &aCoronas[0], 0x815128, 0x81518F);
+    CPatch::AdjustPointer(0x400000+0x143210, &aCoronas[0], 0x815128, 0x81518F);
+    CPatch::AdjustPointer(0x400000+0x143243, &aCoronas[0], 0x815128, 0x81518F);
+    CPatch::AdjustPointer(0x400000+0x14324D, &aCoronas[0], 0x815128, 0x81518F);
+    CPatch::AdjustPointer(0x400000+0x14326B, &aCoronas[0], 0x815128, 0x81518F);
+    CPatch::AdjustPointer(0x400000+0x14328D, &aCoronas[0], 0x815128, 0x81518F);
+    CPatch::AdjustPointer(0x400000+0x1432B4, &aCoronas[0], 0x815128, 0x81518F);
+    CPatch::AdjustPointer(0x400000+0x143306, &aCoronas[0], 0x815128, 0x81518F);
+    CPatch::AdjustPointer(0x400000+0x1433F4, &aCoronas[0], 0x815128, 0x81518F);
+    CPatch::AdjustPointer(0x400000+0x143428, &aCoronas[0], 0x815128, 0x81518F);
+    CPatch::AdjustPointer(0x400000+0x143439, &aCoronas[0], 0x815128, 0x81518F);
+    CPatch::AdjustPointer(0x400000+0x143459, &aCoronas[0], 0x815128, 0x81518F);
+    CPatch::AdjustPointer(0x400000+0x143573, &aCoronas[0], 0x815128, 0x81518F);
+    CPatch::AdjustPointer(0x400000+0x1435B7, &aCoronas[0], 0x815128, 0x81518F);
+    CPatch::AdjustPointer(0x400000+0x1435C4, &aCoronas[0], 0x815128, 0x81518F);
+    CPatch::AdjustPointer(0x400000+0x1435D5, &aCoronas[0], 0x815128, 0x81518F);
+    CPatch::AdjustPointer(0x400000+0x1435DD, &aCoronas[0], 0x815128, 0x81518F);
+    CPatch::AdjustPointer(0x400000+0x1435E8, &aCoronas[0], 0x815128, 0x81518F);
+    CPatch::AdjustPointer(0x400000+0x1435F1, &aCoronas[0], 0x815128, 0x81518F);
+    CPatch::AdjustPointer(0x400000+0x1435FA, &aCoronas[0], 0x815128, 0x81518F);
+    CPatch::AdjustPointer(0x400000+0x143603, &aCoronas[0], 0x815128, 0x81518F);
+    CPatch::AdjustPointer(0x400000+0x14360C, &aCoronas[0], 0x815128, 0x81518F);
+    CPatch::AdjustPointer(0x400000+0x143615, &aCoronas[0], 0x815128, 0x81518F);
+    CPatch::AdjustPointer(0x400000+0x143626, &aCoronas[0], 0x815128, 0x81518F);
+    CPatch::AdjustPointer(0x400000+0x143636, &aCoronas[0], 0x815128, 0x81518F);
+    CPatch::AdjustPointer(0x400000+0x143642, &aCoronas[0], 0x815128, 0x81518F);
+    CPatch::AdjustPointer(0x400000+0x143649, &aCoronas[0], 0x815128, 0x81518F);
+    CPatch::AdjustPointer(0x400000+0x143656, &aCoronas[0], 0x815128, 0x81518F);
+    CPatch::AdjustPointer(0x400000+0x14365F, &aCoronas[0], 0x815128, 0x81518F);
+    CPatch::AdjustPointer(0x400000+0x143720, &aCoronas[0], 0x815128, 0x81518F);
+    CPatch::AdjustPointer(0x400000+0x143741, &aCoronas[0], 0x815128, 0x81518F);
+    CPatch::AdjustPointer(0x400000+0x1437F5, &aCoronas[0], 0x815128, 0x81518F);
+    CPatch::AdjustPointer(0x400000+0x143810, &aCoronas[0], 0x815128, 0x81518F);
+    CPatch::AdjustPointer(0x400000+0x143817, &aCoronas[0], 0x815128, 0x81518F);
+    CPatch::AdjustPointer(0x400000+0x14381D, &aCoronas[0], 0x815128, 0x81518F);
+    CPatch::AdjustPointer(0x400000+0x143823, &aCoronas[0], 0x815128, 0x81518F);
+    CPatch::AdjustPointer(0x400000+0x143829, &aCoronas[0], 0x815128, 0x81518F);
+    CPatch::AdjustPointer(0x400000+0x14382F, &aCoronas[0], 0x815128, 0x81518F);
+    CPatch::AdjustPointer(0x400000+0x143835, &aCoronas[0], 0x815128, 0x81518F);
+    CPatch::AdjustPointer(0x400000+0x14383B, &aCoronas[0], 0x815128, 0x81518F);
+    CPatch::AdjustPointer(0x400000+0x143842, &aCoronas[0], 0x815128, 0x81518F);
+    CPatch::AdjustPointer(0x400000+0x14384F, &aCoronas[0], 0x815128, 0x81518F);
+    CPatch::AdjustPointer(0x400000+0x143856, &aCoronas[0], 0x815128, 0x81518F);
+    CPatch::AdjustPointer(0x400000+0x14387A, &aCoronas[0], 0x815128, 0x81518F);
+    CPatch::AdjustPointer(0x400000+0x143881, &aCoronas[0], 0x815128, 0x81518F);
+    CPatch::AdjustPointer(0x400000+0x1438AD, &aCoronas[0], 0x815128, 0x81518F);
+    CPatch::AdjustPointer(0x400000+0x1438B4, &aCoronas[0], 0x815128, 0x81518F);
+    CPatch::AdjustPointer(0x400000+0x1438C2, &aCoronas[0], 0x815128, 0x81518F);
+    CPatch::AdjustPointer(0x400000+0x143991, &aCoronas[0], 0x815128, 0x81518F);
+    CPatch::AdjustPointer(0x400000+0x1439CB, &aCoronas[0], 0x815128, 0x81518F);
+    CPatch::AdjustPointer(0x400000+0x143A09, &aCoronas[0], 0x815128, 0x81518F);
+    CPatch::AdjustPointer(0x400000+0x143A14, &aCoronas[0], 0x815128, 0x81518F);
+    CPatch::AdjustPointer(0x400000+0x143A28, &aCoronas[0], 0x815128, 0x81518F);
+    CPatch::AdjustPointer(0x400000+0x143A87, &aCoronas[0], 0x815128, 0x81518F);
+    CPatch::AdjustPointer(0x400000+0x143AC0, &aCoronas[0], 0x815128, 0x81518F);
+    CPatch::AdjustPointer(0x400000+0x143AFA, &aCoronas[0], 0x815128, 0x81518F);
+    CPatch::AdjustPointer(0x400000+0x143B3B, &aCoronas[0], 0x815128, 0x81518F);
+    CPatch::AdjustPointer(0x400000+0x143BA3, &aCoronas[0], 0x815128, 0x81518F);
+    CPatch::AdjustPointer(0x400000+0x143BD8, &aCoronas[0], 0x815128, 0x81518F);
+    CPatch::AdjustPointer(0x400000+0x143C11, &aCoronas[0], 0x815128, 0x81518F);
+    CPatch::AdjustPointer(0x400000+0x143C52, &aCoronas[0], 0x815128, 0x81518F);
+    CPatch::AdjustPointer(0x400000+0x143CA2, &aCoronas[0], 0x815128, 0x81518F);
+    CPatch::AdjustPointer(0x400000+0x143D14, &aCoronas[0], 0x815128, 0x81518F);
+    CPatch::AdjustPointer(0x400000+0x143D28, &aCoronas[0], 0x815128, 0x81518F);
+    CPatch::AdjustPointer(0x400000+0x143D36, &aCoronas[0], 0x815128, 0x81518F);
+    CPatch::AdjustPointer(0x400000+0x143E76, &aCoronas[0], 0x815128, 0x81518F);
+    CPatch::AdjustPointer(0x400000+0x143EB0, &aCoronas[0], 0x815128, 0x81518F);
+    CPatch::AdjustPointer(0x400000+0x143EC8, &aCoronas[0], 0x815128, 0x81518F);
+    CPatch::AdjustPointer(0x400000+0x143F61, &aCoronas[0], 0x815128, 0x81518F);
+    CPatch::AdjustPointer(0x400000+0x143F71, &aCoronas[0], 0x815128, 0x81518F);
+    CPatch::AdjustPointer(0x400000+0x143F81, &aCoronas[0], 0x815128, 0x81518F);
+    CPatch::AdjustPointer(0x400000+0x143F97, &aCoronas[0], 0x815128, 0x81518F);
+    CPatch::AdjustPointer(0x400000+0x143FAD, &aCoronas[0], 0x815128, 0x81518F);
+    CPatch::AdjustPointer(0x400000+0x143FBA, &aCoronas[0], 0x815128, 0x81518F);
+    CPatch::AdjustPointer(0x400000+0x143FF5, &aCoronas[0], 0x815128, 0x81518F);
+    CPatch::AdjustPointer(0x400000+0x14400C, &aCoronas[0], 0x815128, 0x81518F);
+    CPatch::AdjustPointer(0x400000+0x144018, &aCoronas[0], 0x815128, 0x81518F);
+    CPatch::AdjustPointer(0x400000+0x144043, &aCoronas[0], 0x815128, 0x81518F);
+    CPatch::AdjustPointer(0x400000+0x1441FB, &aCoronas[0], 0x815128, 0x81518F);
+    CPatch::AdjustPointer(0x400000+0x144200, &aCoronas[0], 0x815128, 0x81518F);
 
     CPatch::RedirectJump(0x542434, patch_542434);
     CPatch::RedirectJump(0x5425B7, patch_5425B7);
@@ -545,7 +547,11 @@ void __declspec(naked)patch_542434()
     {
         cmp eax, CORONAS_LIMIT
         jnb loc_542442
-        cmp edx, dword ptr aCoronas+0xC[ebx]
+        mov _eax, eax
+        mov eax, [aCoronas]
+        add eax, 0xC
+        cmp edx, dword ptr ds : [eax + ebx]
+        mov eax, _eax
         jne loc_542430
 loc_542442:
         cmp eax, CORONAS_LIMIT
@@ -567,7 +573,11 @@ void __declspec(naked)patch_5425B7()
     {
         cmp edx, CORONAS_LIMIT
         jnb loc_5425C5
-        cmp esi, dword ptr aCoronas+0xC[ecx]
+        mov _eax, eax
+        mov eax, [aCoronas]
+        add eax, 0xC
+        cmp esi, dword ptr ds : [eax + ecx]
+        mov eax, _eax
         jne loc_5425B3
 loc_5425C5:
         cmp edx, CORONAS_LIMIT
@@ -589,7 +599,11 @@ void __declspec(naked)patch_5425F4()
     {
         cmp edx, CORONAS_LIMIT
         jnb loc_542603
-        cmp dword ptr aCoronas+0xC[eax], 0
+        mov _ebx, ebx
+        mov ebx, [aCoronas]
+        add ebx, 0xC
+        cmp dword ptr ds : [ebx + eax], 0
+        mov ebx, _ebx
         jne loc_5425F0
 loc_542603:
         cmp edx, CORONAS_LIMIT
@@ -610,7 +624,11 @@ void __declspec(naked)patch_542955()
     __asm
     {
         cmp eax, CORONAS_LIMIT
-        mov dword ptr aCoronas+0xC[edx*8], 0
+        mov _eax, eax
+        mov eax, [aCoronas]
+        add eax, 0xC
+        mov dword ptr ds : [eax + edx * 8h], 0
+        mov eax, _eax
         mov jmpAddress, 0x542964
         jmp jmpAddress
     }
@@ -621,7 +639,11 @@ void __declspec(naked)patch_54310C()
     __asm
     {
         cmp eax, CORONAS_LIMIT
-        mov byte ptr aCoronas+0x34[esi*8], cl
+        mov _eax, eax
+        mov eax, [aCoronas]
+        add eax, 0x34
+        mov byte ptr ds : [eax + esi * 8], cl
+        mov eax, _eax
         mov jmpAddress, 0x543116
         jmp jmpAddress
     }
@@ -632,7 +654,10 @@ void __declspec(naked)patch_543497()
     __asm
     {
         add ebp, 68h
-        cmp dword ptr [esp], CORONAS_LIMIT
+        mov _eax, eax
+        mov eax, CORONAS_LIMIT
+        cmp dword ptr [esp], eax
+        mov eax, _eax
         mov jmpAddress, 0x54349E
         jmp jmpAddress
     }
@@ -642,7 +667,10 @@ void __declspec(naked)patch_543E0C()
 {
     __asm
     {
-        cmp dword ptr [esp+0x38], CORONAS_LIMIT
+        mov _eax, eax
+        mov eax, CORONAS_LIMIT
+        cmp dword ptr[esp + 0x38], eax
+        mov eax, _eax
         mov jmpAddress, 0x543E12
         jmp jmpAddress
     }
@@ -652,7 +680,10 @@ void __declspec(naked)patch_544086()
 {
     __asm
     {
-        cmp dword ptr [esp+0x34], CORONAS_LIMIT
+        mov _eax, eax
+        mov eax, CORONAS_LIMIT
+        cmp dword ptr[esp + 0x34], eax
+        mov eax, _eax
         mov jmpAddress, 0x54408C
         jmp jmpAddress
     }
@@ -669,13 +700,16 @@ void __declspec(naked)patch_544214()
     }
 }
 
+
+
 class CoronasVC : public SimpleAdjuster
 {
 public:
     const char* GetLimitName() { return GetGVM().IsVC() ? "Coronas" : nullptr; }
     void ChangeLimit(int, const std::string& value)
     {
-        PatchCoronas_VC();
+        CORONAS_LIMIT = std::stoi(value);
+        PatchCoronasVC();
     }
 } CoronasVC;
 
@@ -715,76 +749,78 @@ DWORD ext_4FA379 = 0x4FA379;
     0x004FA32A - 0x0072E518
 */
 
-void PatchCoronas_III()
+void PatchCoronasIII()
 {
-    CPatch::AdjustPointer(0x400000+0xF8F8B, aCoronas, 0x72E518, 0x72E597);
-    CPatch::AdjustPointer(0x400000+0xF8F90, aCoronas, 0x72E518, 0x72E597);
-    CPatch::AdjustPointer(0x400000+0xF9023, aCoronas, 0x72E518, 0x72E597);
-    CPatch::AdjustPointer(0x400000+0xF906C, aCoronas, 0x72E518, 0x72E597);
-    CPatch::AdjustPointer(0x400000+0xF907C, aCoronas, 0x72E518, 0x72E597);
-    CPatch::AdjustPointer(0x400000+0xF9083, aCoronas, 0x72E518, 0x72E597);
-    CPatch::AdjustPointer(0x400000+0xF908A, aCoronas, 0x72E518, 0x72E597);
-    CPatch::AdjustPointer(0x400000+0xF9097, aCoronas, 0x72E518, 0x72E597);
-    CPatch::AdjustPointer(0x400000+0xF909E, aCoronas, 0x72E518, 0x72E597);
-    CPatch::AdjustPointer(0x400000+0xF90A7, aCoronas, 0x72E518, 0x72E597);
-    CPatch::AdjustPointer(0x400000+0xF90B0, aCoronas, 0x72E518, 0x72E597);
-    CPatch::AdjustPointer(0x400000+0xF90B9, aCoronas, 0x72E518, 0x72E597);
-    CPatch::AdjustPointer(0x400000+0xF90C2, aCoronas, 0x72E518, 0x72E597);
-    CPatch::AdjustPointer(0x400000+0xF90CB, aCoronas, 0x72E518, 0x72E597);
-    CPatch::AdjustPointer(0x400000+0xF90E2, aCoronas, 0x72E518, 0x72E597);
-    CPatch::AdjustPointer(0x400000+0xF90EE, aCoronas, 0x72E518, 0x72E597);
-    CPatch::AdjustPointer(0x400000+0xF90F5, aCoronas, 0x72E518, 0x72E597);
-    CPatch::AdjustPointer(0x400000+0xF9102, aCoronas, 0x72E518, 0x72E597);
-    CPatch::AdjustPointer(0x400000+0xF910B, aCoronas, 0x72E518, 0x72E597);
-    CPatch::AdjustPointer(0x400000+0xF91D0, aCoronas, 0x72E518, 0x72E597);
-    CPatch::AdjustPointer(0x400000+0xF91F7, aCoronas, 0x72E518, 0x72E597);
-    CPatch::AdjustPointer(0x400000+0xF9263, aCoronas, 0x72E518, 0x72E597);
-    CPatch::AdjustPointer(0x400000+0xF926D, aCoronas, 0x72E518, 0x72E597);
-    CPatch::AdjustPointer(0x400000+0xF9273, aCoronas, 0x72E518, 0x72E597);
-    CPatch::AdjustPointer(0x400000+0xF9279, aCoronas, 0x72E518, 0x72E597);
-    CPatch::AdjustPointer(0x400000+0xF927F, aCoronas, 0x72E518, 0x72E597);
-    CPatch::AdjustPointer(0x400000+0xF9285, aCoronas, 0x72E518, 0x72E597);
-    CPatch::AdjustPointer(0x400000+0xF928B, aCoronas, 0x72E518, 0x72E597);
-    CPatch::AdjustPointer(0x400000+0xF9291, aCoronas, 0x72E518, 0x72E597);
-    CPatch::AdjustPointer(0x400000+0xF9297, aCoronas, 0x72E518, 0x72E597);
-    CPatch::AdjustPointer(0x400000+0xF929E, aCoronas, 0x72E518, 0x72E597);
-    CPatch::AdjustPointer(0x400000+0xF92A7, aCoronas, 0x72E518, 0x72E597);
-    CPatch::AdjustPointer(0x400000+0xF92AD, aCoronas, 0x72E518, 0x72E597);
-    CPatch::AdjustPointer(0x400000+0xF92D4, aCoronas, 0x72E518, 0x72E597);
-    CPatch::AdjustPointer(0x400000+0xF92DA, aCoronas, 0x72E518, 0x72E597);
-    CPatch::AdjustPointer(0x400000+0xF9301, aCoronas, 0x72E518, 0x72E597);
-    CPatch::AdjustPointer(0x400000+0xF9308, aCoronas, 0x72E518, 0x72E597);
-    CPatch::AdjustPointer(0x400000+0xF9318, aCoronas, 0x72E518, 0x72E597);
-    CPatch::AdjustPointer(0x400000+0xF93E5, aCoronas, 0x72E518, 0x72E597);
-    CPatch::AdjustPointer(0x400000+0xF941F, aCoronas, 0x72E518, 0x72E597);
-    CPatch::AdjustPointer(0x400000+0xF9468, aCoronas, 0x72E518, 0x72E597);
-    CPatch::AdjustPointer(0x400000+0xF947C, aCoronas, 0x72E518, 0x72E597);
-    CPatch::AdjustPointer(0x400000+0xF94DB, aCoronas, 0x72E518, 0x72E597);
-    CPatch::AdjustPointer(0x400000+0xF9514, aCoronas, 0x72E518, 0x72E597);
-    CPatch::AdjustPointer(0x400000+0xF954E, aCoronas, 0x72E518, 0x72E597);
-    CPatch::AdjustPointer(0x400000+0xF958F, aCoronas, 0x72E518, 0x72E597);
-    CPatch::AdjustPointer(0x400000+0xF95F7, aCoronas, 0x72E518, 0x72E597);
-    CPatch::AdjustPointer(0x400000+0xF962C, aCoronas, 0x72E518, 0x72E597);
-    CPatch::AdjustPointer(0x400000+0xF9665, aCoronas, 0x72E518, 0x72E597);
-    CPatch::AdjustPointer(0x400000+0xF96A6, aCoronas, 0x72E518, 0x72E597);
-    CPatch::AdjustPointer(0x400000+0xF96F6, aCoronas, 0x72E518, 0x72E597);
-    CPatch::AdjustPointer(0x400000+0xF976D, aCoronas, 0x72E518, 0x72E597);
-    CPatch::AdjustPointer(0x400000+0xF9781, aCoronas, 0x72E518, 0x72E597);
-    CPatch::AdjustPointer(0x400000+0xF978F, aCoronas, 0x72E518, 0x72E597);
-    CPatch::AdjustPointer(0x400000+0xF98CA, aCoronas, 0x72E518, 0x72E597);
-    CPatch::AdjustPointer(0x400000+0xF990B, aCoronas, 0x72E518, 0x72E597);
-    CPatch::AdjustPointer(0x400000+0xF9923, aCoronas, 0x72E518, 0x72E597);
-    CPatch::AdjustPointer(0x400000+0xF99BC, aCoronas, 0x72E518, 0x72E597);
-    CPatch::AdjustPointer(0x400000+0xF99C9, aCoronas, 0x72E518, 0x72E597);
-    CPatch::AdjustPointer(0x400000+0xF99DA, aCoronas, 0x72E518, 0x72E597);
-    CPatch::AdjustPointer(0x400000+0xF99E7, aCoronas, 0x72E518, 0x72E597);
-    CPatch::AdjustPointer(0x400000+0xF99F4, aCoronas, 0x72E518, 0x72E597);
-    CPatch::AdjustPointer(0x400000+0xF9A1F, aCoronas, 0x72E518, 0x72E597);
-    CPatch::AdjustPointer(0x400000+0xF9A28, aCoronas, 0x72E518, 0x72E597);
-    CPatch::AdjustPointer(0x400000+0xF9A43, aCoronas, 0x72E518, 0x72E597);
-    CPatch::AdjustPointer(0x400000+0xF9A4F, aCoronas, 0x72E518, 0x72E597);
-    CPatch::AdjustPointer(0x400000+0xF9A7A, aCoronas, 0x72E518, 0x72E597);
-    CPatch::AdjustPointer(0x400000+0xF9B69, aCoronas, 0x72E518, 0x72E597);
+    aCoronas.resize(CORONAS_LIMIT * 128);
+
+    CPatch::AdjustPointer(0x400000+0xF8F8B, &aCoronas[0], 0x72E518, 0x72E597);
+    CPatch::AdjustPointer(0x400000+0xF8F90, &aCoronas[0], 0x72E518, 0x72E597);
+    CPatch::AdjustPointer(0x400000+0xF9023, &aCoronas[0], 0x72E518, 0x72E597);
+    CPatch::AdjustPointer(0x400000+0xF906C, &aCoronas[0], 0x72E518, 0x72E597);
+    CPatch::AdjustPointer(0x400000+0xF907C, &aCoronas[0], 0x72E518, 0x72E597);
+    CPatch::AdjustPointer(0x400000+0xF9083, &aCoronas[0], 0x72E518, 0x72E597);
+    CPatch::AdjustPointer(0x400000+0xF908A, &aCoronas[0], 0x72E518, 0x72E597);
+    CPatch::AdjustPointer(0x400000+0xF9097, &aCoronas[0], 0x72E518, 0x72E597);
+    CPatch::AdjustPointer(0x400000+0xF909E, &aCoronas[0], 0x72E518, 0x72E597);
+    CPatch::AdjustPointer(0x400000+0xF90A7, &aCoronas[0], 0x72E518, 0x72E597);
+    CPatch::AdjustPointer(0x400000+0xF90B0, &aCoronas[0], 0x72E518, 0x72E597);
+    CPatch::AdjustPointer(0x400000+0xF90B9, &aCoronas[0], 0x72E518, 0x72E597);
+    CPatch::AdjustPointer(0x400000+0xF90C2, &aCoronas[0], 0x72E518, 0x72E597);
+    CPatch::AdjustPointer(0x400000+0xF90CB, &aCoronas[0], 0x72E518, 0x72E597);
+    CPatch::AdjustPointer(0x400000+0xF90E2, &aCoronas[0], 0x72E518, 0x72E597);
+    CPatch::AdjustPointer(0x400000+0xF90EE, &aCoronas[0], 0x72E518, 0x72E597);
+    CPatch::AdjustPointer(0x400000+0xF90F5, &aCoronas[0], 0x72E518, 0x72E597);
+    CPatch::AdjustPointer(0x400000+0xF9102, &aCoronas[0], 0x72E518, 0x72E597);
+    CPatch::AdjustPointer(0x400000+0xF910B, &aCoronas[0], 0x72E518, 0x72E597);
+    CPatch::AdjustPointer(0x400000+0xF91D0, &aCoronas[0], 0x72E518, 0x72E597);
+    CPatch::AdjustPointer(0x400000+0xF91F7, &aCoronas[0], 0x72E518, 0x72E597);
+    CPatch::AdjustPointer(0x400000+0xF9263, &aCoronas[0], 0x72E518, 0x72E597);
+    CPatch::AdjustPointer(0x400000+0xF926D, &aCoronas[0], 0x72E518, 0x72E597);
+    CPatch::AdjustPointer(0x400000+0xF9273, &aCoronas[0], 0x72E518, 0x72E597);
+    CPatch::AdjustPointer(0x400000+0xF9279, &aCoronas[0], 0x72E518, 0x72E597);
+    CPatch::AdjustPointer(0x400000+0xF927F, &aCoronas[0], 0x72E518, 0x72E597);
+    CPatch::AdjustPointer(0x400000+0xF9285, &aCoronas[0], 0x72E518, 0x72E597);
+    CPatch::AdjustPointer(0x400000+0xF928B, &aCoronas[0], 0x72E518, 0x72E597);
+    CPatch::AdjustPointer(0x400000+0xF9291, &aCoronas[0], 0x72E518, 0x72E597);
+    CPatch::AdjustPointer(0x400000+0xF9297, &aCoronas[0], 0x72E518, 0x72E597);
+    CPatch::AdjustPointer(0x400000+0xF929E, &aCoronas[0], 0x72E518, 0x72E597);
+    CPatch::AdjustPointer(0x400000+0xF92A7, &aCoronas[0], 0x72E518, 0x72E597);
+    CPatch::AdjustPointer(0x400000+0xF92AD, &aCoronas[0], 0x72E518, 0x72E597);
+    CPatch::AdjustPointer(0x400000+0xF92D4, &aCoronas[0], 0x72E518, 0x72E597);
+    CPatch::AdjustPointer(0x400000+0xF92DA, &aCoronas[0], 0x72E518, 0x72E597);
+    CPatch::AdjustPointer(0x400000+0xF9301, &aCoronas[0], 0x72E518, 0x72E597);
+    CPatch::AdjustPointer(0x400000+0xF9308, &aCoronas[0], 0x72E518, 0x72E597);
+    CPatch::AdjustPointer(0x400000+0xF9318, &aCoronas[0], 0x72E518, 0x72E597);
+    CPatch::AdjustPointer(0x400000+0xF93E5, &aCoronas[0], 0x72E518, 0x72E597);
+    CPatch::AdjustPointer(0x400000+0xF941F, &aCoronas[0], 0x72E518, 0x72E597);
+    CPatch::AdjustPointer(0x400000+0xF9468, &aCoronas[0], 0x72E518, 0x72E597);
+    CPatch::AdjustPointer(0x400000+0xF947C, &aCoronas[0], 0x72E518, 0x72E597);
+    CPatch::AdjustPointer(0x400000+0xF94DB, &aCoronas[0], 0x72E518, 0x72E597);
+    CPatch::AdjustPointer(0x400000+0xF9514, &aCoronas[0], 0x72E518, 0x72E597);
+    CPatch::AdjustPointer(0x400000+0xF954E, &aCoronas[0], 0x72E518, 0x72E597);
+    CPatch::AdjustPointer(0x400000+0xF958F, &aCoronas[0], 0x72E518, 0x72E597);
+    CPatch::AdjustPointer(0x400000+0xF95F7, &aCoronas[0], 0x72E518, 0x72E597);
+    CPatch::AdjustPointer(0x400000+0xF962C, &aCoronas[0], 0x72E518, 0x72E597);
+    CPatch::AdjustPointer(0x400000+0xF9665, &aCoronas[0], 0x72E518, 0x72E597);
+    CPatch::AdjustPointer(0x400000+0xF96A6, &aCoronas[0], 0x72E518, 0x72E597);
+    CPatch::AdjustPointer(0x400000+0xF96F6, &aCoronas[0], 0x72E518, 0x72E597);
+    CPatch::AdjustPointer(0x400000+0xF976D, &aCoronas[0], 0x72E518, 0x72E597);
+    CPatch::AdjustPointer(0x400000+0xF9781, &aCoronas[0], 0x72E518, 0x72E597);
+    CPatch::AdjustPointer(0x400000+0xF978F, &aCoronas[0], 0x72E518, 0x72E597);
+    CPatch::AdjustPointer(0x400000+0xF98CA, &aCoronas[0], 0x72E518, 0x72E597);
+    CPatch::AdjustPointer(0x400000+0xF990B, &aCoronas[0], 0x72E518, 0x72E597);
+    CPatch::AdjustPointer(0x400000+0xF9923, &aCoronas[0], 0x72E518, 0x72E597);
+    CPatch::AdjustPointer(0x400000+0xF99BC, &aCoronas[0], 0x72E518, 0x72E597);
+    CPatch::AdjustPointer(0x400000+0xF99C9, &aCoronas[0], 0x72E518, 0x72E597);
+    CPatch::AdjustPointer(0x400000+0xF99DA, &aCoronas[0], 0x72E518, 0x72E597);
+    CPatch::AdjustPointer(0x400000+0xF99E7, &aCoronas[0], 0x72E518, 0x72E597);
+    CPatch::AdjustPointer(0x400000+0xF99F4, &aCoronas[0], 0x72E518, 0x72E597);
+    CPatch::AdjustPointer(0x400000+0xF9A1F, &aCoronas[0], 0x72E518, 0x72E597);
+    CPatch::AdjustPointer(0x400000+0xF9A28, &aCoronas[0], 0x72E518, 0x72E597);
+    CPatch::AdjustPointer(0x400000+0xF9A43, &aCoronas[0], 0x72E518, 0x72E597);
+    CPatch::AdjustPointer(0x400000+0xF9A4F, &aCoronas[0], 0x72E518, 0x72E597);
+    CPatch::AdjustPointer(0x400000+0xF9A7A, &aCoronas[0], 0x72E518, 0x72E597);
+    CPatch::AdjustPointer(0x400000+0xF9B69, &aCoronas[0], 0x72E518, 0x72E597);
     CPatch::AdjustPointer(0x400000+0xF9B70, &aCoronas[1], 0x72E598, 0x72E617);
     CPatch::AdjustPointer(0x400000+0xF9B77, &aCoronas[2], 0x72E618, 0x72E697);
     CPatch::AdjustPointer(0x400000+0xF9B7E, &aCoronas[3], 0x72E698, 0x72E717);
@@ -792,27 +828,27 @@ void PatchCoronas_III()
     CPatch::AdjustPointer(0x400000+0xF9B8C, &aCoronas[5], 0x72E798, 0x72E817);
     CPatch::AdjustPointer(0x400000+0xF9B93, &aCoronas[6], 0x72E818, 0x72E897);
     CPatch::AdjustPointer(0x400000+0xF9B9A, &aCoronas[7], 0x72E898, 0x72E918);
-    CPatch::AdjustPointer(0x400000+0xF9C0A, aCoronas, 0x72E518, 0x72E597);
-    CPatch::AdjustPointer(0x400000+0xF9C17, aCoronas, 0x72E518, 0x72E597);
-    CPatch::AdjustPointer(0x400000+0xF9C24, aCoronas, 0x72E518, 0x72E597);
-    CPatch::AdjustPointer(0x400000+0xF9C2D, aCoronas, 0x72E518, 0x72E597);
-    CPatch::AdjustPointer(0x400000+0xF9C3A, aCoronas, 0x72E518, 0x72E597);
-    CPatch::AdjustPointer(0x400000+0xF9C47, aCoronas, 0x72E518, 0x72E597);
-    CPatch::AdjustPointer(0x400000+0xF9C91, aCoronas, 0x72E518, 0x72E597);
-    CPatch::AdjustPointer(0x400000+0xF9C9B, aCoronas, 0x72E518, 0x72E597);
-    CPatch::AdjustPointer(0x400000+0xF9CD1, aCoronas, 0x72E518, 0x72E597);
-    CPatch::AdjustPointer(0x400000+0xF9CDB, aCoronas, 0x72E518, 0x72E597);
-    CPatch::AdjustPointer(0x400000+0xF9CE1, aCoronas, 0x72E518, 0x72E597);
-    CPatch::AdjustPointer(0x400000+0xF9CE8, aCoronas, 0x72E518, 0x72E597);
-    CPatch::AdjustPointer(0x400000+0xF9CF5, aCoronas, 0x72E518, 0x72E597);
-    CPatch::AdjustPointer(0x400000+0xF9D17, aCoronas, 0x72E518, 0x72E597);
-    CPatch::AdjustPointer(0x400000+0xF9D3E, aCoronas, 0x72E518, 0x72E597);
-    CPatch::AdjustPointer(0x400000+0xF9D90, aCoronas, 0x72E518, 0x72E597);
-    CPatch::AdjustPointer(0x400000+0xF9E84, aCoronas, 0x72E518, 0x72E597);
-    CPatch::AdjustPointer(0x400000+0xF9EB8, aCoronas, 0x72E518, 0x72E597);
-    CPatch::AdjustPointer(0x400000+0xF9EC9, aCoronas, 0x72E518, 0x72E597);
-    CPatch::AdjustPointer(0x400000+0xF9EE9, aCoronas, 0x72E518, 0x72E597);
-    CPatch::AdjustPointer(0x400000+0xF9FE5, aCoronas, 0x72E518, 0x72E597);
+    CPatch::AdjustPointer(0x400000+0xF9C0A, &aCoronas[0], 0x72E518, 0x72E597);
+    CPatch::AdjustPointer(0x400000+0xF9C17, &aCoronas[0], 0x72E518, 0x72E597);
+    CPatch::AdjustPointer(0x400000+0xF9C24, &aCoronas[0], 0x72E518, 0x72E597);
+    CPatch::AdjustPointer(0x400000+0xF9C2D, &aCoronas[0], 0x72E518, 0x72E597);
+    CPatch::AdjustPointer(0x400000+0xF9C3A, &aCoronas[0], 0x72E518, 0x72E597);
+    CPatch::AdjustPointer(0x400000+0xF9C47, &aCoronas[0], 0x72E518, 0x72E597);
+    CPatch::AdjustPointer(0x400000+0xF9C91, &aCoronas[0], 0x72E518, 0x72E597);
+    CPatch::AdjustPointer(0x400000+0xF9C9B, &aCoronas[0], 0x72E518, 0x72E597);
+    CPatch::AdjustPointer(0x400000+0xF9CD1, &aCoronas[0], 0x72E518, 0x72E597);
+    CPatch::AdjustPointer(0x400000+0xF9CDB, &aCoronas[0], 0x72E518, 0x72E597);
+    CPatch::AdjustPointer(0x400000+0xF9CE1, &aCoronas[0], 0x72E518, 0x72E597);
+    CPatch::AdjustPointer(0x400000+0xF9CE8, &aCoronas[0], 0x72E518, 0x72E597);
+    CPatch::AdjustPointer(0x400000+0xF9CF5, &aCoronas[0], 0x72E518, 0x72E597);
+    CPatch::AdjustPointer(0x400000+0xF9D17, &aCoronas[0], 0x72E518, 0x72E597);
+    CPatch::AdjustPointer(0x400000+0xF9D3E, &aCoronas[0], 0x72E518, 0x72E597);
+    CPatch::AdjustPointer(0x400000+0xF9D90, &aCoronas[0], 0x72E518, 0x72E597);
+    CPatch::AdjustPointer(0x400000+0xF9E84, &aCoronas[0], 0x72E518, 0x72E597);
+    CPatch::AdjustPointer(0x400000+0xF9EB8, &aCoronas[0], 0x72E518, 0x72E597);
+    CPatch::AdjustPointer(0x400000+0xF9EC9, &aCoronas[0], 0x72E518, 0x72E597);
+    CPatch::AdjustPointer(0x400000+0xF9EE9, &aCoronas[0], 0x72E518, 0x72E597);
+    CPatch::AdjustPointer(0x400000+0xF9FE5, &aCoronas[0], 0x72E518, 0x72E597);
     CPatch::AdjustPointer(0x400000+0xF9FEF, &aCoronas[1], 0x72E598, 0x72E617);
     CPatch::AdjustPointer(0x400000+0xF9FF9, &aCoronas[2], 0x72E618, 0x72E697);
     CPatch::AdjustPointer(0x400000+0xFA003, &aCoronas[3], 0x72E698, 0x72E717);
@@ -820,43 +856,43 @@ void PatchCoronas_III()
     CPatch::AdjustPointer(0x400000+0xFA017, &aCoronas[5], 0x72E798, 0x72E817);
     CPatch::AdjustPointer(0x400000+0xFA021, &aCoronas[6], 0x72E818, 0x72E897);
     CPatch::AdjustPointer(0x400000+0xFA02B, &aCoronas[7], 0x72E898, 0x72E918);
-    //CPatch::AdjustPointer(0x400000+0xFA132, aCoronas, 0x72E518, 0x72E597);
-    //CPatch::AdjustPointer(0x400000+0xFA161, aCoronas, 0x72E518, 0x72E597);
-    CPatch::AdjustPointer(0x400000+0xFA179, aCoronas, 0x72E518, 0x72E597);
-    CPatch::AdjustPointer(0x400000+0xFA183, aCoronas, 0x72E518, 0x72E597);
-    CPatch::AdjustPointer(0x400000+0xFA19D, aCoronas, 0x72E518, 0x72E597);
-    CPatch::AdjustPointer(0x400000+0xFA1A4, aCoronas, 0x72E518, 0x72E597);
-    CPatch::AdjustPointer(0x400000+0xFA1B4, aCoronas, 0x72E518, 0x72E597);
-    CPatch::AdjustPointer(0x400000+0xFA1BB, aCoronas, 0x72E518, 0x72E597);
-    CPatch::AdjustPointer(0x400000+0xFA1C2, aCoronas, 0x72E518, 0x72E597);
-    CPatch::AdjustPointer(0x400000+0xFA1C9, aCoronas, 0x72E518, 0x72E597);
-    CPatch::AdjustPointer(0x400000+0xFA1D0, aCoronas, 0x72E518, 0x72E597);
-    CPatch::AdjustPointer(0x400000+0xFA1D7, aCoronas, 0x72E518, 0x72E597);
-    CPatch::AdjustPointer(0x400000+0xFA1E6, aCoronas, 0x72E518, 0x72E597);
-    CPatch::AdjustPointer(0x400000+0xFA1F9, aCoronas, 0x72E518, 0x72E597);
-    CPatch::AdjustPointer(0x400000+0xFA20D, aCoronas, 0x72E518, 0x72E597);
-    CPatch::AdjustPointer(0x400000+0xFA215, aCoronas, 0x72E518, 0x72E597);
-    CPatch::AdjustPointer(0x400000+0xFA21B, aCoronas, 0x72E518, 0x72E597);
-    CPatch::AdjustPointer(0x400000+0xFA227, aCoronas, 0x72E518, 0x72E597);
-    CPatch::AdjustPointer(0x400000+0xFA231, aCoronas, 0x72E518, 0x72E597);
-    CPatch::AdjustPointer(0x400000+0xFA23B, aCoronas, 0x72E518, 0x72E597);
-    CPatch::AdjustPointer(0x400000+0xFA247, aCoronas, 0x72E518, 0x72E597);
-    CPatch::AdjustPointer(0x400000+0xFA250, aCoronas, 0x72E518, 0x72E597);
-    CPatch::AdjustPointer(0x400000+0xFA259, aCoronas, 0x72E518, 0x72E597);
-    CPatch::AdjustPointer(0x400000+0xFA263, aCoronas, 0x72E518, 0x72E597);
-    CPatch::AdjustPointer(0x400000+0xFA26D, aCoronas, 0x72E518, 0x72E597);
-    CPatch::AdjustPointer(0x400000+0xFA275, aCoronas, 0x72E518, 0x72E597);
-    CPatch::AdjustPointer(0x400000+0xFA27F, aCoronas, 0x72E518, 0x72E597);
-    CPatch::AdjustPointer(0x400000+0xFA285, aCoronas, 0x72E518, 0x72E597);
-    CPatch::AdjustPointer(0x400000+0xFA28F, aCoronas, 0x72E518, 0x72E597);
-    CPatch::AdjustPointer(0x400000+0xFA299, aCoronas, 0x72E518, 0x72E597);
-    //CPatch::AdjustPointer(0x400000+0xFA32A, aCoronas, 0x72E518, 0x72E597);
-    CPatch::AdjustPointer(0x400000+0xFA33E, aCoronas, 0x72E518, 0x72E597);
-    CPatch::AdjustPointer(0x400000+0xFA34C, aCoronas, 0x72E518, 0x72E597);
-    CPatch::AdjustPointer(0x400000+0xFA357, aCoronas, 0x72E518, 0x72E597);
-    CPatch::AdjustPointer(0x400000+0xFA360, aCoronas, 0x72E518, 0x72E597);
-    CPatch::AdjustPointer(0x400000+0xFA369, aCoronas, 0x72E518, 0x72E597);
-    CPatch::AdjustPointer(0x400000+0xFA373, aCoronas, 0x72E518, 0x72E597);
+    //CPatch::AdjustPointer(0x400000+0xFA132, &aCoronas[0], 0x72E518, 0x72E597);
+    //CPatch::AdjustPointer(0x400000+0xFA161, &aCoronas[0], 0x72E518, 0x72E597);
+    CPatch::AdjustPointer(0x400000+0xFA179, &aCoronas[0], 0x72E518, 0x72E597);
+    CPatch::AdjustPointer(0x400000+0xFA183, &aCoronas[0], 0x72E518, 0x72E597);
+    CPatch::AdjustPointer(0x400000+0xFA19D, &aCoronas[0], 0x72E518, 0x72E597);
+    CPatch::AdjustPointer(0x400000+0xFA1A4, &aCoronas[0], 0x72E518, 0x72E597);
+    CPatch::AdjustPointer(0x400000+0xFA1B4, &aCoronas[0], 0x72E518, 0x72E597);
+    CPatch::AdjustPointer(0x400000+0xFA1BB, &aCoronas[0], 0x72E518, 0x72E597);
+    CPatch::AdjustPointer(0x400000+0xFA1C2, &aCoronas[0], 0x72E518, 0x72E597);
+    CPatch::AdjustPointer(0x400000+0xFA1C9, &aCoronas[0], 0x72E518, 0x72E597);
+    CPatch::AdjustPointer(0x400000+0xFA1D0, &aCoronas[0], 0x72E518, 0x72E597);
+    CPatch::AdjustPointer(0x400000+0xFA1D7, &aCoronas[0], 0x72E518, 0x72E597);
+    CPatch::AdjustPointer(0x400000+0xFA1E6, &aCoronas[0], 0x72E518, 0x72E597);
+    CPatch::AdjustPointer(0x400000+0xFA1F9, &aCoronas[0], 0x72E518, 0x72E597);
+    CPatch::AdjustPointer(0x400000+0xFA20D, &aCoronas[0], 0x72E518, 0x72E597);
+    CPatch::AdjustPointer(0x400000+0xFA215, &aCoronas[0], 0x72E518, 0x72E597);
+    CPatch::AdjustPointer(0x400000+0xFA21B, &aCoronas[0], 0x72E518, 0x72E597);
+    CPatch::AdjustPointer(0x400000+0xFA227, &aCoronas[0], 0x72E518, 0x72E597);
+    CPatch::AdjustPointer(0x400000+0xFA231, &aCoronas[0], 0x72E518, 0x72E597);
+    CPatch::AdjustPointer(0x400000+0xFA23B, &aCoronas[0], 0x72E518, 0x72E597);
+    CPatch::AdjustPointer(0x400000+0xFA247, &aCoronas[0], 0x72E518, 0x72E597);
+    CPatch::AdjustPointer(0x400000+0xFA250, &aCoronas[0], 0x72E518, 0x72E597);
+    CPatch::AdjustPointer(0x400000+0xFA259, &aCoronas[0], 0x72E518, 0x72E597);
+    CPatch::AdjustPointer(0x400000+0xFA263, &aCoronas[0], 0x72E518, 0x72E597);
+    CPatch::AdjustPointer(0x400000+0xFA26D, &aCoronas[0], 0x72E518, 0x72E597);
+    CPatch::AdjustPointer(0x400000+0xFA275, &aCoronas[0], 0x72E518, 0x72E597);
+    CPatch::AdjustPointer(0x400000+0xFA27F, &aCoronas[0], 0x72E518, 0x72E597);
+    CPatch::AdjustPointer(0x400000+0xFA285, &aCoronas[0], 0x72E518, 0x72E597);
+    CPatch::AdjustPointer(0x400000+0xFA28F, &aCoronas[0], 0x72E518, 0x72E597);
+    CPatch::AdjustPointer(0x400000+0xFA299, &aCoronas[0], 0x72E518, 0x72E597);
+    //CPatch::AdjustPointer(0x400000+0xFA32A, &aCoronas[0], 0x72E518, 0x72E597);
+    CPatch::AdjustPointer(0x400000+0xFA33E, &aCoronas[0], 0x72E518, 0x72E597);
+    CPatch::AdjustPointer(0x400000+0xFA34C, &aCoronas[0], 0x72E518, 0x72E597);
+    CPatch::AdjustPointer(0x400000+0xFA357, &aCoronas[0], 0x72E518, 0x72E597);
+    CPatch::AdjustPointer(0x400000+0xFA360, &aCoronas[0], 0x72E518, 0x72E597);
+    CPatch::AdjustPointer(0x400000+0xFA369, &aCoronas[0], 0x72E518, 0x72E597);
+    CPatch::AdjustPointer(0x400000+0xFA373, &aCoronas[0], 0x72E518, 0x72E597);
 
     CPatch::RedirectJump(0x4F8FA7, patch_4F8FA7);
     CPatch::RedirectJump(0x4F9860, patch_4F9860);
@@ -891,7 +927,10 @@ void __declspec(naked) patch_4F9860()
 {
     __asm
     {
-        cmp dword ptr [esp+3Ch], CORONAS_LIMIT
+        mov _eax, eax
+        mov eax, CORONAS_LIMIT
+        cmp dword ptr [esp+3Ch], eax
+        mov eax, _eax
         jmp ext_4F9866
     }
 }
@@ -900,7 +939,10 @@ void __declspec(naked) patch_4F9ABD()
 {
     __asm
     {
-        cmp dword ptr [esp+34h], CORONAS_LIMIT
+        mov _eax, eax
+        mov eax, CORONAS_LIMIT
+        cmp dword ptr [esp+34h], eax
+        mov eax, _eax
         jmp ext_4F9AC3
     }
 }
@@ -921,7 +963,10 @@ void __declspec(naked) patch_4F9F2A()
 {
     __asm
     {
-        cmp dword ptr [esp], CORONAS_LIMIT
+        mov _eax, eax
+        mov eax, CORONAS_LIMIT
+        cmp dword ptr [esp], eax
+        mov eax, _eax
         jmp ext_4F9F2F
     }
 }
@@ -944,7 +989,10 @@ void __declspec(naked) patch_4FA12C()
     {
         cmp edx, CORONAS_LIMIT
         jnb loc_4FA13A
-        cmp edi, dword ptr ds:aCoronas[ebx]
+        mov _eax, eax
+        mov eax, [aCoronas]
+        cmp edi, dword ptr ds:[eax + ebx]
+        mov eax, _eax
         jne loc_4FA128
 loc_4FA13A:
         cmp edx, CORONAS_LIMIT
@@ -960,7 +1008,10 @@ void __declspec(naked) patch_4FA15B()
     {
         cmp edx, CORONAS_LIMIT
         jnb loc_4FA16A
-        cmp dword ptr ds:aCoronas[eax], 0
+        mov _ebx, ebx
+        mov ebx, [aCoronas]
+        cmp dword ptr ds:[ebx + eax], 0
+        mov ebx, _ebx
         jne loc_4FA157
 loc_4FA16A:
         cmp edx, CORONAS_LIMIT
@@ -976,7 +1027,10 @@ void __declspec(naked) patch_4FA324()
     {
         cmp eax, CORONAS_LIMIT
         jnb loc_4FA332
-        cmp edx, dword ptr ds:aCoronas[ebx]
+        mov _eax, eax
+        mov eax, [aCoronas]
+        cmp edx, dword ptr ds:[eax + ebx]
+        mov eax, _eax
         jne loc_4FA320
 loc_4FA332:
         cmp eax, CORONAS_LIMIT
@@ -995,6 +1049,7 @@ public:
     const char* GetLimitName() { return GetGVM().IsIII() ? "Coronas" : nullptr; }
     void ChangeLimit(int, const std::string& value)
     {
-        PatchCoronas_III();
+        CORONAS_LIMIT = std::stoi(value);
+        PatchCoronasIII();
     }
 } CoronasIII;

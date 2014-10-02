@@ -114,7 +114,7 @@ int AdjustLimits()
         AdjustLimits(keys);
     }
 
-	return 0;
+    return 0;
 }
 
 
@@ -266,7 +266,7 @@ void DrawText(const char* text, float x, float y, float scalex, float scaley)
     {
         unsigned char red, green, blue, alpha;
         CRGBA() {}
-	    CRGBA(unsigned char r, unsigned char g, unsigned char b, unsigned char a) :
+        CRGBA(unsigned char r, unsigned char g, unsigned char b, unsigned char a) :
             red(r), green(g), blue(b), alpha(a)
         {}
     };
@@ -295,7 +295,7 @@ void DrawText(const char* text, float x, float y, float scalex, float scaley)
     {
         CRGBA temp;
         if(Adjuster::IsSA())
-	        return *((CRGBA* (__thiscall *)(void*, CRGBA*, unsigned char))pGetInterfaceColour)(pInterfaceColour, &temp, index);
+            return *((CRGBA* (__thiscall *)(void*, CRGBA*, unsigned char))pGetInterfaceColour)(pInterfaceColour, &temp, index);
         else if(Adjuster::IsVC())
             return CRGBA(0x1B, 0x59, 0x82, 0xFF);
         else
@@ -409,7 +409,7 @@ void DrawLimits()
 // Patches CHud::Draw to draw additional stuff (limits details)
 void PatchDrawer()
 {
-    DrawHUD.fun = injector::MakeCALL(Adjuster::IsSA() ? 0x53E4FF : Adjuster::IsVC() ? 0x4A64D0 : 0, DrawLimits).get();
+    DrawHUD.fun = injector::MakeCALL(Adjuster::IsSA() ? 0x53E4FF : Adjuster::IsVC() ? 0x4A64D0 : Adjuster::IsIII() ? 0x48E420 : 0, DrawLimits).get();
 }
 
 

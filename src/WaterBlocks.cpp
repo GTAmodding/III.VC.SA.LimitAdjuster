@@ -157,15 +157,15 @@ public:
     const char* GetLimitName() { return GetGVM().IsIII() ? "OutsideWorldWaterBlocks" : nullptr; }
     void ChangeLimit(int, const std::string& value)
     {
-        int WaterCount = std::stoi(value);
+        unsigned int WaterCount = std::stoi(value);
 
         injector::WriteMemory<float>(0x602AE8, 10000.0f, true);
         injector::WriteMemory<float>(0x602AF0, 10000.0f, true);
         injector::WriteMemory<float>(0x602B48, static_cast<float>(WaterCount)* 256.0f, true);
-        injector::WriteMemory<unsigned char>(0x5564BD + 0x2, static_cast<unsigned char>(WaterCount));
-        injector::WriteMemory<unsigned char>(0x5C24D9 + 0x3, (static_cast<unsigned char>(WaterCount)-5) * 2 + 26);
-        injector::WriteMemory<unsigned char>(0x5564D0 + 0x1, static_cast<unsigned char>(WaterCount));
-        injector::WriteMemory<unsigned char>(0x55676D + 0x2, static_cast<unsigned char>(WaterCount));
-        injector::WriteMemory<unsigned char>(0x556777 + 0x2, static_cast<unsigned char>(WaterCount)+16);
+        injector::WriteMemory<unsigned char>(0x5564BD + 0x2, static_cast<unsigned char>(WaterCount), true);
+        injector::WriteMemory<unsigned char>(0x5C24D9 + 0x3, (static_cast<unsigned char>(WaterCount)-5) * 2 + 26, true);
+        injector::WriteMemory<unsigned char>(0x5564D0 + 0x1, static_cast<unsigned char>(WaterCount), true);
+        injector::WriteMemory<unsigned char>(0x55676D + 0x2, static_cast<unsigned char>(WaterCount), true);
+        injector::WriteMemory<unsigned char>(0x556777 + 0x2, static_cast<unsigned char>(WaterCount)+16, true);
     }
 } OutsideWorldWaterBlocksIII;
