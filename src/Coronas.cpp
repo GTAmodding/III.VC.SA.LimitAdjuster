@@ -13,13 +13,15 @@
 #include "misc\yacl\Camera.h"
 #include "misc\CPatch.h"
 
+int NUM_CORONAS;
+
 #define WRAPPER __declspec(naked)
 #define EAXJMP(a) { _asm mov eax, a _asm jmp eax }
 
 std::map<unsigned int, CCoronasLinkedListNode*>	CCoronas::UsedMap;
 CCoronasLinkedListNode							CCoronas::FreeList, CCoronas::UsedList;
-CCoronasLinkedListNode							CCoronas::aLinkedList[NUM_CORONAS];
-CRegisteredCorona								CCoronas::aCoronas[NUM_CORONAS];
+std::vector<CCoronasLinkedListNode>				CCoronas::aLinkedList;
+std::vector<CRegisteredCorona>					CCoronas::aCoronas;
 int&											CCoronas::bChangeBrightnessImmediately = *(int*)0xC3E034;
 float&											CCoronas::ScreenMult = *(float*)0x8D4B5C;
 
@@ -96,56 +98,6 @@ void CCoronas::RegisterCorona(unsigned int nID, CEntity* pAttachTo, unsigned cha
             pSuitableSlot->JustCreated = true;
             pSuitableSlot->Identifier = nID;
         }
-
-
-        /*bool													bFoundFreeSlot = false;
-        std::array<CRegisteredCorona,NUM_CORONAS>::iterator	freeSlotIt;
-        auto													it = aCoronas.begin();
-
-        for ( ; it != aCoronas.end(); it++ )
-        {
-        if ( it->Identifier == nID )
-        break;
-        if ( !bFoundFreeSlot && !it->Identifier )
-        {
-        bFoundFreeSlot = true;
-        freeSlotIt = it;
-        }
-        }
-
-        if ( it != aCoronas.end() )
-        {
-        if ( it->FadedIntensity == 0 && A == 0 )
-        {
-        it->Identifier = 0;
-        --NumCoronas;
-        return;
-        }
-        }
-        else
-        {
-        if ( A )
-        {
-        if ( !bFoundFreeSlot )
-        {
-        PrepareForSizeChange();
-        aCoronas.push_back(CRegisteredCorona());
-        it = aCoronas.end() - 1;
-
-        UpdatePointersInCode();
-        }
-        else
-        it = freeSlotIt;
-        it->FadedIntensity = bFadeIntensity ? 255 : 0;
-        it->OffScreen = true;
-        it->JustCreated = true;
-        it->Identifier = nID;
-        it->WhiteCore = false;
-        ++NumCoronas;
-        }
-        else
-        return;
-        }*/
 
         pSuitableSlot->Red = R;
         pSuitableSlot->Green = G;
@@ -260,56 +212,17 @@ void CCoronas::Init()
     }
 }
 
-/*void CCoronas::InvalidateAllReferences()
-{
-for ( auto it = aCoronas.begin(); it != aCoronas.end(); it++ )
-{
-if ( it->pEntityAttachedTo )
-it->pEntityAttachedTo->CleanUpOldReference(&it->pEntityAttachedTo);
-}
-}
-
-void CCoronas::UpdatePointersInCode()
-{
-auto	pNewPtr = aCoronas.data();
-auto	nSize = aCoronas.size();
-if ( bRemakeReferences )
-{
-for ( auto it = aCoronas.begin(); it != aCoronas.end(); it++ )
-{
-if ( it->pEntityAttachedTo )
-{
-it->pEntityAttachedTo->RegisterReference(&it->pEntityAttachedTo);
-assert(*(int*)(&it->pEntityAttachedTo) == (int)it->pEntityAttachedTo);
-}
-}
-
-// CCoronas::RenderReflections
-Memory::Patch<void*>(0x6FB648, &pNewPtr->JustCreated + 1);
-Memory::Patch<void*>(0x6FB6CF, &pNewPtr->FadedIntensity);
-
-// CCoronas::Render
-Memory::Patch<void*>(0x6FAF42, &pNewPtr->pEntityAttachedTo);
-
-bRemakeReferences = false;
-}
-
-// CCoronas::RenderReflections
-Memory::Patch<void*>(0x6FB657, &pNewPtr[nSize].JustCreated + 1);
-Memory::Patch<void*>(0x6FB9B8, &pNewPtr[nSize].FadedIntensity);
-
-// CCoronas::Render
-Memory::Patch<DWORD>(0x6FAF4A, nSize);
-}*/
-
 void CCoronas::Inject()
 {
+    CCoronas::aLinkedList.resize(NUM_CORONAS);
+    CCoronas::aCoronas.resize(NUM_CORONAS);
+
     // CCoronas::RenderReflections
-    CPatch::SetPointer(0x6FB648, &aCoronas->JustCreated + 1);
-    CPatch::SetPointer(0x6FB6CF, &aCoronas->FadedIntensity);
+    CPatch::SetPointer(0x6FB648, &aCoronas[0].JustCreated + 1);
+    CPatch::SetPointer(0x6FB6CF, &aCoronas[0].FadedIntensity);
 
     // CCoronas::Render
-    CPatch::SetPointer(0x6FAF42, &aCoronas->pEntityAttachedTo);
+    CPatch::SetPointer(0x6FAF42, &aCoronas[0].pEntityAttachedTo);
 
     // CCoronas::RenderReflections
     CPatch::SetPointer(0x6FB657, &aCoronas[NUM_CORONAS].JustCreated + 1);
@@ -324,14 +237,13 @@ void CCoronas::Inject()
     CPatch::RedirectCall(0x53C13B, CCoronas::Update);
 }
 
-
 class CoronasSA : public SimpleAdjuster
 {
 public:
     const char* GetLimitName() { return GetGVM().IsSA() ? "Coronas" : nullptr; }
     void ChangeLimit(int, const std::string& value)
     {
-        //NUM_CORONAS = std::stoi(value);
+        NUM_CORONAS = std::stoi(value);
         CCoronas::Inject();
     }
 } CoronasSA;

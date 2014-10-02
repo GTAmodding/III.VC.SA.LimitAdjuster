@@ -4,7 +4,7 @@
 #include <map>
 #include "General.h"
 
-#define NUM_CORONAS		20000
+//#define NUM_CORONAS		20000
 
 class CRegisteredCorona
 {
@@ -79,8 +79,8 @@ class CCoronas
 private:
 	static std::map<unsigned int,CCoronasLinkedListNode*>	UsedMap;
 	static CCoronasLinkedListNode							FreeList, UsedList;		
-	static CCoronasLinkedListNode							aLinkedList[NUM_CORONAS];
-	static CRegisteredCorona								aCoronas[NUM_CORONAS];
+    static std::vector<CCoronasLinkedListNode>				aLinkedList;
+    static std::vector<CRegisteredCorona>					aCoronas;
 	static int&												bChangeBrightnessImmediately;
 	static float&											ScreenMult;
 

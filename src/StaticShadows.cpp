@@ -388,3 +388,611 @@ class StaticShadowsSA : public SimpleAdjuster
             PatchPermanentShadows();
         }
 } StaticShadowsSA;
+
+///////////////////////THIS THING BELOW MAY NOT WORK!!!///////////////////////////////////////////
+/////////////////////////////////////////////GTA 3|VC/////////////////////////////////////////////
+DWORD _EAX;
+WORD _EBX;
+/////////////////////////////////////////////GTA Vice City/////////////////////////////////////////////
+void patch_56E6C0();
+void patch_56967E();
+void patch_56E924();
+void patch_56E93B();
+void patch_56EB34();
+void patch_56EB43();
+void patch_56F09B();
+void patch_56F24A();
+void patch_56C71B();
+void patch_56C7BC();
+void patch_56CBA8();
+void patch_56CC10();
+void patch_568F17();
+
+void PatchStaticShadowsVC()
+{
+        aStaticShadows.resize(SSHADS_LIMIT * 64);
+
+    AdjustPointer(0x569610 + 0x5C, &aStaticShadows[0], 0x8615A0, 0x8621A0);
+    AdjustPointer(0x56C350 + 0x217, &aStaticShadows[0], 0x8615A0, 0x8621A0);
+    AdjustPointer(0x56E780 + 0x1AA, &aStaticShadows[0], 0x8615A0, 0x8621A0);
+    AdjustPointer(0x56E780 + 0x39B, &aStaticShadows[0], 0x8615A0, 0x8621A0);
+    AdjustPointer(0x56E780 + 0x3EF, &aStaticShadows[0], 0x8615A0, 0x8621A0);
+    AdjustPointer(0x56EDE0 + 0x21B, &aStaticShadows[0], 0x8615A0, 0x8621A0);
+    AdjustPointer(0x56F270 + 0x3E, &aStaticShadows[0], 0x8615A0, 0x8621A0);
+    AdjustPointer(0x569616, &aStaticShadows[0], 0x8615A0, 0x8621A0);
+    AdjustPointer(0x569662, &aStaticShadows[0], 0x8615A0, 0x8621A0);
+    AdjustPointer(0x56C690 + 0xAA, &aStaticShadows[0], 0x8615A0, 0x8621A0);
+    AdjustPointer(0x56C690 + 0x154, &aStaticShadows[0], 0x8615A0, 0x8621A0);
+    AdjustPointer(0x56E780 + 0x1B2, &aStaticShadows[0], 0x8615A0, 0x8621A0);
+    AdjustPointer(0x56EAE8, &aStaticShadows[0], 0x8615A0, 0x8621A0);
+    AdjustPointer(0x56EB11, &aStaticShadows[0], 0x8615A0, 0x8621A0);
+    AdjustPointer(0x56E780 + 0x3BA, &aStaticShadows[0], 0x8615A0, 0x8621A0);
+    AdjustPointer(0x56E780 + 0x4A2, &aStaticShadows[0], 0x8615A0, 0x8621A0);
+    AdjustPointer(0x56EDE0 + 0x225, &aStaticShadows[0], 0x8615A0, 0x8621A0);
+    AdjustPointer(0x569610 + 0x22, &aStaticShadows[0], 0x8615A0, 0x8621A0);
+    AdjustPointer(0x56E780 + 0x35B, &aStaticShadows[0], 0x8615A0, 0x8621A0);
+    AdjustPointer(0x56E780 + 0x497, &aStaticShadows[0], 0x8615A0, 0x8621A0);
+    AdjustPointer(0x56C350 + 0x81, &aStaticShadows[0], 0x8615A0, 0x8621A0);
+    AdjustPointer(0x56E780 + 0x1CD, &aStaticShadows[0], 0x8615A0, 0x8621A0);
+    AdjustPointer(0x56E780 + 0x216, &aStaticShadows[0], 0x8615A0, 0x8621A0);
+    AdjustPointer(0x56E780 + 0x43B, &aStaticShadows[0], 0x8615A0, 0x8621A0);
+    AdjustPointer(0x56C350 + 0x8F, &aStaticShadows[0], 0x8615A0, 0x8621A0);
+    AdjustPointer(0x56E780 + 0x1F0, &aStaticShadows[0], 0x8615A0, 0x8621A0);
+    AdjustPointer(0x56E780 + 0x241, &aStaticShadows[0], 0x8615A0, 0x8621A0);
+    AdjustPointer(0x56E780 + 0x444, &aStaticShadows[0], 0x8615A0, 0x8621A0);
+    AdjustPointer(0x56C350 + 0x9D, &aStaticShadows[0], 0x8615A0, 0x8621A0);
+    AdjustPointer(0x56E780 + 0x26C, &aStaticShadows[0], 0x8615A0, 0x8621A0);
+    AdjustPointer(0x56E780 + 0x44D, &aStaticShadows[0], 0x8615A0, 0x8621A0);
+    AdjustPointer(0x56C350 + 0x35, &aStaticShadows[0], 0x8615A0, 0x8621A0);
+    AdjustPointer(0x56C350 + 0x28F, &aStaticShadows[0], 0x8615A0, 0x8621A0);
+    AdjustPointer(0x56C350 + 0x2E0, &aStaticShadows[0], 0x8615A0, 0x8621A0);
+    AdjustPointer(0x56E780 + 0x298, &aStaticShadows[0], 0x8615A0, 0x8621A0);
+    AdjustPointer(0x56E780 + 0x457, &aStaticShadows[0], 0x8615A0, 0x8621A0);
+    AdjustPointer(0x56C350 + 0x67, &aStaticShadows[0], 0x8615A0, 0x8621A0);
+    AdjustPointer(0x56C350 + 0x289, &aStaticShadows[0], 0x8615A0, 0x8621A0);
+    AdjustPointer(0x56C350 + 0x2DA, &aStaticShadows[0], 0x8615A0, 0x8621A0);
+    AdjustPointer(0x56E780 + 0x2B0, &aStaticShadows[0], 0x8615A0, 0x8621A0);
+    AdjustPointer(0x56E780 + 0x461, &aStaticShadows[0], 0x8615A0, 0x8621A0);
+    AdjustPointer(0x56C350 + 0x1F, &aStaticShadows[0], 0x8615A0, 0x8621A0);
+    AdjustPointer(0x56C350 + 0x283, &aStaticShadows[0], 0x8615A0, 0x8621A0);
+    AdjustPointer(0x56C350 + 0x2D4, &aStaticShadows[0], 0x8615A0, 0x8621A0);
+    AdjustPointer(0x56E780 + 0x2C8, &aStaticShadows[0], 0x8615A0, 0x8621A0);
+    AdjustPointer(0x56E780 + 0x46B, &aStaticShadows[0], 0x8615A0, 0x8621A0);
+    AdjustPointer(0x56C350 + 0x51, &aStaticShadows[0], 0x8615A0, 0x8621A0);
+    AdjustPointer(0x56C350 + 0x277, &aStaticShadows[0], 0x8615A0, 0x8621A0);
+    AdjustPointer(0x56C350 + 0x2CE, &aStaticShadows[0], 0x8615A0, 0x8621A0);
+    AdjustPointer(0x56E780 + 0x2E0, &aStaticShadows[0], 0x8615A0, 0x8621A0);
+    AdjustPointer(0x56E780 + 0x479, &aStaticShadows[0], 0x8615A0, 0x8621A0);
+    AdjustPointer(0x56C350 + 0x269, &aStaticShadows[0], 0x8615A0, 0x8621A0);
+    AdjustPointer(0x56C350 + 0x2C0, &aStaticShadows[0], 0x8615A0, 0x8621A0);
+    AdjustPointer(0x56E780 + 0x335, &aStaticShadows[0], 0x8615A0, 0x8621A0);
+    AdjustPointer(0x56E780 + 0x42B, &aStaticShadows[0], 0x8615A0, 0x8621A0);
+    AdjustPointer(0x56C350 + 0x263, &aStaticShadows[0], 0x8615A0, 0x8621A0);
+    AdjustPointer(0x56C350 + 0x2BA, &aStaticShadows[0], 0x8615A0, 0x8621A0);
+    AdjustPointer(0x56E780 + 0x344, &aStaticShadows[0], 0x8615A0, 0x8621A0);
+    AdjustPointer(0x56E780 + 0x433, &aStaticShadows[0], 0x8615A0, 0x8621A0);
+    AdjustPointer(0x56C690 + 0x118, &aStaticShadows[0], 0x8615A0, 0x8621A0);
+    AdjustPointer(0x56C690 + 0x182, &aStaticShadows[0], 0x8615A0, 0x8621A0);
+    AdjustPointer(0x56C690 + 0x18C, &aStaticShadows[0], 0x8615A0, 0x8621A0);
+    AdjustPointer(0x56E780 + 0x305, &aStaticShadows[0], 0x8615A0, 0x8621A0);
+    AdjustPointer(0x56E780 + 0x3FF, &aStaticShadows[0], 0x8615A0, 0x8621A0);
+    AdjustPointer(0x56C690 + 0x29E, &aStaticShadows[0], 0x8615A0, 0x8621A0);
+    AdjustPointer(0x56E780 + 0x310, &aStaticShadows[0], 0x8615A0, 0x8621A0);
+    AdjustPointer(0x56E780 + 0x40A, &aStaticShadows[0], 0x8615A0, 0x8621A0);
+    AdjustPointer(0x56C690 + 0xC4, &aStaticShadows[0], 0x8615A0, 0x8621A0);
+    AdjustPointer(0x56C690 + 0x166, &aStaticShadows[0], 0x8615A0, 0x8621A0);
+    AdjustPointer(0x56C690 + 0x170, &aStaticShadows[0], 0x8615A0, 0x8621A0);
+    AdjustPointer(0x56E780 + 0x2FB, &aStaticShadows[0], 0x8615A0, 0x8621A0);
+    AdjustPointer(0x56E780 + 0x3F5, &aStaticShadows[0], 0x8615A0, 0x8621A0);
+    AdjustPointer(0x56C690 + 0x32F, &aStaticShadows[0], 0x8615A0, 0x8621A0);
+    AdjustPointer(0x56E780 + 0x31F, &aStaticShadows[0], 0x8615A0, 0x8621A0);
+    AdjustPointer(0x56E780 + 0x415, &aStaticShadows[0], 0x8615A0, 0x8621A0);
+    AdjustPointer(0x56C690 + 0x324, &aStaticShadows[0], 0x8615A0, 0x8621A0);
+    AdjustPointer(0x56E780 + 0x329, &aStaticShadows[0], 0x8615A0, 0x8621A0);
+    AdjustPointer(0x56E780 + 0x41F, &aStaticShadows[0], 0x8615A0, 0x8621A0);
+    AdjustPointer(0x56C690 + 0x33D, &aStaticShadows[0], 0x8615A0, 0x8621A0);
+    AdjustPointer(0x56E780 + 0x32F, &aStaticShadows[0], 0x8615A0, 0x8621A0);
+    AdjustPointer(0x56E780 + 0x425, &aStaticShadows[0], 0x8615A0, 0x8621A0);
+    AdjustPointer(0x569610 + 0x10, &aStaticShadows[0], 0x8615A0, 0x8621A0);
+    AdjustPointer(0x569610 + 0x67, &aStaticShadows[0], 0x8615A0, 0x8621A0);
+    AdjustPointer(0x56E780 + 0x2F4, &aStaticShadows[0], 0x8615A0, 0x8621A0);
+    AdjustPointer(0x56E780 + 0x483, &aStaticShadows[0], 0x8615A0, 0x8621A0);
+    AdjustPointer(0x56C690 + 0x53, &aStaticShadows[0], 0x8615A0, 0x8621A0);
+    AdjustPointer(0x56C690 + 0xB7, &aStaticShadows[0], 0x8615A0, 0x8621A0);
+    AdjustPointer(0x56C690 + 0x508, &aStaticShadows[0], 0x8615A0, 0x8621A0);
+    AdjustPointer(0x569610 + 0x19, &aStaticShadows[0], 0x8615A0, 0x8621A0);
+    AdjustPointer(0x56E780 + 0x34E, &aStaticShadows[0], 0x8615A0, 0x8621A0);
+    AdjustPointer(0x56E780 + 0x48A, &aStaticShadows[0], 0x8615A0, 0x8621A0);
+    AdjustPointer(0x56EDE0 + 0x22F, &aStaticShadows[0], 0x8615A0, 0x8621A0);
+    AdjustPointer(0x56EDE0 + 0x239, &aStaticShadows[0], 0x8615A0, 0x8621A0);
+    AdjustPointer(0x56C690 + 0x5A, &aStaticShadows[0], 0x8615A0, 0x8621A0);
+    AdjustPointer(0x56EDE0 + 0x243, &aStaticShadows[0], 0x8615A0, 0x8621A0);
+    AdjustPointer(0x56EDE0 + 0x24D, &aStaticShadows[0], 0x8615A0, 0x8621A0);
+    AdjustPointer(0x56C690 + 0x61, &aStaticShadows[0], 0x8615A0, 0x8621A0);
+    AdjustPointer(0x56EDE0 + 0x257, &aStaticShadows[0], 0x8615A0, 0x8621A0);
+    AdjustPointer(0x56EDE0 + 0x261, &aStaticShadows[0], 0x8615A0, 0x8621A0);
+    AdjustPointer(0x56C690 + 0x68, &aStaticShadows[0], 0x8615A0, 0x8621A0);
+    AdjustPointer(0x56EDE0 + 0x26B, &aStaticShadows[0], 0x8615A0, 0x8621A0);
+    AdjustPointer(0x56EDE0 + 0x275, &aStaticShadows[0], 0x8615A0, 0x8621A0);
+    AdjustPointer(0x56C690 + 0x6F, &aStaticShadows[0], 0x8615A0, 0x8621A0);
+    AdjustPointer(0x56EDE0 + 0x27F, &aStaticShadows[0], 0x8615A0, 0x8621A0);
+    AdjustPointer(0x56EDE0 + 0x289, &aStaticShadows[0], 0x8615A0, 0x8621A0);
+    AdjustPointer(0x56C690 + 0x76, &aStaticShadows[0], 0x8615A0, 0x8621A0);
+    AdjustPointer(0x56EDE0 + 0x293, &aStaticShadows[0], 0x8615A0, 0x8621A0);
+    AdjustPointer(0x56EDE0 + 0x29D, &aStaticShadows[0], 0x8615A0, 0x8621A0);
+    AdjustPointer(0x56C690 + 0x7D, &aStaticShadows[0], 0x8615A0, 0x8621A0);
+    AdjustPointer(0x56EDE0 + 0x2A7, &aStaticShadows[0], 0x8615A0, 0x8621A0);
+    AdjustPointer(0x56EDE0 + 0x2B1, &aStaticShadows[0], 0x8615A0, 0x8621A0);
+    AdjustPointer(0x56C690 + 0x84, &aStaticShadows[0], 0x8615A0, 0x8621A0);
+
+
+    RedirectJump(0x56E6C0, patch_56E6C0);
+    RedirectJump(0x56967E, patch_56967E);
+    RedirectJump(0x56E924, patch_56E924);
+    RedirectJump(0x56E93B, patch_56E93B);
+    RedirectJump(0x56EB34, patch_56EB34);
+    RedirectJump(0x56EB43, patch_56EB43);
+    RedirectJump(0x56F09B, patch_56F09B);
+    RedirectJump(0x56F24A, patch_56F24A);
+    RedirectJump(0x56C71B, patch_56C71B);
+    RedirectJump(0x56C7BC, patch_56C7BC);
+    RedirectJump(0x56CBA8, patch_56CBA8);
+
+
+    RedirectJump(0x56CC10, patch_56CC10);
+}
+
+DWORD ext_56E6C8 = 0x56E6C8;
+void __declspec(naked) patch_56E6C0()
+{
+    __asm
+    {
+        mov _EBX, bx
+        mov eax, SSHADS_LIMIT
+        cmp word ptr ds : [0xA10AAC], bx
+        mov bx, _EBX
+        jmp ext_56E6C8
+    }
+}
+
+DWORD ext_569684 = 0x569684;
+void __declspec(naked) patch_56967E()
+{
+    __asm
+    {
+        add     ebx, 40h
+        cmp     ecx, SSHADS_LIMIT
+        jmp ext_569684
+    }
+}
+
+DWORD ext_56E92A = 0x56E92A;
+DWORD ext_56E93B = 0x56E93B;
+void __declspec(naked) patch_56E924()
+{
+    __asm
+    {
+        cmp     esi, SSHADS_LIMIT
+        jge     loc_56E93B
+        jmp ext_56E92A
+    loc_56E93B:
+        jmp ext_56E93B
+    }
+}
+
+DWORD ext_56E948 = 0x56E948;
+DWORD ext_56EB27 = 0x56EB27;
+void __declspec(naked) patch_56E93B()
+{
+    __asm
+    {
+        cmp     esi, SSHADS_LIMIT
+        jge     loc_56EB27
+        mov   ebp, esi
+        jmp ext_56E948
+    loc_56EB27:
+        jmp ext_56EB27
+    }
+}
+
+DWORD ext_56EB3A = 0x56EB3A;
+DWORD ext_56EB43 = 0x56EB43;
+void __declspec(naked) patch_56EB34()
+{
+    __asm
+    {
+        cmp     esi, SSHADS_LIMIT
+        jge      loc_56EB43
+        jmp ext_56EB3A
+    loc_56EB43:
+        jmp ext_56EB43
+    }
+}
+
+DWORD ext_56EB49 = 0x56EB49;
+DWORD ext_56EB60 = 0x56EB60;
+void __declspec(naked) patch_56EB43()
+{
+    __asm
+    {
+        cmp     esi, SSHADS_LIMIT
+        jnz     loc_56EB60
+        jmp ext_56EB49
+    loc_56EB60:
+        jmp ext_56EB60
+    }
+}
+
+DWORD ext_56F0A4 = 0x56F0A4;
+void __declspec(naked) patch_56F09B()
+{
+    __asm
+    {
+        add     edx, 200h
+        cmp     eax, SSHADS_LIMIT
+        jmp ext_56F0A4
+    }
+}
+
+DWORD ext_56F24F = 0x56F24F;
+void __declspec(naked) patch_56F24A()
+{
+    __asm
+    {
+        sub     edx, ebx
+        cmp     eax, SSHADS_LIMIT
+        jmp ext_56F24F
+    }
+}
+
+DWORD ext_56C724 = 0x56C724;
+void __declspec(naked) patch_56C71B()
+{
+    __asm
+    {
+        add     ebp, 200h
+        cmp     eax, SSHADS_LIMIT
+        jmp ext_56C724
+    }
+}
+
+
+DWORD ext_56C7C1 = 0x56C7C1;
+void __declspec(naked) patch_56C7BC()
+{
+    __asm
+    {
+        pop     ecx
+        cmp     eax, SSHADS_LIMIT
+        pop     ecx
+        jmp ext_56C7C1
+    }
+}
+
+DWORD ext_56CBAD = 0x56CBAD;
+void __declspec(naked) patch_56CBA8()
+{
+    __asm
+    {
+        mov _EAX, eax
+        mov eax, SSHADS_LIMIT
+        cmp     dword ptr ds:[esp + 20h], eax
+        mov eax, _EAX
+        jmp ext_56CBAD
+    }
+}
+
+DWORD ext_56CC15 = 0x56CC15;
+void __declspec(naked) patch_56CC10()
+{
+    __asm
+    {
+        mov _EAX, eax
+        mov eax, SSHADS_LIMIT
+        cmp     dword ptr ds : [esp + 28h], eax
+        mov eax, _EAX
+        jmp ext_56CC15
+    }
+}
+
+DWORD ext_568F1C = 0x568F1C;
+void __declspec(naked) patch_568F17()
+{
+    __asm
+    {
+        sub     edx, ebx
+        cmp     eax, SSHADS_LIMIT
+        jmp ext_568F1C
+    }
+}
+
+
+class StaticShadowsVC : public SimpleAdjuster
+{
+public:
+    const char* GetLimitName() { return GetGVM().IsVC() ? "StaticShadows" : nullptr; }
+    void ChangeLimit(int, const std::string& value)
+    {
+        SSHADS_LIMIT = std::stoi(value);
+        PatchStaticShadowsVC();
+    }
+} StaticShadowsVC;
+
+
+/////////////////////////////////////////////GTA 3/////////////////////////////////////////////////////
+void  patch_56E6C0();
+void  patch_513214();
+void  patch_51322B();
+void  patch_51344C();
+void  patch_51345B();
+void  patch_512D58();
+void  patch_516C30();
+void  patch_51466B();
+void  patch_5146C9();
+void  patch_5148C8();
+void  patch_5148E1();
+
+void PatchStaticShadowsIII()
+{
+        aStaticShadows.resize(SSHADS_LIMIT * 64);
+
+    AdjustPointer(0x512AB0 + 0x208, &aStaticShadows[0], 0x773BE8, 0x77430E);
+    AdjustPointer(0x5130A0 + 0x17A, &aStaticShadows[0], 0x773BE8, 0x77430E);
+    AdjustPointer(0x5130A0 + 0x394, &aStaticShadows[0], 0x773BE8, 0x77430E);
+    AdjustPointer(0x5130A0 + 0x3E0, &aStaticShadows[0], 0x773BE8, 0x77430E);
+    AdjustPointer(0x514910 + 0x247, &aStaticShadows[0], 0x773BE8, 0x77430E);
+    AdjustPointer(0x516BE0 + 0x7, &aStaticShadows[0], 0x773BE8, 0x77430E);
+    AdjustPointer(0x517890 + 0x3E, &aStaticShadows[0], 0x773BE8, 0x77430E);
+    AdjustPointer(0x512AB0 + 0x212, &aStaticShadows[0], 0x773BE8, 0x77430E);
+    AdjustPointer(0x5130A0 + 0x182, &aStaticShadows[0], 0x773BE8, 0x77430E);
+    AdjustPointer(0x5130A0 + 0x3B2, &aStaticShadows[0], 0x773BE8, 0x77430E);
+    AdjustPointer(0x5145F0 + 0x9A, &aStaticShadows[0], 0x773BE8, 0x77430E);
+    AdjustPointer(0x5145F0 + 0x104, &aStaticShadows[0], 0x773BE8, 0x77430E);
+    AdjustPointer(0x516BF0, &aStaticShadows[0], 0x773BE8, 0x77430E);
+    AdjustPointer(0x5130A0 + 0x382, &aStaticShadows[0], 0x773BE8, 0x77430E);
+    AdjustPointer(0x5130A0 + 0x484, &aStaticShadows[0], 0x773BE8, 0x77430E);
+    AdjustPointer(0x516BE0 + 0x2B, &aStaticShadows[0], 0x773BE8, 0x77430E);
+    AdjustPointer(0x5130A0 + 0x19D, &aStaticShadows[0], 0x773BE8, 0x77430E);
+    AdjustPointer(0x5130A0 + 0x42E, &aStaticShadows[0], 0x773BE8, 0x77430E);
+    AdjustPointer(0x514910 + 0xC2, &aStaticShadows[0], 0x773BE8, 0x77430E);
+    AdjustPointer(0x5130A0 + 0x1D5, &aStaticShadows[0], 0x773BE8, 0x77430E);
+    AdjustPointer(0x5130A0 + 0x240, &aStaticShadows[0], 0x773BE8, 0x77430E);
+    AdjustPointer(0x5130A0 + 0x437, &aStaticShadows[0], 0x773BE8, 0x77430E);
+    AdjustPointer(0x514910 + 0xD0, &aStaticShadows[0], 0x773BE8, 0x77430E);
+    AdjustPointer(0x5130A0 + 0x27D, &aStaticShadows[0], 0x773BE8, 0x77430E);
+    AdjustPointer(0x5130A0 + 0x440, &aStaticShadows[0], 0x773BE8, 0x77430E);
+    AdjustPointer(0x514910 + 0xDE, &aStaticShadows[0], 0x773BE8, 0x77430E);
+    AdjustPointer(0x5130A0 + 0x2BE, &aStaticShadows[0], 0x773BE8, 0x77430E);
+    AdjustPointer(0x5130A0 + 0x44A, &aStaticShadows[0], 0x773BE8, 0x77430E);
+    AdjustPointer(0x514910 + 0x48, &aStaticShadows[0], 0x773BE8, 0x77430E);
+    AdjustPointer(0x514910 + 0x2CF, &aStaticShadows[0], 0x773BE8, 0x77430E);
+    AdjustPointer(0x514910 + 0x320, &aStaticShadows[0], 0x773BE8, 0x77430E);
+    AdjustPointer(0x5130A0 + 0x2D6, &aStaticShadows[0], 0x773BE8, 0x77430E);
+    AdjustPointer(0x5130A0 + 0x454, &aStaticShadows[0], 0x773BE8, 0x77430E);
+    AdjustPointer(0x514910 + 0x9E, &aStaticShadows[0], 0x773BE8, 0x77430E);
+    AdjustPointer(0x514910 + 0x2C9, &aStaticShadows[0], 0x773BE8, 0x77430E);
+    AdjustPointer(0x514910 + 0x31A, &aStaticShadows[0], 0x773BE8, 0x77430E);
+    AdjustPointer(0x5130A0 + 0x2EE, &aStaticShadows[0], 0x773BE8, 0x77430E);
+    AdjustPointer(0x5130A0 + 0x462, &aStaticShadows[0], 0x773BE8, 0x77430E);
+    AdjustPointer(0x514910 + 0x1F, &aStaticShadows[0], 0x773BE8, 0x77430E);
+    AdjustPointer(0x514910 + 0x2C3, &aStaticShadows[0], 0x773BE8, 0x77430E);
+    AdjustPointer(0x514910 + 0x314, &aStaticShadows[0], 0x773BE8, 0x77430E);
+    AdjustPointer(0x5130A0 + 0x306, &aStaticShadows[0], 0x773BE8, 0x77430E);
+    AdjustPointer(0x5130A0 + 0x46C, &aStaticShadows[0], 0x773BE8, 0x77430E);
+    AdjustPointer(0x514910 + 0x76, &aStaticShadows[0], 0x773BE8, 0x77430E);
+    AdjustPointer(0x514910 + 0x2B7, &aStaticShadows[0], 0x773BE8, 0x77430E);
+    AdjustPointer(0x514910 + 0x30E, &aStaticShadows[0], 0x773BE8, 0x77430E);
+    AdjustPointer(0x5130A0 + 0x35B, &aStaticShadows[0], 0x773BE8, 0x77430E);
+    AdjustPointer(0x5130A0 + 0x41C, &aStaticShadows[0], 0x773BE8, 0x77430E);
+    AdjustPointer(0x514910 + 0x2A9, &aStaticShadows[0], 0x773BE8, 0x77430E);
+    AdjustPointer(0x514910 + 0x300, &aStaticShadows[0], 0x773BE8, 0x77430E);
+    AdjustPointer(0x5130A0 + 0x36C, &aStaticShadows[0], 0x773BE8, 0x77430E);
+    AdjustPointer(0x5130A0 + 0x426, &aStaticShadows[0], 0x773BE8, 0x77430E);
+    AdjustPointer(0x514910 + 0x2A3, &aStaticShadows[0], 0x773BE8, 0x77430E);
+    AdjustPointer(0x514910 + 0x2FA, &aStaticShadows[0], 0x773BE8, 0x77430E);
+    AdjustPointer(0x5130A0 + 0x321, &aStaticShadows[0], 0x773BE8, 0x77430E);
+    AdjustPointer(0x5130A0 + 0x3E6, &aStaticShadows[0], 0x773BE8, 0x77430E);
+    AdjustPointer(0x5145F0 + 0xB4, &aStaticShadows[0], 0x773BE8, 0x77430E);
+    AdjustPointer(0x5145F0 + 0x116, &aStaticShadows[0], 0x773BE8, 0x77430E);
+    AdjustPointer(0x5145F0 + 0x120, &aStaticShadows[0], 0x773BE8, 0x77430E);
+    AdjustPointer(0x5130A0 + 0x336, &aStaticShadows[0], 0x773BE8, 0x77430E);
+    AdjustPointer(0x5130A0 + 0x3FB, &aStaticShadows[0], 0x773BE8, 0x77430E);
+    AdjustPointer(0x5145F0 + 0x185, &aStaticShadows[0], 0x773BE8, 0x77430E);
+    AdjustPointer(0x5130A0 + 0x345, &aStaticShadows[0], 0x773BE8, 0x77430E);
+    AdjustPointer(0x5130A0 + 0x406, &aStaticShadows[0], 0x773BE8, 0x77430E);
+    AdjustPointer(0x5147D1, &aStaticShadows[0], 0x773BE8, 0x77430E);
+    AdjustPointer(0x5130A0 + 0x34F, &aStaticShadows[0], 0x773BE8, 0x77430E);
+    AdjustPointer(0x5130A0 + 0x410, &aStaticShadows[0], 0x773BE8, 0x77430E);
+    AdjustPointer(0x5145F0 + 0x1E8, &aStaticShadows[0], 0x773BE8, 0x77430E);
+    AdjustPointer(0x5130A0 + 0x355, &aStaticShadows[0], 0x773BE8, 0x77430E);
+    AdjustPointer(0x5130A0 + 0x416, &aStaticShadows[0], 0x773BE8, 0x77430E);
+    AdjustPointer(0x5145F0 + 0x1EF, &aStaticShadows[0], 0x773BE8, 0x77430E);
+    AdjustPointer(0x5130A0 + 0x31A, &aStaticShadows[0], 0x773BE8, 0x77430E);
+    AdjustPointer(0x5130A0 + 0x472, &aStaticShadows[0], 0x773BE8, 0x77430E);
+    AdjustPointer(0x516BE0 + 0x19, &aStaticShadows[0], 0x773BE8, 0x77430E);
+    AdjustPointer(0x516BE0 + 0x46, &aStaticShadows[0], 0x773BE8, 0x77430E);
+    AdjustPointer(0x5145F0 + 0x43, &aStaticShadows[0], 0x773BE8, 0x77430E);
+    AdjustPointer(0x5145F0 + 0xA7, &aStaticShadows[0], 0x773BE8, 0x77430E);
+    AdjustPointer(0x5145F0 + 0x2C8, &aStaticShadows[0], 0x773BE8, 0x77430E);
+    AdjustPointer(0x5130A0 + 0x376, &aStaticShadows[0], 0x773BE8, 0x77430E);
+    AdjustPointer(0x5130A0 + 0x479, &aStaticShadows[0], 0x773BE8, 0x77430E);
+    AdjustPointer(0x516BE0 + 0x22, &aStaticShadows[0], 0x773BE8, 0x77430E);
+    AdjustPointer(0x5130A0 + 0x32B, &aStaticShadows[0], 0x773BE8, 0x77430E);
+    AdjustPointer(0x5130A0 + 0x3F0, &aStaticShadows[0], 0x773BE8, 0x77430E);
+    AdjustPointer(0x5145F0 + 0xC5, &aStaticShadows[0], 0x773BE8, 0x77430E);
+    AdjustPointer(0x5145F0 + 0x132, &aStaticShadows[0], 0x773BE8, 0x77430E);
+    AdjustPointer(0x5145F0 + 0x13C, &aStaticShadows[0], 0x773BE8, 0x77430E);
+    AdjustPointer(0x512AB0 + 0x21C, &aStaticShadows[0], 0x773BE8, 0x77430E);
+    AdjustPointer(0x512AB0 + 0x226, &aStaticShadows[0], 0x773BE8, 0x77430E);
+    AdjustPointer(0x5145F0 + 0x4A, &aStaticShadows[0], 0x773BE8, 0x77430E);
+    AdjustPointer(0x512AB0 + 0x230, &aStaticShadows[0], 0x773BE8, 0x77430E);
+    AdjustPointer(0x512AB0 + 0x23A, &aStaticShadows[0], 0x773BE8, 0x77430E);
+    AdjustPointer(0x5145F0 + 0x51, &aStaticShadows[0], 0x773BE8, 0x77430E);
+    AdjustPointer(0x512AB0 + 0x244, &aStaticShadows[0], 0x773BE8, 0x77430E);
+    AdjustPointer(0x512AB0 + 0x24E, &aStaticShadows[0], 0x773BE8, 0x77430E);
+    AdjustPointer(0x5145F0 + 0x58, &aStaticShadows[0], 0x773BE8, 0x77430E);
+    AdjustPointer(0x512AB0 + 0x258, &aStaticShadows[0], 0x773BE8, 0x77430E);
+    AdjustPointer(0x512AB0 + 0x262, &aStaticShadows[0], 0x773BE8, 0x77430E);
+    AdjustPointer(0x5145F0 + 0x5F, &aStaticShadows[0], 0x773BE8, 0x77430E);
+    AdjustPointer(0x512AB0 + 0x26C, &aStaticShadows[0], 0x773BE8, 0x77430E);
+    AdjustPointer(0x512AB0 + 0x276, &aStaticShadows[0], 0x773BE8, 0x77430E);
+    AdjustPointer(0x5145F0 + 0x66, &aStaticShadows[0], 0x773BE8, 0x77430E);
+    AdjustPointer(0x512AB0 + 0x280, &aStaticShadows[0], 0x773BE8, 0x77430E);
+    AdjustPointer(0x512AB0 + 0x28A, &aStaticShadows[0], 0x773BE8, 0x77430E);
+    AdjustPointer(0x5145F0 + 0x6D, &aStaticShadows[0], 0x773BE8, 0x77430E);
+    AdjustPointer(0x512AB0 + 0x294, &aStaticShadows[0], 0x773BE8, 0x77430E);
+    AdjustPointer(0x512AB0 + 0x29E, &aStaticShadows[0], 0x773BE8, 0x77430E);
+    AdjustPointer(0x5145F0 + 0x74, &aStaticShadows[0], 0x773BE8, 0x77430E);
+
+    RedirectJump(0x513214, patch_513214);
+    RedirectJump(0x51322B, patch_51322B);
+    RedirectJump(0x51344C, patch_51344C);
+    RedirectJump(0x51345B, patch_51345B);
+
+    RedirectJump(0x51466B, patch_51466B);
+    RedirectJump(0x5146C9, patch_5146C9);
+    RedirectJump(0x5148C8, patch_5148C8);
+    RedirectJump(0x5148E1, patch_5148E1);
+
+    RedirectJump(0x512D58, patch_512D58);
+    RedirectJump(0x516C30, patch_516C30);
+}
+
+DWORD ext_51321A = 0x51321A;
+DWORD ext_51322B = 0x51322B;
+void __declspec(naked) patch_513214()
+{
+    __asm
+    {
+        cmp     ebp, SSHADS_LIMIT
+        jge     loc_51322B
+        jmp ext_51321A
+    loc_51322B:
+        jmp ext_51322B
+    }
+}
+
+DWORD ext_513238 = 0x513238;
+DWORD ext_513442 = 0x513442;
+void __declspec(naked) patch_51322B()
+{
+    __asm
+    {
+        cmp     ebp, SSHADS_LIMIT
+        jge     loc_513442
+        mov   edx, ebp
+        jmp ext_513238
+    loc_513442:
+        jmp ext_513442
+    }
+}
+
+DWORD ext_513452 = 0x513452;
+DWORD ext_51345B = 0x51345B;
+void __declspec(naked) patch_51344C()
+{
+    __asm
+    {
+        cmp     ebp, SSHADS_LIMIT
+        jge    loc_51345B
+        jmp ext_513452
+    loc_51345B :
+        jmp ext_51345B
+    }
+}
+
+DWORD ext_513538 = 0x513538;
+DWORD ext_513465 = 0x513465;
+void __declspec(naked) patch_51345B()
+{
+    __asm
+    {
+        cmp     ebp, SSHADS_LIMIT
+        jnz     loc_513538
+        jmp ext_513465
+    loc_513538 :
+        jmp ext_513538
+    }
+}
+
+DWORD ext_512D61 = 0x512D61;
+void __declspec(naked) patch_512D58()
+{
+    __asm
+    {
+        add     edx, 200h
+        cmp     eax, SSHADS_LIMIT
+        jmp ext_512D61
+    }
+}
+
+DWORD ext_516C36 = 0x516C36;
+void __declspec(naked) patch_516C30()
+{
+    __asm
+    {
+        add     ebp, 40h
+        cmp     ebx, SSHADS_LIMIT
+        jmp ext_516C36
+    }
+}
+
+DWORD ext_514674 = 0x514674;
+void __declspec(naked) patch_51466B()
+{
+    __asm
+    {
+        add     ebp, 200h
+        cmp     eax, SSHADS_LIMIT
+        jmp ext_514674
+    }
+}
+
+DWORD ext_5146CE = 0x5146CE;
+void __declspec(naked) patch_5146C9()
+{
+    __asm
+    {
+        pop     ecx
+        cmp     eax, SSHADS_LIMIT
+        pop     ecx
+        jmp ext_5146CE
+    }
+}
+
+DWORD ext_5148CD = 0x5148CD;
+void __declspec(naked) patch_5148C8()
+{
+    __asm
+    {
+        mov _EAX, eax
+        mov eax, SSHADS_LIMIT
+        cmp     dword ptr[esp + 18h],  eax
+        mov eax, _EAX
+        jmp ext_5148CD
+    }
+}
+
+DWORD ext_5148E6 = 0x5148E6;
+void __declspec(naked) patch_5148E1()
+{
+    __asm
+    {
+        mov _EAX, eax
+        mov eax, SSHADS_LIMIT
+        cmp     dword ptr[esp + 20h], eax
+        mov eax, _EAX
+        jmp ext_5148E6
+    }
+}
+
+class StaticShadowsIII : public SimpleAdjuster
+{
+public:
+    const char* GetLimitName() { return GetGVM().IsIII() ? "StaticShadows" : nullptr; }
+    void ChangeLimit(int, const std::string& value)
+    {
+        SSHADS_LIMIT = std::stoi(value);
+        PatchStaticShadowsIII();
+    }
+} StaticShadowsIII;
