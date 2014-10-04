@@ -30,6 +30,26 @@ struct dummy_object
     }
 };
 
+// Reflects aligned_storage but has constructor and destructor for the storage.
+// The constructor automatically fills the object with 0's (BEFORE calling addr_ctor)
+template<size_t size, uintptr_t addr_ctor = 0, uintptr_t addr_dtor = 0>
+struct dummy_object_zero
+{
+    typename std::aligned_storage<size, 1>::type data;
+
+    dummy_object_zero()
+    {
+        static_assert(sizeof(dummy_object_zero) == size, "Wrong sizeof");
+        memset(this, 0, size);
+        if(addr_ctor) ((void(__fastcall*)(void*))(injector::lazy_ptr<addr_ctor>().get()))(this);
+    }
+
+    ~dummy_object_zero()
+    {
+        if(addr_dtor) ((void(__fastcall*)(void*))(injector::lazy_ptr<addr_dtor>().get()))(this);
+    }
+};
+
 // Reflects aligned_storage but has constructor and destructor for the storage, where the destructor is virtual
 template<size_t size, uintptr_t addr_ctor>
 struct dummy_object_vmt : public dummy_object<size, addr_ctor>

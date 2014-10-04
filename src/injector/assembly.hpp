@@ -52,12 +52,31 @@ namespace injector
             uint32_t arr[8];
             struct { uint32_t edi, esi, ebp, esp, ebx, edx, ecx, eax; };
         };
-        enum reg_name { reg_edi, reg_esi, reg_ebp, reg_esp, reg_ebx, reg_edx, reg_ecx, reg_eax  };
+        
+        enum reg_name {
+            reg_edi, reg_esi, reg_ebp, reg_esp, reg_ebx, reg_edx, reg_ecx, reg_eax 
+        };
+        
+        enum ef_flag {
+            carry_flag = 0, parity_flag = 2, adjust_flag = 4, zero_flag = 6, sign_flag = 7,
+            direction_flag = 10, overflow_flag = 11
+        };
 
         uint32_t& operator[](size_t i)
         { return this->arr[i]; }
         const uint32_t& operator[](size_t i) const
         { return this->arr[i]; }
+
+        template<uint32_t bit>   // bit starts from 0, use ef_flag enum
+        bool flag()
+        {
+            return (this->ef & (1 << bit)) != 0;
+        }
+
+        bool jnb()
+        {
+            return flag<carry_flag>() == false;
+        }
     };
 
     // Lowest level stuff (actual assembly) goes on the following namespace
@@ -133,8 +152,8 @@ namespace injector
     template<uintptr_t at, uintptr_t end, class FuncT>
     void MakeInline(FuncT func)
     {
-        static FuncT static_func;   // Stores the func object
-        static_func = func;         //
+        static FuncT static_func = func;    // Stores the func object
+        static_func = func;                 //
 
         // Encapsulates the call to static_func
         struct Caps

@@ -1,195 +1,154 @@
 /*
 * Searchlights Adjuster
 * Copyright (c) 2014 ThirteenAG
+* Copyright (c) 2014 LINK/2012
 * Licensed under the MIT License (http://opensource.org/licenses/MIT)
 */
 #include "LimitAdjuster.h"
-#include "misc\CPatch.h"
+#include "injector/assembly.hpp"
+#include "utility/dummy_object.hpp"
+#include "utility/StaticArrayAdjuster.hpp"
 
-std::vector<char> aSearchlights;
+typedef dummy_object_zero<0x7C> CSearchlights_SA;
 
-class SearchlightsSA : public SimpleAdjuster
+struct ScriptSearchlightsSA : public StaticArrayAdjuster<CSearchlights_SA>
 {
-public:
-    const char* GetLimitName() { return GetGVM().IsSA() ? "Searchlights" : nullptr; }
-
-    void ChangeLimit(int, const std::string& value) 
+    const char* GetLimitName()
     {
-        int nCount = std::stoi(value);
-        aSearchlights.resize(nCount * 0x7C);
+        return IsSA()? "ScriptSearchLights" : nullptr;
+    }
 
-        if (GetGVM().IsHoodlum())
+    ScriptSearchlightsSA() : StaticArrayAdjuster(0xA94D68, 8)
+    {
+        if(GetLimitName())
         {
-            CPatch::AdjustPointer(0x483A31, &aSearchlights[0], 0xA94D68, 0xA95148);
-            CPatch::AdjustPointer(0x493183, &aSearchlights[0], 0xA94D68, 0xA95148);
-            CPatch::AdjustPointer(0x49337B, &aSearchlights[0], 0xA94D68, 0xA95148);
-            CPatch::AdjustPointer(0x49399A, &aSearchlights[0], 0xA94D68, 0xA95148);
-            CPatch::AdjustPointer(0x5870CD, &aSearchlights[0], 0xA94D68, 0xA95148);
-            CPatch::AdjustPointer(0x156223F, &aSearchlights[0], 0xA94D68, 0xA95148);
-            CPatch::AdjustPointer(0x1565793, &aSearchlights[0], 0xA94D68, 0xA95148);
-            CPatch::AdjustPointer(0x15692C1, &aSearchlights[0], 0xA94D68, 0xA95148);
-            CPatch::AdjustPointer(0x1569305, &aSearchlights[0], 0xA94D68, 0xA95148);
-            CPatch::AdjustPointer(0x156F01D, &aSearchlights[0], 0xA94D68, 0xA95148);
-            CPatch::AdjustPointer(0x4773A3, &aSearchlights[0], 0xA94D68, 0xA95148);
-            CPatch::AdjustPointer(0x4773B8, &aSearchlights[0], 0xA94D68, 0xA95148);
-            CPatch::AdjustPointer(0x493189, &aSearchlights[0], 0xA94D68, 0xA95148);
-            CPatch::AdjustPointer(0x15692F6, &aSearchlights[0], 0xA94D68, 0xA95148);
-            CPatch::AdjustPointer(0x47B667, &aSearchlights[0], 0xA94D68, 0xA95148);
-            CPatch::AdjustPointer(0x49318F, &aSearchlights[0], 0xA94D68, 0xA95148);
-            CPatch::AdjustPointer(0x156930B, &aSearchlights[0], 0xA94D68, 0xA95148);
-            CPatch::AdjustPointer(0x493196, &aSearchlights[0], 0xA94D68, 0xA95148);
-            CPatch::AdjustPointer(0x15692FC, &aSearchlights[0], 0xA94D68, 0xA95148);
-            CPatch::AdjustPointer(0x4837C3, &aSearchlights[0], 0xA94D68, 0xA95148);
-            CPatch::AdjustPointer(0x483A23, &aSearchlights[0], 0xA94D68, 0xA95148);
-            CPatch::AdjustPointer(0x4939D4, &aSearchlights[0], 0xA94D68, 0xA95148);
-            CPatch::AdjustPointer(0x49319C, &aSearchlights[0], 0xA94D68, 0xA95148);
-            CPatch::AdjustPointer(0x1569315, &aSearchlights[0], 0xA94D68, 0xA95148);
-            CPatch::AdjustPointer(0x4931A2, &aSearchlights[0], 0xA94D68, 0xA95148);
-            CPatch::AdjustPointer(0x156931F, &aSearchlights[0], 0xA94D68, 0xA95148);
-            CPatch::AdjustPointer(0x4692C6, &aSearchlights[0], 0xA94D68, 0xA95148);
-            CPatch::AdjustPointer(0x4931A8, &aSearchlights[0], 0xA94D68, 0xA95148);
-            CPatch::AdjustPointer(0x1569329, &aSearchlights[0], 0xA94D68, 0xA95148);
-            CPatch::AdjustPointer(0x4931AE, &aSearchlights[0], 0xA94D68, 0xA95148);
-            CPatch::AdjustPointer(0x1569333, &aSearchlights[0], 0xA94D68, 0xA95148);
-            CPatch::AdjustPointer(0x4931B4, &aSearchlights[0], 0xA94D68, 0xA95148);
-            CPatch::AdjustPointer(0x4939F8, &aSearchlights[0], 0xA94D68, 0xA95148);
-            CPatch::AdjustPointer(0x156933D, &aSearchlights[0], 0xA94D68, 0xA95148);
-            CPatch::AdjustPointer(0x4931BA, &aSearchlights[0], 0xA94D68, 0xA95148);
-            CPatch::AdjustPointer(0x1569347, &aSearchlights[0], 0xA94D68, 0xA95148);
-            CPatch::AdjustPointer(0x4931C0, &aSearchlights[0], 0xA94D68, 0xA95148);
-            CPatch::AdjustPointer(0x1569353, &aSearchlights[0], 0xA94D68, 0xA95148);
-            CPatch::AdjustPointer(0x4931C6, &aSearchlights[0], 0xA94D68, 0xA95148);
-            CPatch::AdjustPointer(0x156934D, &aSearchlights[0], 0xA94D68, 0xA95148);
-            CPatch::AdjustPointer(0x4931CC, &aSearchlights[0], 0xA94D68, 0xA95148);
-            CPatch::AdjustPointer(0x1569359, &aSearchlights[0], 0xA94D68, 0xA95148);
-            CPatch::AdjustPointer(0x4931D2, &aSearchlights[0], 0xA94D68, 0xA95148);
-            CPatch::AdjustPointer(0x156935F, &aSearchlights[0], 0xA94D68, 0xA95148);
-            CPatch::AdjustPointer(0x4931D8, &aSearchlights[0], 0xA94D68, 0xA95148);
-            CPatch::AdjustPointer(0x1569365, &aSearchlights[0], 0xA94D68, 0xA95148);
-            CPatch::AdjustPointer(0x4931DF, &aSearchlights[0], 0xA94D68, 0xA95148);
-            CPatch::AdjustPointer(0x156936C, &aSearchlights[0], 0xA94D68, 0xA95148);
-            CPatch::AdjustPointer(0x4931E5, &aSearchlights[0], 0xA94D68, 0xA95148);
-            CPatch::AdjustPointer(0x1569372, &aSearchlights[0], 0xA94D68, 0xA95148);
-            CPatch::AdjustPointer(0x4931EB, &aSearchlights[0], 0xA94D68, 0xA95148);
-            CPatch::AdjustPointer(0x1569378, &aSearchlights[0], 0xA94D68, 0xA95148);
-            CPatch::AdjustPointer(0x4931FF, &aSearchlights[0], 0xA94D68, 0xA95148);
-            CPatch::AdjustPointer(0x156938C, &aSearchlights[0], 0xA94D68, 0xA95148);
-            CPatch::AdjustPointer(0x49320D, &aSearchlights[0], 0xA94D68, 0xA95148);
-            CPatch::AdjustPointer(0x493217, &aSearchlights[0], 0xA94D68, 0xA95148);
-            CPatch::AdjustPointer(0x493E3D, &aSearchlights[0], 0xA94D68, 0xA95148);
-            CPatch::AdjustPointer(0x156939A, &aSearchlights[0], 0xA94D68, 0xA95148);
-            CPatch::AdjustPointer(0x15693A4, &aSearchlights[0], 0xA94D68, 0xA95148);
-            CPatch::AdjustPointer(0x4931F1, &aSearchlights[0], 0xA94D68, 0xA95148);
-            CPatch::AdjustPointer(0x4931F9, &aSearchlights[0], 0xA94D68, 0xA95148);
-            CPatch::AdjustPointer(0x156937E, &aSearchlights[0], 0xA94D68, 0xA95148);
-            CPatch::AdjustPointer(0x1569386, &aSearchlights[0], 0xA94D68, 0xA95148);
-            CPatch::AdjustPointer(0x493225, &aSearchlights[0], 0xA94D68, 0xA95148);
-            CPatch::AdjustPointer(0x49322F, &aSearchlights[0], 0xA94D68, 0xA95148);
-            CPatch::AdjustPointer(0x15693C2, &aSearchlights[0], 0xA94D68, 0xA95148);
-            CPatch::AdjustPointer(0x15693CA, &aSearchlights[0], 0xA94D68, 0xA95148);
-            CPatch::AdjustPointer(0x49323D, &aSearchlights[0], 0xA94D68, 0xA95148);
-            CPatch::AdjustPointer(0x493247, &aSearchlights[0], 0xA94D68, 0xA95148);
-            CPatch::AdjustPointer(0x15693D8, &aSearchlights[0], 0xA94D68, 0xA95148);
-            CPatch::AdjustPointer(0x15693E2, &aSearchlights[0], 0xA94D68, 0xA95148);
-            CPatch::AdjustPointer(0x493255, &aSearchlights[0], 0xA94D68, 0xA95148);
-            CPatch::AdjustPointer(0x49325D, &aSearchlights[0], 0xA94D68, 0xA95148);
-            CPatch::AdjustPointer(0x15693F0, &aSearchlights[0], 0xA94D68, 0xA95148);
-            CPatch::AdjustPointer(0x15693F8, &aSearchlights[0], 0xA94D68, 0xA95148);
-            CPatch::AdjustPointer(0x4932E0, &aSearchlights[0], 0xA94D68, 0xA95148);
-            CPatch::AdjustPointer(0x4932E9, &aSearchlights[0], 0xA94D68, 0xA95148);
-            CPatch::AdjustPointer(0x4932A0, &aSearchlights[0], 0xA94D68, 0xA95148);
-            CPatch::AdjustPointer(0x15692DB, &aSearchlights[0], 0xA94D68, 0xA95148);
-            CPatch::AdjustPointer(0x49328E, &aSearchlights[0], 0xA94D68, 0xA95148);
-            CPatch::AdjustPointer(0x4932F2, &aSearchlights[0], 0xA94D68, 0xA95148);
-
-            CPatch::SetInt(0x015692D3, 992 * nCount);
-            CPatch::SetInt(0x493E42, nCount);
-        }
-        else
-        {
-            CPatch::AdjustPointer(0x4839A0 + 0x8F, &aSearchlights[0], 0xA94D68, 0xA95148);
-            CPatch::AdjustPointer(0x493000, &aSearchlights[0], 0xA94D68, 0xA95148);
-            CPatch::AdjustPointer(0x493000 + 0x43, &aSearchlights[0], 0xA94D68, 0xA95148);
-            CPatch::AdjustPointer(0x493160 + 0x21, &aSearchlights[0], 0xA94D68, 0xA95148);
-            CPatch::AdjustPointer(0x493360 + 0x1A, &aSearchlights[0], 0xA94D68, 0xA95148);
-            CPatch::AdjustPointer(0x493420 + 0x1C, &aSearchlights[0], 0xA94D68, 0xA95148);
-            CPatch::AdjustPointer(0x493480 + 0x1E, &aSearchlights[0], 0xA94D68, 0xA95148);
-            CPatch::AdjustPointer(0x4934F0 + 0x22, &aSearchlights[0], 0xA94D68, 0xA95148);
-            CPatch::AdjustPointer(0x493960 + 0x39, &aSearchlights[0], 0xA94D68, 0xA95148);
-            CPatch::AdjustPointer(0x587000 + 0xCC, &aSearchlights[0], 0xA94D68, 0xA95148);
-            CPatch::AdjustPointer(0x4773A1, &aSearchlights[0], 0xA94D68, 0xA95148);
-            CPatch::AdjustPointer(0x4773B6, &aSearchlights[0], 0xA94D68, 0xA95148);
-            CPatch::AdjustPointer(0x493000 + 0x34, &aSearchlights[0], 0xA94D68, 0xA95148);
-            CPatch::AdjustPointer(0x493160 + 0x27, &aSearchlights[0], 0xA94D68, 0xA95148);
-            CPatch::AdjustPointer(0x47A760 + 0xF05, &aSearchlights[0], 0xA94D68, 0xA95148);
-            CPatch::AdjustPointer(0x493000 + 0x49, &aSearchlights[0], 0xA94D68, 0xA95148);
-            CPatch::AdjustPointer(0x493160 + 0x2D, &aSearchlights[0], 0xA94D68, 0xA95148);
-            CPatch::AdjustPointer(0x493000 + 0x3A, &aSearchlights[0], 0xA94D68, 0xA95148);
-            CPatch::AdjustPointer(0x493160 + 0x34, &aSearchlights[0], 0xA94D68, 0xA95148);
-            CPatch::AdjustPointer(0x483720 + 0xA1, &aSearchlights[0], 0xA94D68, 0xA95148);
-            CPatch::AdjustPointer(0x4839A0 + 0x80, &aSearchlights[0], 0xA94D68, 0xA95148);
-            CPatch::AdjustPointer(0x493960 + 0x71, &aSearchlights[0], 0xA94D68, 0xA95148);
-            CPatch::AdjustPointer(0x493000 + 0x53, &aSearchlights[0], 0xA94D68, 0xA95148);
-            CPatch::AdjustPointer(0x493160 + 0x3A, &aSearchlights[0], 0xA94D68, 0xA95148);
-            CPatch::AdjustPointer(0x493000 + 0x5D, &aSearchlights[0], 0xA94D68, 0xA95148);
-            CPatch::AdjustPointer(0x493160 + 0x40, &aSearchlights[0], 0xA94D68, 0xA95148);
-            CPatch::AdjustPointer(0x468D50 + 0x575, &aSearchlights[0], 0xA94D68, 0xA95148);
-            CPatch::AdjustPointer(0x493000 + 0x67, &aSearchlights[0], 0xA94D68, 0xA95148);
-            CPatch::AdjustPointer(0x493160 + 0x46, &aSearchlights[0], 0xA94D68, 0xA95148);
-            CPatch::AdjustPointer(0x493000 + 0x71, &aSearchlights[0], 0xA94D68, 0xA95148);
-            CPatch::AdjustPointer(0x493160 + 0x4C, &aSearchlights[0], 0xA94D68, 0xA95148);
-            CPatch::AdjustPointer(0x493000 + 0x7B, &aSearchlights[0], 0xA94D68, 0xA95148);
-            CPatch::AdjustPointer(0x493160 + 0x52, &aSearchlights[0], 0xA94D68, 0xA95148);
-            CPatch::AdjustPointer(0x4939F0 + 0x7, &aSearchlights[0], 0xA94D68, 0xA95148);
-            CPatch::AdjustPointer(0x493000 + 0x85, &aSearchlights[0], 0xA94D68, 0xA95148);
-            CPatch::AdjustPointer(0x493160 + 0x58, &aSearchlights[0], 0xA94D68, 0xA95148);
-            CPatch::AdjustPointer(0x493000 + 0x91, &aSearchlights[0], 0xA94D68, 0xA95148);
-            CPatch::AdjustPointer(0x493160 + 0x5E, &aSearchlights[0], 0xA94D68, 0xA95148);
-            CPatch::AdjustPointer(0x493000 + 0x8B, &aSearchlights[0], 0xA94D68, 0xA95148);
-            CPatch::AdjustPointer(0x493160 + 0x64, &aSearchlights[0], 0xA94D68, 0xA95148);
-            CPatch::AdjustPointer(0x493000 + 0x97, &aSearchlights[0], 0xA94D68, 0xA95148);
-            CPatch::AdjustPointer(0x493160 + 0x6A, &aSearchlights[0], 0xA94D68, 0xA95148);
-            CPatch::AdjustPointer(0x493000 + 0x9D, &aSearchlights[0], 0xA94D68, 0xA95148);
-            CPatch::AdjustPointer(0x493160 + 0x70, &aSearchlights[0], 0xA94D68, 0xA95148);
-            CPatch::AdjustPointer(0x493000 + 0xA3, &aSearchlights[0], 0xA94D68, 0xA95148);
-            CPatch::AdjustPointer(0x493160 + 0x76, &aSearchlights[0], 0xA94D68, 0xA95148);
-            CPatch::AdjustPointer(0x493000 + 0xAA, &aSearchlights[0], 0xA94D68, 0xA95148);
-            CPatch::AdjustPointer(0x493160 + 0x7D, &aSearchlights[0], 0xA94D68, 0xA95148);
-            CPatch::AdjustPointer(0x493000 + 0xB0, &aSearchlights[0], 0xA94D68, 0xA95148);
-            CPatch::AdjustPointer(0x493160 + 0x83, &aSearchlights[0], 0xA94D68, 0xA95148);
-            CPatch::AdjustPointer(0x493000 + 0xB6, &aSearchlights[0], 0xA94D68, 0xA95148);
-            CPatch::AdjustPointer(0x493160 + 0x89, &aSearchlights[0], 0xA94D68, 0xA95148);
-            CPatch::AdjustPointer(0x493000 + 0xCA, &aSearchlights[0], 0xA94D68, 0xA95148);
-            CPatch::AdjustPointer(0x493160 + 0x9D, &aSearchlights[0], 0xA94D68, 0xA95148);
-            CPatch::AdjustPointer(0x4930D8, &aSearchlights[0], 0xA94D68, 0xA95148);
-            CPatch::AdjustPointer(0x493000 + 0xE2, &aSearchlights[0], 0xA94D68, 0xA95148);
-            CPatch::AdjustPointer(0x49320B, &aSearchlights[0], 0xA94D68, 0xA95148);
-            CPatch::AdjustPointer(0x493160 + 0xB5, &aSearchlights[0], 0xA94D68, 0xA95148);
-            CPatch::AdjustPointer(0x493E30 + 0xC, &aSearchlights[0], 0xA94D68, 0xA95148);
-            CPatch::AdjustPointer(0x493000 + 0xBC, &aSearchlights[0], 0xA94D68, 0xA95148);
-            CPatch::AdjustPointer(0x493000 + 0xC4, &aSearchlights[0], 0xA94D68, 0xA95148);
-            CPatch::AdjustPointer(0x493160 + 0x8F, &aSearchlights[0], 0xA94D68, 0xA95148);
-            CPatch::AdjustPointer(0x493160 + 0x97, &aSearchlights[0], 0xA94D68, 0xA95148);
-            CPatch::AdjustPointer(0x493100, &aSearchlights[0], 0xA94D68, 0xA95148);
-            CPatch::AdjustPointer(0x493000 + 0x108, &aSearchlights[0], 0xA94D68, 0xA95148);
-            CPatch::AdjustPointer(0x493223, &aSearchlights[0], 0xA94D68, 0xA95148);
-            CPatch::AdjustPointer(0x493160 + 0xCD, &aSearchlights[0], 0xA94D68, 0xA95148);
-            CPatch::AdjustPointer(0x493116, &aSearchlights[0], 0xA94D68, 0xA95148);
-            CPatch::AdjustPointer(0x493000 + 0x120, &aSearchlights[0], 0xA94D68, 0xA95148);
-            CPatch::AdjustPointer(0x49323B, &aSearchlights[0], 0xA94D68, 0xA95148);
-            CPatch::AdjustPointer(0x493160 + 0xE5, &aSearchlights[0], 0xA94D68, 0xA95148);
-            CPatch::AdjustPointer(0x49312E, &aSearchlights[0], 0xA94D68, 0xA95148);
-            CPatch::AdjustPointer(0x493000 + 0x136, &aSearchlights[0], 0xA94D68, 0xA95148);
-            CPatch::AdjustPointer(0x493253, &aSearchlights[0], 0xA94D68, 0xA95148);
-            CPatch::AdjustPointer(0x493160 + 0xFB, &aSearchlights[0], 0xA94D68, 0xA95148);
-            CPatch::AdjustPointer(0x493280 + 0xC, &aSearchlights[0], 0xA94D68, 0xA95148);
-            CPatch::AdjustPointer(0x493280 + 0x1E, &aSearchlights[0], 0xA94D68, 0xA95148);
-            CPatch::AdjustPointer(0x493000 + 0x19, &aSearchlights[0], 0xA94D68, 0xA95148);
-
-            
-            CPatch::SetInt(0x493013, 992 * nCount);
-            CPatch::SetInt(0x493E42, nCount);
+            // TODO HOODLUM https://www.diffchecker.com/1um77dt6
+            bool isHoodlum = GetGVM().IsHoodlum();
+            this->AddPointer(0x483A31, 0x0);
+            this->AddPointer(0x493001, 0x0);
+            this->AddPointer(0x493045, 0x0);
+            this->AddPointer(0x493183, 0x0);
+            this->AddPointer(0x49337B, 0x0);
+            this->AddPointer(0x49343D, 0x0);
+            this->AddPointer(0x49349F, 0x0);
+            this->AddPointer(0x493513, 0x0);
+            this->AddPointer(0x49399A, 0x0);
+            this->AddPointer(0x5870CD, 0x0);
+            this->AddPointer(0x4773A3, 0x1);
+            this->AddPointer(0x4773B8, 0x1);
+            this->AddPointer(0x493036, 0x1);
+            this->AddPointer(0x493189, 0x1);
+            this->AddPointer(0x47B667, 0x2);
+            this->AddPointer(0x49304B, 0x2);
+            this->AddPointer(0x49318F, 0x2);
+            this->AddPointer(0x49303C, 0x3);
+            this->AddPointer(0x493196, 0x3);
+            this->AddPointer(0x4837C3, 0x4);
+            this->AddPointer(0x483A23, 0x4);
+            this->AddPointer(0x4939D4, 0x4);
+            this->AddPointer(0x493055, 0x8);
+            this->AddPointer(0x49319C, 0x8);
+            this->AddPointer(0x49305F, 0xC);
+            this->AddPointer(0x4931A2, 0xC);
+            this->AddPointer(0x4692C6, 0x10);
+            this->AddPointer(0x493069, 0x10);
+            this->AddPointer(0x4931A8, 0x10);
+            this->AddPointer(0x493073, 0x14);
+            this->AddPointer(0x4931AE, 0x14);
+            this->AddPointer(0x49307D, 0x18);
+            this->AddPointer(0x4931B4, 0x18);
+            this->AddPointer(0x4939F8, 0x18);
+            this->AddPointer(0x493087, 0x1C);
+            this->AddPointer(0x4931BA, 0x1C);
+            this->AddPointer(0x493093, 0x20);
+            this->AddPointer(0x4931C0, 0x20);
+            this->AddPointer(0x49308D, 0x24);
+            this->AddPointer(0x4931C6, 0x24);
+            this->AddPointer(0x493099, 0x28);
+            this->AddPointer(0x4931CC, 0x28);
+            this->AddPointer(0x49309F, 0x2C);
+            this->AddPointer(0x4931D2, 0x2C);
+            this->AddPointer(0x4930A5, 0x30);
+            this->AddPointer(0x4931D8, 0x30);
+            this->AddPointer(0x4930AC, 0x34);
+            this->AddPointer(0x4931DF, 0x34);
+            this->AddPointer(0x4930B2, 0x38);
+            this->AddPointer(0x4931E5, 0x38);
+            this->AddPointer(0x4930B8, 0x3C);
+            this->AddPointer(0x4931EB, 0x3C);
+            this->AddPointer(0x4930CC, 0x40);
+            this->AddPointer(0x4931FF, 0x40);
+            this->AddPointer(0x4930DA, 0x44);
+            this->AddPointer(0x4930E4, 0x44);
+            this->AddPointer(0x49320D, 0x44);
+            this->AddPointer(0x493217, 0x44);
+            this->AddPointer(0x493E3D, 0x44);
+            this->AddPointer(0x4930BE, 0x48);
+            this->AddPointer(0x4930C6, 0x48);
+            this->AddPointer(0x4931F1, 0x48);
+            this->AddPointer(0x4931F9, 0x48);
+            this->AddPointer(0x493102, 0x4C);
+            this->AddPointer(0x49310A, 0x4C);
+            this->AddPointer(0x493225, 0x4C);
+            this->AddPointer(0x49322F, 0x4C);
+            this->AddPointer(0x493118, 0x50);
+            this->AddPointer(0x493122, 0x50);
+            this->AddPointer(0x49323D, 0x50);
+            this->AddPointer(0x493247, 0x50);
+            this->AddPointer(0x493130, 0x54);
+            this->AddPointer(0x493138, 0x54);
+            this->AddPointer(0x493255, 0x54);
+            this->AddPointer(0x49325D, 0x54);
+            this->AddPointer(0x4932E0, 0x58);
+            this->AddPointer(0x4932E9, 0x5C);
+            this->AddPointer(0x4932F2, 0x60);
+            this->AddPointer(0x49328E, 0x64);
+            this->AddPointer(0x4932A0, 0x70);
+            this->AddPointer(0x49301B, 0x7C);
         }
     }
 
-} SearchlightsSA;
+    void ChangeLimit(int, const std::string& value)
+    {
+        // Note: Limited to int16 bounds.
+        // To increase to uint16 patch the 'jl' @468DA1 to 'jb'. Must check if there's no other signed compare somewhere (rendering iteration?)
+        static const uint32_t max = (std::numeric_limits<int16_t>::max)();
+
+        if(Adjuster::IsUnlimited(value))
+        {
+            auto grower = [this](injector::reg_pack& regs)
+            {
+                // Grow the array if the 'i' (free index) is out of the bounds of the array
+                if(regs.ebp == this->GetArraySize())
+                {
+                    this->GrowArray();
+                    if(GetArraySize() > max) throw std::runtime_error("Out of searchlight bounds");
+                }
+
+                // Perform the code we've replaced with this hook
+                regs.ecx = *(uint32_t*)(regs.esp + 0xC + 0x8);
+                regs.edx = *(uint32_t*)(regs.esp + 0xC + 0xC);
+            };
+
+            if(GetGVM().IsHoodlum())
+                injector::MakeInline<0x493027, 0x49302F>(grower); // TODO FIX FOR HOODLUM
+            else
+                injector::MakeInline<0x493027, 0x49302F>(grower);
+        }
+        else
+        {
+            auto value_ = std::stoul(value);
+            if(value_ > max) throw std::runtime_error("Invalid integer boundaries, integer boundary is int16");
+            this->RellocArray(value_);
+        }
+    }
+
+    protected:
+    virtual void ApplyPatches()
+    {
+        StaticArrayAdjuster::ApplyPatches();
+        injector::WriteMemory<size_t>(0x493013, sizeof(CSearchlights_SA) * GetArraySize(), true); // TODO HOODLUM
+        injector::WriteMemory<size_t>(GetGVM().IsHoodlum()? 0x015692D3 : 0x493E42, GetArraySize(), true);
+    }
+
+} ScriptSearchlightsSA;

@@ -76,10 +76,7 @@ class StaticArrayAdjuster : public SimpleAdjuster
 
             // Move the contents of the previous array to the new array if it's the first time we're rellocating
             // Not necessary the second time because std::vector handles that for us
-            if(has_relloc == false)
-            {
-                ptrs.ApplyReflection(&our_array[0], default_ptr, sizeof(T), size, default_size);
-            }
+            if(has_relloc == false) ptrs.ApplyReflection(&our_array[0], default_ptr, sizeof(T), size, default_size);
 
             has_relloc = true;
         }
@@ -93,10 +90,10 @@ class StaticArrayAdjuster : public SimpleAdjuster
             }
         }
 
-    private:
+    protected:
 
         // Performs the rellocation itself
-        void ApplyPatches()
+        virtual void ApplyPatches()
         {
             ptrs.ApplyPatches(&our_array[0]);
         }
