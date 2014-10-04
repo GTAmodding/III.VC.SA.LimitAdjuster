@@ -181,13 +181,26 @@ class CDynamicPool
         // Checks if the object is in the range of this pool
         bool Contains(T* obj)
         {
-            return (obj && GetIndexFromElement(obj) != -1);
+            return GetBlockIndexFromObjectPtr(obj) != -1;
         }
 
         // Checks if the object is in a block bound
         bool IsExactlyContained(T* obj)
         {
-            return ((uintptr_t(obj) % sizeof(U)) == 0) && Contains(obj);
+            if(obj)
+            {
+                auto i = GetBlockIndexFromObjectPtr(obj);
+                if(i != -1)
+                {
+                    // Check if the object is on the block boundaries of elements]
+                    if( (((uintptr_t)obj - (uintptr_t)m_ppBeginBlock[i]) % sizeof(U)) == 0 )
+                    {
+                        bool result = !IsFreeSlotAtIndex(GetIndexFromElement(obj));
+                        return !IsFreeSlotAtIndex(GetIndexFromElement(obj));
+                    }
+                }
+            }
+            return false;
         }
 
 
@@ -207,6 +220,20 @@ class CDynamicPool
             return m_ppEndBlock[i] - m_ppBeginBlock[i];
         }
 
+        // Gets m_ppBeginBlock/m_ppEndBlock index a object is in (doesn't matter if on U boundaries or not)
+        int GetBlockIndexFromObjectPtr(T* p)
+        {
+            if(p)
+            {
+                // Iterate on each block until object pointer is in range
+                for(int i = 0; i < this->m_nBlocks; ++i)
+                {
+                    if(p >= m_ppBeginBlock[i] && p < m_ppEndBlock[i])   // Checks if pointer in range of this block
+                        return i;
+                }
+            }
+            return -1;
+        }
 
 
         // Finds out the pointer for the element at the specified index
@@ -230,11 +257,14 @@ class CDynamicPool
         // Gets the index for the specified element
         int GetIndexFromElement(T* p)
         {
-            // Iterate on each block until object pointer is in range
-            for(int i = 0, count = 0; i < this->m_nBlocks; count += GetBlockSize(i), ++i)
+            if(p)
             {
-                if(p >= m_ppBeginBlock[i] && p < m_ppEndBlock[i])   // Checks if pointer in range of this block
-                    return count + ((U*)(p) - m_ppBeginBlock[i]);   // <- (real starting index for this block) + (object index on block)
+                // Iterate on each block until object pointer is in range
+                for(int i = 0, count = 0; i < this->m_nBlocks; count += GetBlockSize(i), ++i)
+                {
+                    if(p >= m_ppBeginBlock[i] && p < m_ppEndBlock[i])   // Checks if pointer in range of this block
+                        return count + ((U*)(p) - m_ppBeginBlock[i]);   // <- (real starting index for this block) + (object index on block)
+                }
             }
             return -1;
         }

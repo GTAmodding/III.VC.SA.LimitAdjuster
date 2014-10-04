@@ -107,7 +107,7 @@ struct PoolAdjusterDynamic : PoolAdjuster<addr_call>
             case 0x551145:  // Task
                 PatchShutdown(0x551C71);
                 PatchStaticND(0x61A5A0, 0x61A5B0);
-                injector::MakeCALL(0x61A4B0, Do_IsExactlyContained);
+                injector::MakeJMP(0x61A4B0, Do_IsExactlyContained);
                 injector::MakeInline<0x61A5EF, 0x61A613>(ReleaseEAX);
                 injector::MakeInline<0x61A631, 0x61A655>(ReleaseEAX);
                 injector::MakeInline<0x61A670, 0x61A694>(ReleaseEAX);
