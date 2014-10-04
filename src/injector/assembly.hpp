@@ -1,7 +1,7 @@
 /*
  *  Injectors - Useful Assembly Stuff
  *
- *  Copyright (C) 2014 LINK/2012 <dma_2012@hotmail.com>
+ *  Copyright (C) 2012-2014 LINK/2012 <dma_2012@hotmail.com>
  *
  *  This software is provided 'as-is', without any express or implied
  *  warranty. In no event will the authors be held liable for any damages
@@ -47,7 +47,17 @@ namespace injector
         uint32_t ef;
 
         // PUSHAD/POPAD -- must be the lastest fields (because of esp)
-        uint32_t edi, esi, ebp, esp, ebx, edx, ecx, eax;
+        union
+        {
+            uint32_t arr[8];
+            struct { uint32_t edi, esi, ebp, esp, ebx, edx, ecx, eax; };
+        };
+        enum reg_name { reg_edi, reg_esi, reg_ebp, reg_esp, reg_ebx, reg_edx, reg_ecx, reg_eax  };
+
+        uint32_t& operator[](size_t i)
+        { return this->arr[i]; }
+        const uint32_t& operator[](size_t i) const
+        { return this->arr[i]; }
     };
 
     // Lowest level stuff (actual assembly) goes on the following namespace
@@ -123,8 +133,8 @@ namespace injector
     template<uintptr_t at, uintptr_t end, class FuncT>
     void MakeInline(FuncT func)
     {
-        static FuncT static_func = func;    // Stores the func object
-        static_func = func;                 //
+        static FuncT static_func;   // Stores the func object
+        static_func = func;         //
 
         // Encapsulates the call to static_func
         struct Caps
