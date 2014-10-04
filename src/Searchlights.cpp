@@ -185,7 +185,9 @@ public:
             CPatch::AdjustPointer(0x493280 + 0xC, &aSearchlights[0], 0xA94D68, 0xA95148);
             CPatch::AdjustPointer(0x493280 + 0x1E, &aSearchlights[0], 0xA94D68, 0xA95148);
             CPatch::AdjustPointer(0x493000 + 0x19, &aSearchlights[0], 0xA94D68, 0xA95148);
-
+            CPatch::AdjustPointer(0x4932E0, &aSearchlights[0], 0xA94D68, 0xA95148);
+            CPatch::AdjustPointer(0x4932E9, &aSearchlights[0], 0xA94D68, 0xA95148);
+            CPatch::AdjustPointer(0x4932F2, &aSearchlights[0], 0xA94D68, 0xA95148);
             
             CPatch::SetInt(0x493013, 992 * nCount);
             CPatch::SetInt(0x493E42, nCount);
