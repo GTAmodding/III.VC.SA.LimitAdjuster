@@ -239,6 +239,25 @@ struct DrawerTranslator : injector::address_translator
             map[0x719610] = 0x550120;   // CFont::SetOrientation
             map[0x71A700] = 0x551040;   // CFont::PrintString
         }
+        else if (Adjuster::IsIII())
+        {
+            map[0x719840] = 0x4ACF60;   // CFont::RenderFontBuffer ??? no such thing in gta3, so i placed nullsub
+            map[0xBAB22C] = 0x00000u;   // HudColours
+            map[0x58FEA0] = 0x00000u;   // CHudColours::GetRGBA
+            map[0xC17040] = 0x8F4360;   // RsGlobal
+            map[0x719380] = 0x501B80;   // CFont::SetScale
+            map[0x719430] = 0x501BD0;   // CFont::SetColor
+            map[0x719490] = 0x501DB0;   // CFont::SetFontStyle
+            map[0x719510] = 0x501E70;   // CFont::SetDropColor
+            map[0x719590] = 0x501E70;   // CFont::SetEdge
+            map[0x7195B0] = 0x501DA0;   // CFont::SetProportional
+            map[0x7195C0] = 0x501CF0;   // CFont::SetBackground
+            map[0x719600] = 0x501C80;   // CFont::SetJustify
+            map[0x7194F0] = 0x501D50;   // CFont::SetRightJustifyWrap
+            map[0x7194D0] = 0x501CC0;   // CFont::SetWrapx
+            map[0x719610] = 0x501C90;   // CFont::SetOrientation
+            map[0x71A700] = 0x500F50;   // CFont::PrintString
+        }
     }
 };
 
