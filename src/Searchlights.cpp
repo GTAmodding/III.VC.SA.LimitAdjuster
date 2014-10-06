@@ -11,7 +11,7 @@ std::vector<char> aSearchlights;
 class SearchlightsSA : public SimpleAdjuster
 {
 public:
-    const char* GetLimitName() { return GetGVM().IsSA() ? "Searchlights" : nullptr; }
+    const char* GetLimitName() { return GetGVM().IsSA() ? "ScriptSearchLights" : nullptr; }
 
     void ChangeLimit(int, const std::string& value) 
     {
