@@ -46,6 +46,9 @@ struct TimeModelInfoVC : public StoreAdjuster<CTimeModelInfo_VC, 0x74A6B0, 385> 
 
     TimeModelInfoVC()
     {
+        if (*(DWORD *)0x55FF11 != 0x0074A6B4) //exe modified by another adjuster
+            return;
+
         this->SetGrower(0x48C498);
         this->AddPointer(0x55F6E0 + 0x2, 0x0);
         this->AddPointer(0x55F703 + 0x2, 0x0);
