@@ -94,20 +94,51 @@ class Adjuster
 
     public:
 
-        // Helper to GetUsage()
-        template<class T>
-        static bool GetUsage(std::string& str, T usage, T max)
-        {
-            str = std::to_string(usage);
-            str.append(" / ").append(std::to_string(max));
-            return true;
-        }
-
         // Helper to check if string is 'unlimited'
         static bool IsUnlimited(const std::string& str)
         {
             return str.compare("unlimited") == 0;
         }
+
+
+#if __cplusplus >= 201103L || _MSC_VER >= 1800  // C++11 compilant or MSVC 2013
+
+        template<class T>
+        static bool GetUsage(std::string& str, T usage, T max)
+        {
+			using std::to_string;
+            str = to_string(usage);
+            str.append(" / ").append(to_string(max));
+            return true;
+        }
+
+#else	// for MSVC 2010 and MSVC 2012
+
+		template<class T>
+		static bool GetUsage(std::string& str, T usage, T max)
+        {
+            str = to_string(usage);
+            str.append(" / ").append(to_string(max));
+            return true;
+        }
+
+		// MSVC 2010 and MSVC 2012 std::to_string provides only overloads for the types (long double), (long long) and (unsigned long long) 
+		// We need to get around it to accept any T
+		template<class T>
+		static std::string to_string(T value)
+		{
+			static const bool is_floating_point = std::is_floating_point<T>::value;
+			static const bool is_unsigned       = std::is_unsigned<T>::value;
+			static const bool is_signed         = std::is_signed<T>::value;
+
+			static_assert(is_floating_point || is_signed || is_unsigned, "T must be either a floating point, signed, or unsigned type");
+
+			return is_floating_point? std::to_string((long double)value) :
+				           is_signed? std::to_string((long long)value)   :
+						              std::to_string((unsigned long long)value);
+		}
+
+#endif
 
 };
 

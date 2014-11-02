@@ -309,17 +309,15 @@ void DrawText(const char* text, float x, float y, float scalex, float scaley)
     static void (*SetOrientation)(int alignment)                            = injector::lazy_pointer<0x719610>::get();   // CFont method
     static void (*PrintString)(float x, float y, const char *text)          = injector::lazy_pointer<0x71A700>::get();   // CFont method
 
-    // Gets the interface colour an specific interface colour
-    static auto GetInterfaceColour = [](unsigned char index)
-    {
-        CRGBA temp;
-        if(Adjuster::IsSA())
-            return *((CRGBA* (__thiscall *)(void*, CRGBA*, unsigned char))pGetInterfaceColour)(pInterfaceColour, &temp, index);
-        else if(Adjuster::IsVC())
-            return CRGBA(0x1B, 0x59, 0x82, 0xFF);
-        else
-            return CRGBA(0x00, 0x00, 0x00, 0xFF);
-    };
+    // Gets the interface colour for the text
+	CRGBA rgba;
+	if(Adjuster::IsSA())
+		((CRGBA* (__thiscall *)(void*, CRGBA*, unsigned char))pGetInterfaceColour)(pInterfaceColour, &rgba, 4);
+	else if(Adjuster::IsVC())
+		rgba = CRGBA(0x1B, 0x59, 0x82, 0xFF);
+	else
+		rgba = CRGBA(0x00, 0x00, 0x00, 0xFF);
+
 
     // Transformer from global screen space to local screen space
     float screenx((float)((signed int)*(pRsGlobal + 1)) / 640.0f);
@@ -335,7 +333,6 @@ void DrawText(const char* text, float x, float y, float scalex, float scaley)
     SetWrapx(640.0f * screenx);
     SetEdge(1);
     SetDropColor(CRGBA(0, 0, 0, 0xFF));
-    auto rgba = GetInterfaceColour(4);
     SetColor(Adjuster::IsSA() ? *(CRGBA**)&rgba : &rgba);
     SetScale(screenx * scalex, screeny * scaley);
 
@@ -404,8 +401,10 @@ void DrawLimits()
         std::string usage;
         unsigned int i = 0, drawn = 0;  // Limit index and num drawn limits
 
-        for(auto& pair : limits)
+        for(auto it = limits.begin(); it != limits.end(); ++it)
         {
+			auto& pair = *it;
+
             // Check if are already in the limit we should start drawing from and also 
             // if we are still in the limits per page range OR we didn't draw enought stuff to complete limits per page
             if(i >= current_limit && (i < current_limit + limits_per_page || drawn < limits_per_page))
