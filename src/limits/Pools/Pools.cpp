@@ -79,22 +79,10 @@ struct PoolsAdjusterBase : public Adjuster
 		if (id == PtrNode || id == Buildings)
 			if (this->IsVC() && (injector::ReadMemory<int>(0x4C0284) > 50000 || injector::ReadMemory<int>(0x4C0309) > 50000)) return;    // Vice Cry 1.8 compat
 
-        char buf[512];
-        sprintf(buf, "ChangeLimit(%d, \"%s\" called...", id, value.data());
-        MessageBoxA(NULL, buf, "test", 0);
-
         if(IsUnlimited(value))
-        {
-            sprintf(buf, "Forwarding MakeUnlimited, value is unlimited (!)");
-            MessageBoxA(NULL, buf, "test", 0);
             return GetUserData(id)->MakeUnlimited();
-        }
         else
-        {
-            sprintf(buf, "Forwarding ChangeLimit, value is not unlimited (!)");
-            MessageBoxA(NULL, buf, "test", 0);
             return GetUserData(id)->ChangeLimit(std::stoul(value));
-        }
 	}
 
     bool GetUsage(int id, std::string& usagebuf)

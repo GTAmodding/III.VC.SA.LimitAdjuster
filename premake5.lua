@@ -76,6 +76,7 @@ solution "OpenLA"
             "src/**.cpp",
             "src/**.hpp",
             "src/**.h",
+            "doc/**"
         }
         excludes { "sample.cpp" }
         

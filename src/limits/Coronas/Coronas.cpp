@@ -216,6 +216,7 @@ void CCoronas::Inject()
 {
     CCoronas::aLinkedList.resize(NUM_CORONAS);
     CCoronas::aCoronas.resize(NUM_CORONAS);
+    CRegisteredCorona* aCoronas = &CCoronas::aCoronas[0];    // avoid exception on vector for acessing [NUM_CORONAS]
 
     // CCoronas::RenderReflections
     CPatch::SetPointer(0x6FB648, &aCoronas[0].JustCreated + 1);

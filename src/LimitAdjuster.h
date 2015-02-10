@@ -97,9 +97,6 @@ class Adjuster
         // Helper to check if string is 'unlimited'
         static bool IsUnlimited(const std::string& str)
         {
-            char buf[512];
-            sprintf(buf, "Comparing '%s' against '%s', result is %d", str.data(), "unlimited", str.compare("unlimited"));
-            MessageBoxA(NULL, buf, "test", 0);
             return str.compare("unlimited") == 0;
         }
 
