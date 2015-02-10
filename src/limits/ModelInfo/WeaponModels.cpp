@@ -3,7 +3,7 @@
 * Copyright (c) 2014 LINK/2012 <dma_2012@hotmail.com>
 * Licensed under the MIT License (http://opensource.org/licenses/MIT)
 */
-#include "utility/StoreAdjuster.hpp"
+#include "StoreAdjuster.hpp"
 #include "utility/dummy_object.hpp"
 
 typedef dummy_object_vmt<0x28, 0x4C5760> CWeaponModelInfo_SA;

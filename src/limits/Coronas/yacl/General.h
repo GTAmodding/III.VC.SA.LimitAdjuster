@@ -1,4 +1,5 @@
 #include <math.h>
+#include <windows.h>
 #ifndef __GENERAL
 #define __GENERAL
 

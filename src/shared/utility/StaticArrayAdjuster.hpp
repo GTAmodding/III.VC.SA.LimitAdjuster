@@ -5,7 +5,7 @@
 */
 #pragma once
 #include "LimitAdjuster.h"
-#include "PointerAdjuster.hpp"
+#include "utility/PointerAdjuster.hpp"
 
 /*
     StaticArrayAdjuster

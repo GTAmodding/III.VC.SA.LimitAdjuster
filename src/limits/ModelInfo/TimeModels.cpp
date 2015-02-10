@@ -3,7 +3,7 @@
 * Copyright (c) 2014 ThirteenAG <thirteenag@gmail.com>
 * Licensed under the MIT License (http://opensource.org/licenses/MIT)
 */
-#include "utility/StoreAdjuster.hpp"
+#include "StoreAdjuster.hpp"
 #include "utility/dummy_object.hpp"
 
 typedef dummy_object_vmt<0x58, 0x50C0A0> CTimeModelInfo_III;

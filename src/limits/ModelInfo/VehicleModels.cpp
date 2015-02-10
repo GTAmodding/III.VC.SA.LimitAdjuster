@@ -3,7 +3,7 @@
 * Copyright (c) 2014 LINK/2012 <dma_2012@hotmail.com>
 * Licensed under the MIT License (http://opensource.org/licenses/MIT)
 */
-#include "utility/StoreAdjuster.hpp"
+#include "StoreAdjuster.hpp"
 #include "utility/dummy_object.hpp"
 #include "injector/utility.hpp"
 

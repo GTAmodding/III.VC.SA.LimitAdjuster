@@ -16,17 +16,13 @@ Not sure what to contribute? Check the [open issues](https://github.com/Thirteen
 
 ### Compiling
 
-The source code targets pre-C++11 compilers with naked attribute, that is Visual Studio 2010 and above.
+The source code targets pre-C++11 compilers with naked attribute, that is [Visual Studio](http://www.visualstudio.com/downloads) 2010 or greater.
 
-You'll need to following tools to compile the source code.
-+ [CMake](http://www.cmake.org/) 2.8 or greater
-+ [Visual Studio](http://www.visualstudio.com/downloads) 2010 or greater
+Then run premake5 (executable included) from the base directory to generate the projects file in the *build/* directory specifying the compiler you're using.
+By using command line, this can be done by the following command for Visual Studio 2010:
 
-Then run CMake in the base source directory to generate the projects file in the *msvc/* directory.
-By using command line, this can be done by:
+    premake5 vs2010
 
-    mkdir msvc
-    cd msvc
-    cmake ../
+That's it, you have a Visual Studio 2010 solution now, you are ready to contribute and compile.
+To generate solution for another Visual Studio version just change the *2010* to the version you are using _(e.g. vs2013)_.
 
-That's it, you have a Visual Studio solution now, you are ready to contribute and compile.

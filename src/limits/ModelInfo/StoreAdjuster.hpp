@@ -5,7 +5,7 @@
 */
 #pragma once
 #include "LimitAdjuster.h"
-#include "PointerAdjuster.hpp"
+#include "utility/PointerAdjuster.hpp"
 #include "DynamicStore.hpp"
 #include <algorithm>
 #include <injector/utility.hpp>

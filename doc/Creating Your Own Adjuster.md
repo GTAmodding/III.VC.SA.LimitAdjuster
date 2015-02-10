@@ -7,7 +7,7 @@ Creating The Adjuster Instance
 --------------------------------
 
 First of all you need a new cpp file to implement your adjuster class.
-In our example we're going to call it *foo.cpp*, right, create it at the src folder and add it to the *CMakeLists.txt* source files.
+In our example we're going to call it *foo.cpp*, right, create it at the *src/limits* directory in a directory that fits it's category or none if unsure.
 
 Then, you need to create a derived class from either `SimpleAdjuster` or  `Adjuster`, those are in the *LimitAdjuster.h* header.
 The difference between then, is that `Adjuster` is more complex than `SimpleAdjuster` and is supposed to be used when one class will handle more than one limit. Generally you would use `SimpleAdjuster`.
@@ -28,7 +28,7 @@ The interface is simple and event-based:
     + Optionally `GetUsage` can be implemented to tell the user how much of the limit has been used
     + The `Adjuster::GetUsage<T>` method can be used to straightly get the string from the usage and max usage integers.
 * **Injector and Game Version Manager**
-    + The basic frontend for patches is the blessed injector library.
+    + The basic frontend for patches is the injector library.
     + It includes a game version manager, that can be accessed from `Adjuster::GetGVM` or the shortcuts `Adjuster::IsIII`, `Adjuster::IsVC` and `Adjuster::IsSA`
     + You are not totally required to use the injector library if you are implementing a pre-existing adjuster, but making a biding for the other library that translates into injector calls is recommended.
 

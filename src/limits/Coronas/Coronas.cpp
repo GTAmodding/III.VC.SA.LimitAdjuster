@@ -8,10 +8,10 @@
 #include <vector>
 #include <map>
 #include <math.h>
-#include "misc\yacl\General.h"
-#include "misc\yacl\Coronas.h"
-#include "misc\yacl\Camera.h"
-#include "misc\CPatch.h"
+#include "yacl/General.h"
+#include "yacl/Coronas.h"
+#include "yacl/Camera.h"
+#include "CPatch.h"
 
 int NUM_CORONAS;
 

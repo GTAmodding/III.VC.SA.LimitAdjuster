@@ -4,7 +4,7 @@
  * http://gtaforums.com/topic/675664-staticshadow-limit/
  */
 #include "LimitAdjuster.h"
-#include "misc\hook.h"
+#include "cpatch/hook.h"
 
 using namespace Hook;
 

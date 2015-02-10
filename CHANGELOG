@@ -1,9 +1,42 @@
+v1.5
+---------------
+ * Added coronas and static shadows limits
+ * Added ScriptSearchLight limit
+ * Unlimited _TimeModels_ for III/VC
+ * Fixed _Task = unlimited_ crashing
+ * Other bugfixes
+
+v1.4.2
+---------------
+ * Added unlimited IDE definitions _(still limited by our little ids)_
+ * Fixed VisibleEntiesPtrs / VisibleLodPtrs not growing correctly possibly causing a crash
+ * Fixed limits information (F5) having wrong wrapx
+
+
+v1.4:
+---------------
+ * All the limits usage can be checked by pressing F5 in game _(SA-only for now)_
+   + The key can be changed at the ini
+ * The *unlimited* concept has been added
+   + Most of the already implemented limits can be unlimited _(SA-only for now)_
+ * Other fixes and improvements
+
+v1.3:
+---------------
+ * Lots of improvements
+ * Compatible with ViceCry 1.8
+ * Compatible with SAMP
+
+
 v1.2
-    Added outside world water blocks limit
+---------------
+ * Added outside world water blocks limit
 
 v1.1
-    Added static matrices limit
+---------------
+ * Added static matrices limit
 
 v1.0
-    First public release
+---------------
+ * First public release
 
