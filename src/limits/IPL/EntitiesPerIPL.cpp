@@ -44,7 +44,7 @@ struct EntitiesPerIplBase : public StaticArrayAdjuster<void*>
 	    virtual void ChangeLimit(int, const std::string& value)
 	    {
             if(Adjuster::IsUnlimited(value))
-                this->LoadObjectInstance = MakeCALL(0x5B892A, &EntitiesPerIplBase::Grower).get();
+                this->LoadObjectInstance = MakeCALL(pCallLoadObjectInstance, &EntitiesPerIplBase::Grower).get();
             else
                 this->RellocArray(std::stoi(value));
 	    }
@@ -57,11 +57,13 @@ struct EntitiesPerIplBase : public StaticArrayAdjuster<void*>
             return false;
         }
 
+        // Grows the array used for unlimited
         static void* Grower(const char* line)
         {
             auto m_dwUsage = Instance()->m_dwUsage;
-            Instance()->EnsureHasCapacityFor(m_dwUsage + 1);
-            Instance()->m_dwMaxUsageEver = m_dwUsage + 1;
+            auto m_dwNewUse = m_dwUsage + 1;
+            Instance()->EnsureHasCapacityFor(m_dwNewUse);
+            Instance()->m_dwMaxUsageEver = Instance()->m_dwMaxUsageEver < m_dwNewUse? m_dwNewUse : Instance()->m_dwMaxUsageEver; 
             return Instance()->LoadObjectInstance(line);
         }
 };
