@@ -71,6 +71,17 @@ struct PoolAdjusterDynamic : PoolAdjuster<addr_call>
                 PatchStaticND(0x40FC30, 0x40FC40);
                 break;
 
+            case 0x5B8FE7: // VehicleStructs
+                //PatchShutdown(); -- doesnt seem it have one
+                PatchStaticND(0x4C9570, 0x4C9580);
+                injector::MakeInline<0x4C98A3, 0x4C98D2>(ReleaseESI);
+                injector::MakeNOP(0x4C989B, 1);
+                injector::MakeInline<0x4C9850, 0x4C9885>(ReleaseEDI);
+                
+                injector::MakeJMP(0x4C94C0, Do_Alloc);
+                injector::MakeJMP(0x4C9840, Do_StaticRelease);
+                break;
+
             case 0x5511B2:  // PointRoute
                 PatchShutdown(0x551CF3);
                 PatchStaticND(0x41B7C0, 0x41B7D0);

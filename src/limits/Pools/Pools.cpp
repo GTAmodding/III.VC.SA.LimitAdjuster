@@ -50,6 +50,7 @@ enum
 	TaskAllocator,
 	PedIntelligence,
 	PedAttractors,
+    VehicleStructs,
 	
 	MAX_POOLS
 };
@@ -202,6 +203,7 @@ struct PoolsAdjusterSA : public PoolsAdjusterBase
     PoolAdjusterDynamic<0x55121C, 0x5511F0 + 1,  36>    m_NodeRoute;
     PoolAdjusterDynamic<0x551251, 0x551225 + 1,  32>    m_TaskAllocator;
     PoolAdjusterDynamic<0x5512BF, 0x551292 + 1,  196>   m_PedAttractors;
+    PoolAdjusterDynamic<0x5B8FE7, 0x5B8FC3 + 1,  788>   m_VehicleStructs;
 
 	// Limit Names
 	const Limit* GetLimits()
@@ -227,6 +229,7 @@ struct PoolsAdjusterSA : public PoolsAdjusterBase
 				DEFINE_POOL_LIMIT(TaskAllocator),
 				DEFINE_POOL_LIMIT(PedIntelligence),
 				DEFINE_POOL_LIMIT(PedAttractors),
+                DEFINE_POOL_LIMIT(VehicleStructs),
 				FINISH_LIMITS()
 			};
 			return lm;
