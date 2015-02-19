@@ -10,12 +10,37 @@
 static injector::hook_back<void*(__fastcall*)(void*)> hb_ctor;
 
 typedef dummy_object_vmt<0x308, 0x4C75E0> CVehicleModelInfo_SA;
+typedef dummy_object_vmt<0x174, 0x57AA20> CVehicleModelInfo_VC;
 
 
+struct VehicleModelsVC : public StoreAdjuster<CVehicleModelInfo_VC, 0x752A88, 110>    // T, pDefaultStore, dwDefaultCapacity
+{
+    const char* GetLimitName()
+    {
+        return IsVC() ? "VehicleModels" : nullptr;
+    }
+
+    VehicleModelsVC()
+    {
+        this->SetGrower(0x48BF16);
+        this->AddPointer(0x55F5D2, 0x0);
+        this->AddPointer(0x55F5ED, 0x0);
+        this->AddPointer(0x55F5F3, 0x0);
+        this->AddPointer(0x55F5FE, 0x0);
+        this->AddPointer(0x55F919, 0x0);
+        this->AddPointer(0x55F921, 0x0);
+        this->AddPointer(0x55F93B, 0x0);
+        this->AddPointer(0x55F9D8, 0x0);
+        this->AddPointer(0x55FB62, 0x0);
+        //this->AddPointer(0x55FFD6, 0x0);
+        //this->AddPointer(0x55FFE9, 0x0);
+    }
+
+} VehicleModelsVC;
 
 struct VehicleModelsSA : public StoreAdjuster<CVehicleModelInfo_SA, 0xB1F650, 212>    // T, pDefaultStore, dwDefaultCapacity
 {
-	const char* GetLimitName()
+    const char* GetLimitName()
     {
         return IsSA()? "VehicleModels" : nullptr;
     }
@@ -29,8 +54,8 @@ struct VehicleModelsSA : public StoreAdjuster<CVehicleModelInfo_SA, 0xB1F650, 21
         return StoreAdjuster::ChangeLimit(0, value);
     }
 
-	VehicleModelsSA()
-	{
+    VehicleModelsSA()
+    {
         // -----
         this->SetGrower (0x5B6FD1);
         this->AddPointer(0x4C64ED, 0x0);
@@ -43,7 +68,7 @@ struct VehicleModelsSA : public StoreAdjuster<CVehicleModelInfo_SA, 0xB1F650, 21
         //this->AddPointer(0x8562A1, 0x0);
         this->AddPointer(0x4C64F8, 0x4);
         this->AddPointer(0x4C6780, 0x4);
-	}
+    }
 
     // Initialises CVehicleModelInfo::m_apDirtMaterials at CVehicleModelInfo constructor 
     static void* __fastcall FixConstructor(CVehicleModelInfo_SA* p)

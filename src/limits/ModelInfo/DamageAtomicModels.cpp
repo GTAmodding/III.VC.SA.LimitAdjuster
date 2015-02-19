@@ -11,13 +11,13 @@ typedef dummy_object_vmt<0x24, 0x4C55A0> CDamageAtomicModelInfo_SA;
 
 struct DamageAtomicModelsSA : public StoreAdjuster<CDamageAtomicModelInfo_SA, 0xB1BF58, 70>    // T, pDefaultStore, dwDefaultCapacity
 {
-	const char* GetLimitName()
+    const char* GetLimitName()
     {
         return IsSA()? "DamageAtomicModels" : nullptr;
     }
 
-	DamageAtomicModelsSA()
-	{
+    DamageAtomicModelsSA()
+    {
         this->SetGrower (0x5B3D8E);
         this->AddPointer(0x4C640B, 0x0);
         this->AddPointer(0x4C6428, 0x0);
@@ -29,6 +29,6 @@ struct DamageAtomicModelsSA : public StoreAdjuster<CDamageAtomicModelInfo_SA, 0x
         //this->AddPointer(0x856241, 0x0);
         this->AddPointer(0x4C6416, 0x4);
         this->AddPointer(0x4C665D, 0x4);
-	}
+    }
 
 } DamageAtomicModelSA;
