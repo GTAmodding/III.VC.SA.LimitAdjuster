@@ -58,14 +58,14 @@ class StoreAdjuster : public SimpleAdjuster
 
 
         // Called when the limit is found on the ini
-	    virtual void ChangeLimit(int, const std::string& value)
-	    {
+        virtual void ChangeLimit(int, const std::string& value)
+        {
             if(Adjuster::IsUnlimited(value))
             {
                 if(!pgrow[0].is_null()) hb[0].fun = injector::MakeCALL(pgrow[0], H_AddAnother<0>).get();
                 if(!pgrow[1].is_null()) hb[1].fun = injector::MakeCALL(pgrow[1], H_AddAnother<1>).get();
                 
-                #if defined(_DEBUG) && 0            // For testing
+                #if defined(_DEBUG) && 1            // For testing
                 this->store.ForceCapacity(16);  
                 #endif
             }
@@ -78,7 +78,7 @@ class StoreAdjuster : public SimpleAdjuster
                     IsVC() ? 0x48DCE5 :
                     IsSA() ? 0x5B9253 : 0x0,
                     H_DoReflection).get();
-	    }
+        }
 
         // Gets the current usage of this CStore<>
         virtual bool GetUsage(int, std::string& output)
@@ -162,10 +162,19 @@ class StoreAdjuster : public SimpleAdjuster
             }
 
             // Find pointers in the array that are in the old bounds and then fix it to the current bound
-            for(void** p = pModelInfoPtrs; p != pModelInfoPtrs_end; ++p)
+            for (void** p = pModelInfoPtrs; p != pModelInfoPtrs_end; ++p)
             {
-                if(*p >= begin && *p <= end)
-                    *p = (char*)*p - ((char*)begin - (char*)&store.GetStore()->m_Objects[0]);
+                if (*p)
+                {
+                    void* lodptr = *(void**)(p + 0x30);
+                    if (lodptr >= begin && lodptr <= end)
+                        lodptr = (char*)lodptr - ((char*)begin - (char*)&store.GetStore()->m_Objects[0]);
+
+                    if (*p >= begin && *p <= end)
+                        *p = (char*)*p - ((char*)begin - (char*)&store.GetStore()->m_Objects[0]);
+
+                    *(void**)(p + 0x30) = lodptr;
+                }
             }
         }
 
