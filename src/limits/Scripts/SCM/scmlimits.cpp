@@ -35,13 +35,13 @@ public:
 
     void ChangeLimit(int id, const std::string& value)
     {
-        if (id = MAINsegmentSize)
+        if (id == MAINsegmentSize)
         {
             Game_GTASA::SCMlimits::iMAINsegmentSize = std::stoi(value);
             bNeedsPatch = true;
         }
 
-        if (id = MissionSize)
+        if (id == MissionSize)
         {
             Game_GTASA::SCMlimits::iMissionSize = std::stoi(value);
             bNeedsPatch = true;
