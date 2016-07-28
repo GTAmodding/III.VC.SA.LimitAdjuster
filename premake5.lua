@@ -64,10 +64,10 @@ solution "OpenLA"
     configuration "vs*"
         buildoptions { "/arch:IA32" }           -- disable the use of SSE/SSE2 instructions
 
-    project "limit_adjuster_gta3vcsa"
+    project "III.VC.SA.LimitAdjuster"
         language "C++"
         kind "SharedLib"
-        targetname "limit_adjuster_gta3vcsa"
+        targetname "III.VC.SA.LimitAdjuster"
         targetextension ".asi"
         
         flags { "NoPCH" }

@@ -81,7 +81,7 @@ void ReadSection(const linb::ini& ini, const char* secname, std::map<std::string
 int AdjustLimits()
 {
     std::map<std::string, std::string> keys;
-    linb::ini ini("limit_adjuster_gta3vcsa.ini");           // Open the ini
+    linb::ini ini("III.VC.SA.LimitAdjuster.ini");           // Open the ini
     const char* secname = 0;
 
     // Find which section we should read on the ini
