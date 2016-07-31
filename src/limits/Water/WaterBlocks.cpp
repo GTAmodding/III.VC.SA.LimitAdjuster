@@ -175,7 +175,7 @@ public:
 		injector::WriteMemory<uint8_t>(0x5564BF, WaterLines, true);								// количество внешней воды севера и юга
 		injector::WriteMemory<uint8_t>(0x5564C9, (WaterLines - 5) * 2 + 26, true);				// расширение внешней воды севера и юга на восток
 		injector::WriteMemory<uint8_t>(0x5564D1, WaterLines, true);								// сдвиг внешней воды запада и востока на север
-		injector::WriteMemory<uint8_t>(0x55676F, (WaterLines - 5) * 2 + 26, true);				// количество внешней воды запада и востока
-		injector::WriteMemory<uint8_t>(0x556779, (WaterLines - 5) * 2 + 26, true);				// расширение внешней воды запада и востока на север
+		injector::WriteMemory<uint8_t>(0x55676F, WaterLines, true);								// количество внешней воды запада и востока
+		injector::WriteMemory<uint8_t>(0x556779, WaterLines + 16, true);						// расширение внешней воды запада и востока на север
 	}
 } OutsideWorldWaterBlocksIII;
