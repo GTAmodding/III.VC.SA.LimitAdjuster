@@ -9,7 +9,10 @@ class StreamingInfoIII : public SimpleAdjuster
         void ChangeLimit(int, const std::string& value)
 	{
 		int n = std::stoi(value);
-		char *streaminginfo = new char[n*0x14];
+		// The unrolled loop in CStreaming::Init inits 6 more elements
+		// after looping in 8 element increments because the default
+		// size 6350 % 8 == 6. We'll just allocate 6 more elements.
+		char *streaminginfo = new char[(n+6)*0x14];
 		// fix loop limit
 		WriteMemory(0x40664A + 1, n-8, true);
 		// move array references
