@@ -5,10 +5,9 @@ using namespace injector;
 class StreamingInfoIII : public SimpleAdjuster
 {
     public:
-        const char* GetLimitName() { return GetGVM().IsIII()? "StreamingInfoLimit" : nullptr; }
+        const char* GetLimitName() { return GetGVM().IsIII()? "StreamingInfo" : nullptr; }
         void ChangeLimit(int, const std::string& value)
 	{
-		memset((void*)0x6C7088, 0xcd, 6350*0x14);
 		int n = std::stoi(value);
 		char *streaminginfo = new char[n*0x14];
 		// fix loop limit

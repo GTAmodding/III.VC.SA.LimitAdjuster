@@ -5,10 +5,10 @@ using namespace injector;
 class TxdStoreIII : public SimpleAdjuster
 {
     public:
-        const char* GetLimitName() { return GetGVM().IsIII()? "TxdLimit" : nullptr; }
+        const char* GetLimitName() { return GetGVM().IsIII()? "TxdStore" : nullptr; }
         void ChangeLimit(int, const std::string& value)
 	{
-		int n = std::stoi(value)*0x14;
+		int n = std::stoi(value);
 		WriteMemory(0x406977 + 2, n, true);
 		WriteMemory(0x527457 + 1, n, true);
 		WriteMemory(0x5274CF + 2, n, true);
