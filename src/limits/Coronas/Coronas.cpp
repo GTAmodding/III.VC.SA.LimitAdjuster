@@ -83,7 +83,7 @@ void CCoronas::RegisterCorona(unsigned int nID, CEntity* pAttachTo, unsigned cha
             auto	pNewEntry = FreeList.First();
             if (!pNewEntry)
             {
-                MessageBox(0, "ERROR: Not enough space for coronas!", "ERROR: Not enough space for coronas!", 0);
+                MessageBoxA(0, "ERROR: Not enough space for coronas!", "ERROR: Not enough space for coronas!", 0);
                 return;
             }
 

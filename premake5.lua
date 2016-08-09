@@ -33,7 +33,7 @@ solution "OpenLA"
     flags {
         "StaticRuntime",
         "NoImportLib",
-        "NoRTTI",
+        rtti ("Off"),
         "NoBufferSecurityCheck"
     }
 
