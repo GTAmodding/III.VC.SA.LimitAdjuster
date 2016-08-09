@@ -27,6 +27,8 @@ using namespace injector;
 enum
 {
 	PtrNode,            // GTA3 / VC
+	Treadables,	    // GTA3 / VC
+	AudioScriptObj,	    // GTA3 / VC
 	PtrNodeSingle,      // SA
 	PtrNodeDouble,      // SA
 	EntryInfoNode,
@@ -36,10 +38,6 @@ enum
 	Objects,
 	Dummys,
 	ColModel,           // VC / SA
-	
-	// VC-only below
-	Treadables,
-	AudioScriptObj,
 
 	// SA-only below
 	Task,
@@ -50,8 +48,8 @@ enum
 	TaskAllocator,
 	PedIntelligence,
 	PedAttractors,
-    VehicleStructs,
-	
+	VehicleStructs,
+
 	MAX_POOLS
 };
 
@@ -106,8 +104,10 @@ struct PoolsAdjuster3 : public PoolsAdjusterBase
     PoolAdjuster<0x4A17BD> m_Peds;
     PoolAdjuster<0x4A17D7> m_Vehicles;
     PoolAdjuster<0x4A17F4> m_Buildings;
+    PoolAdjuster<0x4A1811> m_Treadables;
     PoolAdjuster<0x4A182E> m_Objects;
     PoolAdjuster<0x4A184B> m_Dummys;
+    PoolAdjuster<0x4A1868> m_AudioScriptObj;
 
 	// Limit Names
 	const Limit* GetLimits()
@@ -121,8 +121,10 @@ struct PoolsAdjuster3 : public PoolsAdjusterBase
 				DEFINE_POOL_LIMIT(Peds),
 				DEFINE_POOL_LIMIT(Vehicles),
 				DEFINE_POOL_LIMIT(Buildings),
+				DEFINE_POOL_LIMIT(Treadables),
 				DEFINE_POOL_LIMIT(Objects),
 				DEFINE_POOL_LIMIT(Dummys),
+				DEFINE_POOL_LIMIT(AudioScriptObj),
 				FINISH_LIMITS()
 			};
 			return lm;
