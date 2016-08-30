@@ -26,7 +26,7 @@ class StoreAdjuster : public SimpleAdjuster
         PointerAdjuster  ptrs;                                          // Pointers to be replaced in rellocations
         CDynamicStore<T> store;                                         // The new dynamic store
         
-        injector::hook_back<void(*)(void*)> hb_r;                       // < for reflector
+        injector::hook_back<void(*)(void*,void*,void*)> hb_r;                       // < for reflector
         injector::hook_back<T*(*)(int)>     hb[2];                      // Go back to the original call for CModelInfo::AddSomething
         injector::memory_pointer_raw        pgrow[2];                   // Pointer to the grower call
 
@@ -98,10 +98,10 @@ class StoreAdjuster : public SimpleAdjuster
         }
 
         // Called after reading all IDEs to make a reflection of this CStore in the default CStore
-        static void H_DoReflection(void* a)
+        static void H_DoReflection(void* a, void* b, void* c)
         {
             Instance()->ApplyReflection();
-            return Instance()->hb_r.fun(a);
+            return Instance()->hb_r.fun(a, b, c);
         }
 
         // Checks if it's possible to add another element in the CStore (called only if 'unlimited')
