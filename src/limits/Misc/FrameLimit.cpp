@@ -3,6 +3,21 @@
  *
  */
 #include "LimitAdjuster.h"
+
+// injector includes windows.h without defining NOMINMAX...
+#ifdef max
+#undef max
+#endif
+
+#ifdef min
+#undef min
+#endif
+
+static int ReadFrameLimitValue( const std::string& value )
+{
+    const int fpsValue = std::stoi(value);
+    return fpsValue > 0 ? fpsValue : std::numeric_limits<int>::max();
+}
  
 class FrameLimitSA : public SimpleAdjuster
 {
@@ -10,8 +25,10 @@ class FrameLimitSA : public SimpleAdjuster
         const char* GetLimitName() { return GetGVM().IsSA()? "FrameLimit" : nullptr; }
         void ChangeLimit(int, const std::string& value) 
         { 
-            injector::WriteMemory(0x619626, std::stoi(value), true); 
-            injector::WriteMemory(0xC1704C, std::stoi(value), true);
+            const int fpsValue = ReadFrameLimitValue( value );
+
+            injector::WriteMemory(0x619626, fpsValue, true); 
+            injector::WriteMemory(0xC1704C, fpsValue, false);
         }
         
 } FrameLimitSA;
@@ -22,8 +39,10 @@ public:
     const char* GetLimitName() { return GetGVM().IsVC() ? "FrameLimit" : nullptr; }
     void ChangeLimit(int, const std::string& value) 
     { 
-        injector::WriteMemory(0x602D68, std::stoi(value), true); 
-        injector::WriteMemory(0x9B48EC, std::stoi(value), true);
+        const int fpsValue = ReadFrameLimitValue( value );
+
+        injector::WriteMemory(0x602D68, fpsValue, true); 
+        injector::WriteMemory(0x9B48EC, fpsValue, false);
     }
 
 } FrameLimitVC;
@@ -34,8 +53,10 @@ public:
     const char* GetLimitName() { return GetGVM().IsIII() ? "FrameLimit" : nullptr; }
     void ChangeLimit(int, const std::string& value) 
     { 
-        injector::WriteMemory(0x584C78, std::stoi(value), true); 
-        injector::WriteMemory(0x8F4374, std::stoi(value), true);
+        const int fpsValue = ReadFrameLimitValue( value );
+
+        injector::WriteMemory(0x584C78, fpsValue, true); 
+        injector::WriteMemory(0x8F4374, fpsValue, false);
     }
 
 } FrameLimitIII;
