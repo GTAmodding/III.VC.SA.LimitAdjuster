@@ -42,43 +42,45 @@ namespace injector
 #ifndef INJECTOR_GVM_DUMMY
 class game_version_manager
 {
-	public:
-		// Set this if you would like that MessagesBox contain PluginName as caption
-		const char* PluginName;
+    public:
+        // Set this if you would like that MessagesBox contain PluginName as caption
+        const char* PluginName;
         
-	private:
-        char game, region, major, minor, cracker, steam;
+    private:
+        char game, region, major, minor, majorRevision, minorRevision, cracker, steam;
 
-	public:
-		game_version_manager()
-		{
-		    #ifdef INJECTOR_GVM_PLUGIN_NAME
-		        PluginName = INJECTOR_GVM_PLUGIN_NAME;
-		    #else
+    public:
+        game_version_manager()
+        {
+            #ifdef INJECTOR_GVM_PLUGIN_NAME
+                PluginName = INJECTOR_GVM_PLUGIN_NAME;
+            #else
                 PluginName = "Unknown Plugin Name";
             #endif
-			
-			this->Clear();
-		}
+            
+            this->Clear();
+        }
         
 
-	    // Clear any information about game version
-	    void Clear()
-	    {
-	        game = region = major = minor = cracker = steam = 0;
-	    }
+        // Clear any information about game version
+        void Clear()
+        {
+            game = region = major = minor = majorRevision = minorRevision = cracker = steam = 0;
+        }
         
-		// Checks if I don't know the game we are attached to
-		bool IsUnknown()		{ return game == 0; }
-		// Checks if this is the steam version
-		bool IsSteam()			{ return steam != 0; }
-		// Gets the game we are attached to (0, '3', 'V', 'S')
-		char GetGame()			{ return game; }
-		// Gets the region from the game we are attached to (0, 'U', 'E');
-		char GetRegion()		{ return region; }
-		// Get major and minor version of the game (e.g. [major = 1, minor = 0] = 1.0)
-		int GetMajorVersion()	{ return major; }
-		int GetMinorVersion()	{ return minor; }
+        // Checks if I don't know the game we are attached to
+        bool IsUnknown()		{ return game == 0; }
+        // Checks if this is the steam version
+        bool IsSteam()			{ return steam != 0; }
+        // Gets the game we are attached to (0, '3', 'V', 'S', 'I', 'E')
+        char GetGame()			{ return game; }
+        // Gets the region from the game we are attached to (0, 'U', 'E');
+        char GetRegion()		{ return region; }
+        // Get major and minor version of the game (e.g. [major = 1, minor = 0] = 1.0)
+        int GetMajorVersion()	{ return major; }
+        int GetMinorVersion()	{ return minor; }
+        int GetMajorRevisionVersion()	{ return majorRevision; }
+        int GetMinorRevisionVersion()	{ return minorRevision; }
         
         bool IsHoodlum()        { return cracker == 'H'; }
         
@@ -90,11 +92,13 @@ class game_version_manager
         bool IsIII() { return game == '3'; }
         bool IsVC () { return game == 'V'; }
         bool IsSA () { return game == 'S'; }
+        bool IsIV () { return game == 'I'; }
+        bool IsEFLC(){ return game == 'E'; }
 
-		// Detects game, region and version; returns false if could not detect it
-		bool Detect();
+        // Detects game, region and version; returns false if could not detect it
+        bool Detect();
         
-		// Gets the game version as text, the buffer must contain at least 32 bytes of space.
+        // Gets the game version as text, the buffer must contain at least 32 bytes of space.
         char* GetVersionText(char* buffer)
         {
             if(this->IsUnknown())
@@ -103,34 +107,34 @@ class game_version_manager
                 return buffer;
             }
 
-            const char* g = this->IsIII()? "III" : this->IsVC()? "VC" : this->IsSA()? "SA" : "UNK";
+            const char* g = this->IsIII() ? "III" : this->IsVC() ? "VC" : this->IsSA() ? "SA" : this->IsIV() ? "IV" : this->IsEFLC() ? "EFLC" : "UNK";
             const char* r = this->IsUS()? "US" : this->IsEU()? "EURO" : "UNK_REGION";
             const char* s = this->IsSteam()? "Steam" : "";
-            sprintf(buffer, "GTA %s %d.%d %s%s", g, major, minor, r, s);
+            sprintf(buffer, "GTA %s %d.%d.%d.%d %s%s", g, major, minor, majorRevision, minorRevision, r, s);
             return buffer;
         }
 
 
-	public:
-		// Raises a error saying that you could not detect the game version
-		void RaiseCouldNotDetect()
-		{
-			MessageBoxA(0,
-				"Could not detect the game version\nContact the mod creator!",
-				PluginName, MB_ICONERROR
-			);
-		}
+    public:
+        // Raises a error saying that you could not detect the game version
+        void RaiseCouldNotDetect()
+        {
+            MessageBoxA(0,
+                "Could not detect the game version\nContact the mod creator!",
+                PluginName, MB_ICONERROR
+            );
+        }
 
-		// Raises a error saying that the exe version is incompatible (and output the exe name)
-		void RaiseIncompatibleVersion()
-		{
-			char buf[128], v[32];
-			sprintf(buf,
-				"An incompatible exe version has been detected! (%s)\nContact the mod creator!",
-				GetVersionText(v)
-				);
-			MessageBoxA(0, buf, PluginName, MB_ICONERROR);
-		}
+        // Raises a error saying that the exe version is incompatible (and output the exe name)
+        void RaiseIncompatibleVersion()
+        {
+            char buf[128], v[32];
+            sprintf(buf,
+                "An incompatible exe version has been detected! (%s)\nContact the mod creator!",
+                GetVersionText(v)
+                );
+            MessageBoxA(0, buf, PluginName, MB_ICONERROR);
+        }
 };
 #else   // INJECTOR_GVM_DUMMY
 class game_version_manager
@@ -193,7 +197,17 @@ class address_manager : public game_version_manager
         
     public:
         // Functors for memory translation:
-        
+
+        // Translates aslr translator
+        struct fn_mem_translator_aslr
+        {
+            void* operator()(void* p) const
+            {
+                static uintptr_t  module = (uintptr_t)GetModuleHandle(NULL);
+                return (void*)((uintptr_t)(p)-(0x400000 - module));
+            }
+        };
+
         // Translates nothing translator
         struct fn_mem_translator_nop
         {

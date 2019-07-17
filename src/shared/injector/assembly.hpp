@@ -43,15 +43,15 @@ namespace injector
         // The ordering is very important, don't change
         // The first field is the last to be pushed and first to be poped
 
-        // PUSHFD / POPFD
-        uint32_t ef;
-
         // PUSHAD/POPAD -- must be the lastest fields (because of esp)
         union
         {
             uint32_t arr[8];
             struct { uint32_t edi, esi, ebp, esp, ebx, edx, ecx, eax; };
         };
+
+        // PUSHFD / POPFD
+        uint32_t ef;
         
         enum reg_name {
             reg_edi, reg_esi, reg_ebp, reg_esp, reg_ebx, reg_edx, reg_ecx, reg_eax 
@@ -100,9 +100,9 @@ namespace injector
             _asm
             {
                 // Construct the reg_pack structure on the stack
-                pushad              // Pushes general purposes registers to reg_pack
-                add [esp+12], 4     // Add 4 to reg_pack::esp 'cuz of our return pointer, let it be as before this func is called
                 pushfd              // Pushes EFLAGS to reg_pack
+                pushad              // Pushes general purposes registers to reg_pack
+                add dword ptr[esp+12], 8     // Add 4 to reg_pack::esp 'cuz of our return pointer, let it be as before this func is called
 
                 // Call wrapper sending reg_pack as parameter
                 push esp
@@ -110,9 +110,9 @@ namespace injector
                 add esp, 4
 
                 // Destructs the reg_pack from the stack
-                sub [esp+12+4], 4   // Fix reg_pack::esp before popping it (doesn't make a difference though) (+4 because eflags)
-                popfd               // Warning: Do not use any instruction that changes EFLAGS after this (-> sub affects EF!! <-)
+                sub dword ptr[esp+12], 8   // Fix reg_pack::esp before popping it (doesn't make a difference though) (+4 because eflags)
                 popad
+                popfd               // Warning: Do not use any instruction that changes EFLAGS after this (-> sub affects EF!! <-)
 
                 // Back to normal flow
                 ret
@@ -152,14 +152,14 @@ namespace injector
     template<uintptr_t at, uintptr_t end, class FuncT>
     void MakeInline(FuncT func)
     {
-        static FuncT static_func = func;    // Stores the func object
-        static_func = func;                 //
+        static std::unique_ptr<FuncT> static_func;
+        static_func.reset(new FuncT(std::move(func)));
 
         // Encapsulates the call to static_func
         struct Caps
         {
             void operator()(reg_pack& regs)
-            { static_func(regs); }
+            { (*static_func)(regs); }
         };
 
         // Does the actual MakeInline

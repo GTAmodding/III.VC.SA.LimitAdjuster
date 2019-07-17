@@ -2,7 +2,6 @@
  *  Injectors - Base Header
  *
  *  Copyright (C) 2012-2014 LINK/2012 <dma_2012@hotmail.com>
- *  Copyright (C) 2014 Deji <the_zone@hotmail.co.uk>
  *
  *  This software is provided 'as-is', without any express or implied
  *  warranty. In no event will the authors be held liable for any damages
@@ -29,7 +28,7 @@
 #include <windows.h>
 #include <cstdint>
 #include <cstdio>
-
+#include "gvm/gvm.hpp"
 /*
     The following macros (#define) are relevant on this header:
 
@@ -73,14 +72,14 @@ union auto_pointer
         friend union memory_pointer_tr;
         template<class T> friend union basic_memory_pointer;
         
-	    void*	 p;
-	    uintptr_t a;
+        void*	 p;
+        uintptr_t a;
 
     public:
-	    auto_pointer() : p(0)                          {}
+        auto_pointer() : p(0)                          {}
         auto_pointer(const auto_pointer& x) : p(x.p)  {}
-	    explicit auto_pointer(void* x)    : p(x)       {}
-	    explicit auto_pointer(uint32_t x) : a(x)       {}
+        explicit auto_pointer(void* x)    : p(x)       {}
+        explicit auto_pointer(uint32_t x) : a(x)       {}
 
         bool is_null() const { return this->p != nullptr; }
 
@@ -92,8 +91,8 @@ union auto_pointer
         template<class T> T* get() const       { return (T*) this->p; }
         template<class T> T* get_raw() const   { return (T*) this->p; }
 
-	    template<class T>
-	    operator T*() const { return reinterpret_cast<T*>(p); }
+        template<class T>
+        operator T*() const { return reinterpret_cast<T*>(p); }
 };
 
 /*
@@ -194,7 +193,7 @@ union basic_memory_pointer
  // Typedefs including memory translator for the above type
 typedef basic_memory_pointer<address_manager::fn_mem_translator>       memory_pointer;
 typedef basic_memory_pointer<address_manager::fn_mem_translator_nop>   memory_pointer_raw;
-
+typedef basic_memory_pointer<address_manager::fn_mem_translator_aslr>  memory_pointer_aslr;
 
 
 
@@ -270,7 +269,7 @@ union memory_pointer_tr
  */
 inline bool ProtectMemory(memory_pointer_tr addr, size_t size, DWORD protection)
 {
-	return VirtualProtect(addr.get(), size, protection, &protection) != 0;
+    return VirtualProtect(addr.get(), size, protection, &protection) != 0;
 }
 
 /*
@@ -280,7 +279,7 @@ inline bool ProtectMemory(memory_pointer_tr addr, size_t size, DWORD protection)
  */
 inline bool UnprotectMemory(memory_pointer_tr addr, size_t size, DWORD& out_oldprotect)
 {
-	return VirtualProtect(addr.get(), size, PAGE_EXECUTE_READWRITE, &out_oldprotect) != 0;
+    return VirtualProtect(addr.get(), size, PAGE_EXECUTE_READWRITE, &out_oldprotect) != 0;
 }
 
 /*
@@ -395,7 +394,29 @@ inline T ReadMemory(memory_pointer_tr addr, bool vp = false)
     return ReadObject(addr, value, vp);
 }
 
-
+/*
+ *  AdjustPointer 
+ *      Searches in the range [@addr, @addr + @max_search] for a pointer in the range [@default_base, @default_end] and replaces
+ *      it with the proper offset in the pointer @replacement_base.
+ *      Does memory unprotection if @vp is true.
+ */
+ inline memory_pointer_raw AdjustPointer(memory_pointer_tr addr,
+                                         memory_pointer_raw replacement_base, memory_pointer_tr default_base, memory_pointer_tr default_end,
+                                         size_t max_search = 8, bool vp = true)
+ {
+    scoped_unprotect xprotect(addr, vp? max_search + sizeof(void*) : 0);
+    for(size_t i = 0; i < max_search; ++i)
+    {
+        memory_pointer_raw ptr = ReadMemory<void*>(addr + i);
+        if(ptr >= default_base.get() && ptr <= default_end.get())
+        {
+            auto result = replacement_base + (ptr - default_base.get());
+            WriteMemory<void*>(addr + i, result.get());
+            return result;
+        }
+    }
+    return nullptr;
+ }
 
 
 
@@ -417,7 +438,7 @@ inline memory_pointer_raw GetAbsoluteOffset(int rel_value, memory_pointer_tr end
  */
 inline int GetRelativeOffset(memory_pointer_tr abs_value, memory_pointer_tr end_of_instruction)
 {
-	return uintptr_t(abs_value.get<char>() - end_of_instruction.get<char>());
+    return uintptr_t(abs_value.get<char>() - end_of_instruction.get<char>());
 }
 
 /*
@@ -426,13 +447,13 @@ inline int GetRelativeOffset(memory_pointer_tr abs_value, memory_pointer_tr end_
  */
 inline memory_pointer_raw ReadRelativeOffset(memory_pointer_tr at, size_t sizeof_addr = 4, bool vp = true)
 {
-	switch(sizeof_addr)
-	{
-		case 1: return (GetAbsoluteOffset(ReadMemory<int8_t> (at, vp), at+sizeof_addr));
-		case 2: return (GetAbsoluteOffset(ReadMemory<int16_t>(at, vp), at+sizeof_addr));
-		case 4: return (GetAbsoluteOffset(ReadMemory<int32_t>(at, vp), at+sizeof_addr));
-	}
-	return nullptr;
+    switch(sizeof_addr)
+    {
+        case 1: return (GetAbsoluteOffset(ReadMemory<int8_t> (at, vp), at+sizeof_addr));
+        case 2: return (GetAbsoluteOffset(ReadMemory<int16_t>(at, vp), at+sizeof_addr));
+        case 4: return (GetAbsoluteOffset(ReadMemory<int32_t>(at, vp), at+sizeof_addr));
+    }
+    return nullptr;
 }
 
 /*
@@ -441,12 +462,12 @@ inline memory_pointer_raw ReadRelativeOffset(memory_pointer_tr at, size_t sizeof
  */
 inline void MakeRelativeOffset(memory_pointer_tr at, memory_pointer_tr dest, size_t sizeof_addr = 4, bool vp = true)
 {
-	switch(sizeof_addr)
-	{
-		case 1: WriteMemory<int8_t> (at, static_cast<int8_t> (GetRelativeOffset(dest, at+sizeof_addr)), vp);
-		case 2: WriteMemory<int16_t>(at, static_cast<int16_t>(GetRelativeOffset(dest, at+sizeof_addr)), vp);
-		case 4: WriteMemory<int32_t>(at, static_cast<int32_t>(GetRelativeOffset(dest, at+sizeof_addr)), vp);
-	}
+    switch(sizeof_addr)
+    {
+        case 1: WriteMemory<int8_t> (at, static_cast<int8_t> (GetRelativeOffset(dest, at+sizeof_addr)), vp);
+        case 2: WriteMemory<int16_t>(at, static_cast<int16_t>(GetRelativeOffset(dest, at+sizeof_addr)), vp);
+        case 4: WriteMemory<int32_t>(at, static_cast<int32_t>(GetRelativeOffset(dest, at+sizeof_addr)), vp);
+    }
 }
 
 /*
@@ -456,23 +477,23 @@ inline void MakeRelativeOffset(memory_pointer_tr at, memory_pointer_tr dest, siz
  */
 inline memory_pointer_raw GetBranchDestination(memory_pointer_tr at, bool vp = true)
 {
-	switch(ReadMemory<uint8_t>(at, vp))
-	{
+    switch(ReadMemory<uint8_t>(at, vp))
+    {
         // We need to handle other instructions (and prefixes) later...
-		case 0xE8:	// call rel
-		case 0xE9:	// jmp rel
-			return ReadRelativeOffset(at + 1, 4, vp);
+        case 0xE8:	// call rel
+        case 0xE9:	// jmp rel
+            return ReadRelativeOffset(at + 1, 4, vp);
 
         case 0xFF: 
             switch(ReadMemory<uint8_t>(at + 1, vp))
             {
-            	case 0x15:  // call dword ptr [addr]
+                case 0x15:  // call dword ptr [addr]
                 case 0x25:  // jmp dword ptr [addr]
                     return *(ReadMemory<uintptr_t*>(at + 2, vp));
             }
             break;
-	}
-	return nullptr;
+    }
+    return nullptr;
 }
 
 /*
@@ -482,10 +503,10 @@ inline memory_pointer_raw GetBranchDestination(memory_pointer_tr at, bool vp = t
  */
 inline memory_pointer_raw MakeJMP(memory_pointer_tr at, memory_pointer_raw dest, bool vp = true)
 {
-	auto p = GetBranchDestination(at, vp);
-	WriteMemory<uint8_t>(at, 0xE9, vp);
-	MakeRelativeOffset(at+1, dest, 4, vp);
-	return p;
+    auto p = GetBranchDestination(at, vp);
+    WriteMemory<uint8_t>(at, 0xE9, vp);
+    MakeRelativeOffset(at+1, dest, 4, vp);
+    return p;
 }
 
 /*
@@ -495,10 +516,10 @@ inline memory_pointer_raw MakeJMP(memory_pointer_tr at, memory_pointer_raw dest,
  */
 inline memory_pointer_raw MakeCALL(memory_pointer_tr at, memory_pointer_raw dest, bool vp = true)
 {
-	auto p = GetBranchDestination(at, vp);
-	WriteMemory<uint8_t>(at, 0xE8, vp);
-	MakeRelativeOffset(at+1, dest, 4, vp);
-	return p;
+    auto p = GetBranchDestination(at, vp);
+    WriteMemory<uint8_t>(at, 0xE8, vp);
+    MakeRelativeOffset(at+1, dest, 4, vp);
+    return p;
 }
 
 /*
@@ -508,8 +529,8 @@ inline memory_pointer_raw MakeCALL(memory_pointer_tr at, memory_pointer_raw dest
  */
 inline void MakeJA(memory_pointer_tr at, memory_pointer_raw dest, bool vp = true)
 {
-	WriteMemory<uint16_t>(at, 0x87F0, vp);
-	MakeRelativeOffset(at+2, dest, 4, vp);
+    WriteMemory<uint16_t>(at, 0x87F0, vp);
+    MakeRelativeOffset(at+2, dest, 4, vp);
 }
 
 /*
@@ -616,7 +637,7 @@ inline memory_pointer_raw  raw_ptr(T p)
 template<class Tr>
 inline memory_pointer_raw  raw_ptr(basic_memory_pointer<Tr> p)
 {
-	return raw_ptr(p.get());
+    return raw_ptr(p.get());
 }
 
 template<uintptr_t addr>
@@ -625,7 +646,11 @@ inline memory_pointer_raw  lazy_ptr()
     return lazy_pointer<addr>::get();
 }
 
-
+template<class T>
+inline memory_pointer_aslr  aslr_ptr(T p)
+{
+    return memory_pointer_aslr(p);
+}
 
 
 
@@ -641,13 +666,13 @@ inline bool game_version_manager::Detect()
     this->Clear();
 
     // Find NT header
-    uintptr_t          base     = (uintptr_t) GetModuleHandleA(NULL);;
+    uintptr_t          base     = (uintptr_t) GetModuleHandleA(NULL);
     IMAGE_DOS_HEADER*  dos      = (IMAGE_DOS_HEADER*)(base);
     IMAGE_NT_HEADERS*  nt       = (IMAGE_NT_HEADERS*)(base + dos->e_lfanew);
             
     // Look for game and version thought the entry-point
     // Thanks to Silent for many of the entry point offsets
-    switch(base + nt->OptionalHeader.AddressOfEntryPoint)
+    switch (base + nt->OptionalHeader.AddressOfEntryPoint + (0x400000 - base))
     {
         case 0x5C1E70:  // GTA III 1.0
             game = '3', major = 1, minor = 0, region = 0, steam = false;
@@ -698,6 +723,26 @@ inline bool game_version_manager::Detect()
         case 0x85EC4A:  // GTA SA 3.0 (Cracked Steam Version)
         case 0xD3C3DB:  // GTA SA 3.0 (Encrypted Steam Version)
             game = 'S', major = 3, minor = 0, region = 0, steam = true;
+            return true;
+
+        case 0xC965AD:  // GTA IV 1.0.0.4 US
+            game = 'I', major = 1, minor = 0, majorRevision = 0, minorRevision = 4, region = 'U', steam = false;
+            return true;
+
+        case 0xD0D011:  // GTA IV 1.0.0.7 US
+            game = 'I', major = 1, minor = 0, majorRevision = 0, minorRevision = 7, region = 'U', steam = false;
+            return true;
+
+        case 0xCF529E:  // GTA IV 1.0.0.8 US
+            game = 'I', major = 1, minor = 0, majorRevision = 0, minorRevision = 8, region = 'U', steam = false;
+            return true;
+
+        case 0xD0AF06:  // GTA EFLC 1.1.2.0 US
+            game = 'E', major = 1, minor = 1, majorRevision = 2, minorRevision = 0, region = 'U', steam = false;
+            return true;
+
+        case 0xCF4BAD:  // GTA EFLC 1.1.3.0 US
+            game = 'E', major = 1, minor = 1, majorRevision = 3, minorRevision = 0, region = 'U', steam = false;
             return true;
 
         default:
