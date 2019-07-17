@@ -39,7 +39,8 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD reason, LPVOID lpReserved)
         else
         {
             AdjustLimits();             // Run the limit adjuster
-            PatchDrawer();
+            if (gvm.IsSA())             // FIX ME (nothing is drawn in III and VC, and in VC sometimes some junk text appears on screen)
+                PatchDrawer();
         }
     }
     return TRUE;
