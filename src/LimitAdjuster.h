@@ -13,7 +13,8 @@
 #include <injector/injector.hpp>    // base injection library
 #include <string>                   // for std::string
 #include <vector>                   // for std::vector
-
+#include <stdexcept>
+#include <memory>
 
 /*
  *  You can use the following interface for your limit adjuster if it adjusts more than one limit

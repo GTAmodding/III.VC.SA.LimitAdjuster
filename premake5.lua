@@ -29,6 +29,13 @@ solution "OpenLA"
     targetprefix "" -- no 'lib' prefix on gcc
     targetdir "bin"
     implibdir "bin"
+	
+    defines { "rsc_CompanyName=\"LimitAdjuster\"" }
+    defines { "rsc_LegalCopyright=\"MIT License\""} 
+    defines { "rsc_FileVersion=\"1.0.0.0\"", "rsc_ProductVersion=\"1.0.0.0\"" }
+    defines { "rsc_InternalName=\"%{prj.name}\"", "rsc_ProductName=\"%{prj.name}\"", "rsc_OriginalFilename=\"%{prj.name}.dll\"" }
+    defines { "rsc_FileDescription=\"This is a open source limit adjuster for Grand Theft Auto III, Vice City and San Andreas\"" }
+    defines { "rsc_UpdateUrl=\"https://github.com/ThirteenAG/III.VC.SA.LimitAdjuster\"" }
 
     flags {
         "StaticRuntime",
@@ -39,7 +46,7 @@ solution "OpenLA"
 
     defines {
         "INJECTOR_GVM_HAS_TRANSLATOR",
-        'INJECTOR_GVM_PLUGIN_NAME="\\"Open Limit Adjuster\\""'    -- (additional quotes needed for gmake)
+        'INJECTOR_GVM_PLUGIN_NAME=\"Open Limit Adjuster\"'    -- (additional quotes needed for gmake)
     }
 
     defines {
@@ -78,6 +85,7 @@ solution "OpenLA"
             "src/**.h",
             "doc/**"
         }
+        files { "src/resources/Versioninfo.rc" }
         excludes { "sample.cpp" }
         
         
