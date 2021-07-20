@@ -20,3 +20,13 @@ class TxdStoreIII : public SimpleAdjuster
 		WriteMemory(0x592F59 + 1, n, true);        
 	}
 } TxdStoreIII;
+
+class TxdStoreVC : public SimpleAdjuster {
+public:
+	const char* GetLimitName() { return GetGVM().IsVC() ? "TxdStore" : nullptr; }
+	void ChangeLimit(int, const std::string& value)
+	{
+		int n = std::stoi(value);
+		WriteMemory(0x58102D, n, true);
+	}
+} TxdStoreVC;
