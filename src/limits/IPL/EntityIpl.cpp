@@ -76,11 +76,20 @@ struct EntityIplSA : EntityIplBase<0x5B8A36, 0x8E3F08, 40, 0x8E3F00>    // <pCal
 	
     EntityIplSA()
     {
-        this->AddPointer(0x40479A);
-        this->AddPointer(0x4047B7);
-        this->AddPointer(0x405C3D);
-        this->AddPointer(0x406033);
-        this->AddPointer(0x40619B);
+        if (GetGVM().IsHoodlum()) {
+            this->AddPointer(0x405C3C);
+            this->AddPointer(0x40619B);
+            this->AddPointer(0x1561160);
+            this->AddPointer(0x15649FA);
+            this->AddPointer(0x1569777);
+        }
+        else {
+            this->AddPointer(0x40479A);
+            this->AddPointer(0x4047B7);
+            this->AddPointer(0x405C3D);
+            this->AddPointer(0x406033);
+            this->AddPointer(0x40619B);
+        }
     }
 
 } EntityIplSA;
