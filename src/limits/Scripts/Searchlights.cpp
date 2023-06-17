@@ -102,7 +102,7 @@ public:
             CPatch::AdjustPointer(0x49328E, &aSearchlights[0], 0xA94D68, 0xA95148);
             CPatch::AdjustPointer(0x4932F2, &aSearchlights[0], 0xA94D68, 0xA95148);
 
-            CPatch::SetInt(0x015692D3, 992 * nCount);
+            CPatch::SetInt(0x015692D3, 124 * nCount);
             CPatch::SetInt(0x493E42, nCount);
         }
         else
@@ -189,9 +189,8 @@ public:
             CPatch::AdjustPointer(0x4932E9, &aSearchlights[0], 0xA94D68, 0xA95148);
             CPatch::AdjustPointer(0x4932F2, &aSearchlights[0], 0xA94D68, 0xA95148);
             
-            CPatch::SetInt(0x493013, 992 * nCount);
+            CPatch::SetInt(0x493013, 124 * nCount);
             CPatch::SetInt(0x493E42, nCount);
         }
     }
-
 } SearchlightsSA;
