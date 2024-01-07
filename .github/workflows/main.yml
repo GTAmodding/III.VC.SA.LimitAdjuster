@@ -43,3 +43,4 @@ jobs:
         name: III.VC.SA.LimitAdjuster
         path: |
           bin\*
+          !bin\*.pdb
