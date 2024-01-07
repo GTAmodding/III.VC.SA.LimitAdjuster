@@ -1,0 +1,46 @@
+name: GitHub Actions Build
+
+on:
+  push:
+    paths-ignore:
+      - "**/*.md"
+      - '**/*.txt'
+    branches:
+      - '**'
+  pull_request:
+    paths-ignore:
+      - "**/*.md"
+      - '**/*.txt'
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+      with:
+        submodules: recursive
+
+    - name: Add msbuild to PATH
+      uses: microsoft/setup-msbuild@main
+      
+    - name: Configure build
+      run: ./premake5.bat
+      
+    - name: Build
+      run: |
+        msbuild -m build/OpenLA.sln /property:Configuration=Release /property:Platform=Win32
+
+    - name: Copy Configuration File
+      run: |
+        copy doc\III.VC.SA.LimitAdjuster.ini bin\III.VC.SA.LimitAdjuster.ini
+
+    - name: Upload artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: III.VC.SA.LimitAdjuster
+        path: |
+          bin\*
+          !bin\*.pdb
