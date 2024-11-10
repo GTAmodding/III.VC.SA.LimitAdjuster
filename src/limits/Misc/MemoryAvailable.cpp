@@ -23,7 +23,8 @@ struct MemoryLimit : public SimpleAdjuster
             MEMORYSTATUSEX sysmem = { sizeof(sysmem) };
             if(GlobalMemoryStatusEx(&sysmem))
             {
-                memory = uint32_t(sysmem.ullTotalPhys * std::stoul(value.substr(0, value.size() - 1)) / 100);
+                auto calcmem = sysmem.ullTotalPhys * (std::stoul(value.substr(0, value.size() - 1)) / 100.0);
+                memory = calcmem > UINT32_MAX ? UINT32_MAX : uint32_t(calcmem); // use the maximum value of uint32_t (if the calculated value exceeds the capacity)
             }
         }
         else
