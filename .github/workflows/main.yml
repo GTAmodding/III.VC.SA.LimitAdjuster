@@ -38,7 +38,7 @@ jobs:
         copy doc\III.VC.SA.LimitAdjuster.ini bin\III.VC.SA.LimitAdjuster.ini
 
     - name: Upload artifact
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v6
       with:
         name: III.VC.SA.LimitAdjuster
         path: |
