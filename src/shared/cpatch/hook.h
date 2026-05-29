@@ -124,7 +124,7 @@ namespace Hook
 		do
 		{
 			content = *(int *)address;
-			if(content >= start && content < end)
+			if(content >= start && content <= end)
 			{
 				result = (int)value + (content - start);
 				Patch(address, &result, 4);
