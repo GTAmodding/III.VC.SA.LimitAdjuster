@@ -100,7 +100,7 @@ jobs:
 
     - name: Upload Release
       if: |
-        (github.event_name == 'push' && github.ref_name == 'master') ||
+#        (github.event_name == 'push' && github.ref_name == 'master') ||
         (github.event_name == 'workflow_dispatch' && github.event.inputs.release == 'true' && github.ref_name == 'master')
       uses: ncipollo/release-action@main
       with:
