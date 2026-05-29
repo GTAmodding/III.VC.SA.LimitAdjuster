@@ -12,6 +12,30 @@ on:
       - "**/*.md"
       - '**/*.txt'
   workflow_dispatch:
+    inputs:
+      release:
+        description: "Create a release"
+        type: choice
+        required: false
+        default: 'false'
+        options:
+          - 'true'
+          - 'false'
+      version_increment:
+        description: "Default semantic version release type"
+        type: choice
+        required: false
+        default: 'patch'
+        options:
+          - 'major'
+          - 'minor'
+          - 'patch'
+
+env:
+  VERINC: ${{ github.event.inputs.version_increment || 'patch' }}
+
+permissions:
+  contents: write
 
 jobs:
   build:
@@ -22,13 +46,25 @@ jobs:
       uses: actions/checkout@v6
       with:
         submodules: recursive
+        fetch-depth: 0
 
     - name: Add msbuild to PATH
       uses: microsoft/setup-msbuild@main
-      
+
+    - name: Auto Increment Version
+      if: |
+        (github.event_name == 'push' && github.ref_name == 'master') ||
+        (github.event_name == 'workflow_dispatch' && github.event.inputs.release == 'true' && github.ref_name == 'master')
+      uses: MCKanpolat/auto-semver-action@1.0.12
+      id: versioning
+      with:
+        releaseType: ${{ env.VERINC }}
+        incrementPerCommit: false
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+
     - name: Configure build
-      run: ./premake5.bat
-      
+      run: ./premake5.bat --with-version=${{ steps.versioning.outputs.version }}
+
     - name: Build
       run: |
         msbuild -m build/OpenLA.sln /property:Configuration=Release /property:Platform=Win32
@@ -37,6 +73,23 @@ jobs:
       run: |
         copy doc\III.VC.SA.LimitAdjuster.ini bin\III.VC.SA.LimitAdjuster.ini
 
+    - name: Create release archive
+      if: |
+        (github.event_name == 'push' && github.ref_name == 'master') ||
+        (github.event_name == 'workflow_dispatch' && github.event.inputs.release == 'true' && github.ref_name == 'master')
+      shell: powershell
+      run: |
+        Remove-Item -Recurse -Force release -ErrorAction SilentlyContinue
+        New-Item -ItemType Directory -Path release | Out-Null
+        $sourcePath = (Resolve-Path 'bin').Path
+        $releasePath = (Resolve-Path 'release').Path
+        Get-ChildItem -Path bin -Recurse -File | Where-Object { $_.Extension -ne '.pdb' } | ForEach-Object {
+          $target = $_.FullName.Replace($sourcePath, $releasePath)
+          New-Item -ItemType Directory -Force -Path (Split-Path $target) | Out-Null
+          Copy-Item $_.FullName $target -Force
+        }
+        Compress-Archive -Path release\* -DestinationPath III.VC.SA.LimitAdjuster.zip -Force
+
     - name: Upload artifact
       uses: actions/upload-artifact@v7
       with:
@@ -44,3 +97,15 @@ jobs:
         path: |
           bin\*
           !bin\*.pdb
+
+    - name: Upload Release
+      if: |
+        (github.event_name == 'push' && github.ref_name == 'master') ||
+        (github.event_name == 'workflow_dispatch' && github.event.inputs.release == 'true' && github.ref_name == 'master')
+      uses: ncipollo/release-action@main
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        allowUpdates: false
+        name: III.VC.SA.LimitAdjuster v${{ steps.versioning.outputs.version }}
+        tag: v${{ steps.versioning.outputs.version }}
+        artifacts: III.VC.SA.LimitAdjuster.zip
