@@ -98,3 +98,14 @@ public:
         injector::MakeJMP(0x40FC92, dirEntryHookVC, true);
     }
 } ExtraObjectsDirVC;
+
+class ExtraObjectsDirSA : public SimpleAdjuster
+{
+public:
+    const char* GetLimitName() { return GetGVM().IsSA() ? "ExtraObjectsDir" : nullptr; }
+    void ChangeLimit(int, const std::string& value)
+    {
+        int n = std::stoi(value);
+        WriteMemory<uint32_t>(0x5B8DDF + 1, n, true);
+    }
+} ExtraObjectsDirSA;
