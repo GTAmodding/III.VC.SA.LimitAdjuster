@@ -52,9 +52,6 @@ jobs:
       uses: microsoft/setup-msbuild@main
 
     - name: Auto Increment Version
-      if: |
-        (github.event_name == 'push' && github.ref_name == 'master') ||
-        (github.event_name == 'workflow_dispatch' && github.event.inputs.release == 'true' && github.ref_name == 'master')
       uses: MCKanpolat/auto-semver-action@1.0.12
       id: versioning
       with:

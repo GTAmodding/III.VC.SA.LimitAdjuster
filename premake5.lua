@@ -35,7 +35,7 @@ solution "OpenLA"
     targetprefix "" -- no 'lib' prefix on gcc
     targetdir "bin"
     implibdir "bin"
-	
+    
     defines { "rsc_CompanyName=\"LimitAdjuster\"" }
     defines { "rsc_LegalCopyright=\"MIT License\""}
     defines { "rsc_InternalName=\"%{prj.name}\"", "rsc_ProductName=\"%{prj.name}\"", "rsc_OriginalFilename=\"%{cfg.buildtarget.name}\"" }
@@ -80,12 +80,10 @@ solution "OpenLA"
     defines { "rsc_GitSHA1=\"" .. githash .. "\"" }
     defines { "rsc_GitSHA1W=L\"" .. githash .. "\"" }
 
-    flags {
-        "StaticRuntime",
-        "NoImportLib",
-        rtti ("Off"),
-        "NoBufferSecurityCheck"
-    }
+    staticruntime "On"
+    rtti "Off"
+    useimportlib "Off"
+    buffersecuritycheck "Off"
 
     defines {
         "INJECTOR_GVM_HAS_TRANSLATOR",
@@ -104,15 +102,17 @@ solution "OpenLA"
         "src/shared/structs",
     }
 
-    configuration "Debug*"
-        flags { "Symbols" }
-        
-    configuration "Release*"
+    filter "configurations:Debug*"
+        symbols "On"
+
+    filter "configurations:Release*"
         defines { "NDEBUG" }
         optimize "Speed"
 
-    configuration "vs*"
+    filter "action:vs*"
         buildoptions { "/arch:IA32" }           -- disable the use of SSE/SSE2 instructions
+
+    filter {}
 
     project "III.VC.SA.LimitAdjuster"
         language "C++"
@@ -120,7 +120,7 @@ solution "OpenLA"
         targetname "III.VC.SA.LimitAdjuster"
         targetextension ".asi"
         
-        flags { "NoPCH" }
+        enablepch "Off"
         
         files {
             "src/**.cpp",
