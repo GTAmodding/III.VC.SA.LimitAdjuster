@@ -253,6 +253,7 @@ public:
 DWORD _eax;
 DWORD _ebx;
 std::vector<char> aCoronas;
+char* aCoronasData;
 DWORD jmpAddress;
 int CORONAS_LIMIT;
 
@@ -276,6 +277,7 @@ void patch_544214();
 void PatchCoronasVC()
 {
     aCoronas.resize(CORONAS_LIMIT * 104);
+    aCoronasData = &aCoronas[0];
 
     //CPatch::AdjustPointer(0x400000+0x14243A, &aCoronas[0], 0x815128, 0x81518F);
     CPatch::AdjustPointer(0x400000+0x14244E, &aCoronas[0], 0x815128, 0x81518F);
@@ -461,7 +463,7 @@ void __declspec(naked)patch_542434()
         cmp eax, CORONAS_LIMIT
         jnb loc_542442
         mov _eax, eax
-        mov eax, [aCoronas]
+        mov eax, [aCoronasData]
         add eax, 0xC
         cmp edx, dword ptr ds : [eax + ebx]
         mov eax, _eax
@@ -487,7 +489,7 @@ void __declspec(naked)patch_5425B7()
         cmp edx, CORONAS_LIMIT
         jnb loc_5425C5
         mov _eax, eax
-        mov eax, [aCoronas]
+        mov eax, [aCoronasData]
         add eax, 0xC
         cmp esi, dword ptr ds : [eax + ecx]
         mov eax, _eax
@@ -513,7 +515,7 @@ void __declspec(naked)patch_5425F4()
         cmp edx, CORONAS_LIMIT
         jnb loc_542603
         mov _ebx, ebx
-        mov ebx, [aCoronas]
+        mov ebx, [aCoronasData]
         add ebx, 0xC
         cmp dword ptr ds : [ebx + eax], 0
         mov ebx, _ebx
@@ -538,7 +540,7 @@ void __declspec(naked)patch_542955()
     {
         cmp eax, CORONAS_LIMIT
         mov _eax, eax
-        mov eax, [aCoronas]
+        mov eax, [aCoronasData]
         add eax, 0xC
         mov dword ptr ds : [eax + edx * 8h], 0
         mov eax, _eax
@@ -553,7 +555,7 @@ void __declspec(naked)patch_54310C()
     {
         cmp eax, CORONAS_LIMIT
         mov _eax, eax
-        mov eax, [aCoronas]
+        mov eax, [aCoronasData]
         add eax, 0x34
         mov byte ptr ds : [eax + esi * 8], cl
         mov eax, _eax
@@ -665,6 +667,7 @@ DWORD ext_4FA379 = 0x4FA379;
 void PatchCoronasIII()
 {
     aCoronas.resize(CORONAS_LIMIT * 128);
+    aCoronasData = &aCoronas[0];
 
     CPatch::AdjustPointer(0x400000+0xF8F8B, &aCoronas[0], 0x72E518, 0x72E597);
     CPatch::AdjustPointer(0x400000+0xF8F90, &aCoronas[0], 0x72E518, 0x72E597);
@@ -903,7 +906,7 @@ void __declspec(naked) patch_4FA12C()
         cmp edx, CORONAS_LIMIT
         jnb loc_4FA13A
         mov _eax, eax
-        mov eax, [aCoronas]
+        mov eax, [aCoronasData]
         cmp edi, dword ptr ds:[eax + ebx]
         mov eax, _eax
         jne loc_4FA128
@@ -922,7 +925,7 @@ void __declspec(naked) patch_4FA15B()
         cmp edx, CORONAS_LIMIT
         jnb loc_4FA16A
         mov _ebx, ebx
-        mov ebx, [aCoronas]
+        mov ebx, [aCoronasData]
         cmp dword ptr ds:[ebx + eax], 0
         mov ebx, _ebx
         jne loc_4FA157
@@ -941,7 +944,7 @@ void __declspec(naked) patch_4FA324()
         cmp eax, CORONAS_LIMIT
         jnb loc_4FA332
         mov _eax, eax
-        mov eax, [aCoronas]
+        mov eax, [aCoronasData]
         cmp edx, dword ptr ds:[eax + ebx]
         mov eax, _eax
         jne loc_4FA320
