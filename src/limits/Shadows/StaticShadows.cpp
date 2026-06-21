@@ -397,14 +397,12 @@ public:
 DWORD _EAX;
 WORD _EBX;
 /////////////////////////////////////////////GTA Vice City/////////////////////////////////////////////
-void patch_56E6C0();
 void patch_56967E();
 void patch_56E924();
 void patch_56E93B();
 void patch_56EB34();
 void patch_56EB43();
 void patch_56F09B();
-void patch_56F24A();
 void patch_56C71B();
 void patch_56C7BC();
 void patch_56CBA8();
@@ -528,19 +526,15 @@ void PatchStaticShadowsVC()
     AdjustPointer(0x56F093, &aStaticShadows[0], 0x8615A0, 0x8621A0);
     AdjustPointer(0x56C716, &aStaticShadows[0], 0x8615A0, 0x8621A0);
 
-
-    RedirectJump(0x56E6C0, patch_56E6C0);
     RedirectJump(0x56967E, patch_56967E);
     RedirectJump(0x56E924, patch_56E924);
     RedirectJump(0x56E93B, patch_56E93B);
     RedirectJump(0x56EB34, patch_56EB34);
     RedirectJump(0x56EB43, patch_56EB43);
     RedirectJump(0x56F09B, patch_56F09B);
-    RedirectJump(0x56F24A, patch_56F24A);
     RedirectJump(0x56C71B, patch_56C71B);
     RedirectJump(0x56C7BC, patch_56C7BC);
     RedirectJump(0x56CBA8, patch_56CBA8);
-
     RedirectJump(0x56CC10, patch_56CC10);
 
     auto MAX_POLYBUNCHES = SSHADS_LIMIT * 7;
@@ -571,19 +565,6 @@ void PatchStaticShadowsVC()
     }
 
     AdjustPointer(0x56F0B2, &aPolyBunches[0], 0x939628 + 0x0, 0x939628 + 0x0);
-}
-
-DWORD ext_56E6C8 = 0x56E6C8;
-void __declspec(naked) patch_56E6C0()
-{
-    __asm
-    {
-        mov _EBX, bx
-        mov eax, SSHADS_LIMIT
-        cmp word ptr ds : [0xA10AAC] , bx
-        mov bx, _EBX
-        jmp ext_56E6C8
-    }
 }
 
 DWORD ext_569684 = 0x569684;
@@ -665,17 +646,6 @@ void __declspec(naked) patch_56F09B()
     }
 }
 
-DWORD ext_56F24F = 0x56F24F;
-void __declspec(naked) patch_56F24A()
-{
-    __asm
-    {
-        sub     edx, ebx
-        cmp     eax, SSHADS_LIMIT
-        jmp ext_56F24F
-    }
-}
-
 DWORD ext_56C724 = 0x56C724;
 void __declspec(naked) patch_56C71B()
 {
@@ -751,7 +721,6 @@ public:
 
 
 /////////////////////////////////////////////GTA 3/////////////////////////////////////////////////////
-void  patch_56E6C0();
 void  patch_513214();
 void  patch_51322B();
 void  patch_51344C();
@@ -879,12 +848,10 @@ void PatchStaticShadowsIII()
     RedirectJump(0x51322B, patch_51322B);
     RedirectJump(0x51344C, patch_51344C);
     RedirectJump(0x51345B, patch_51345B);
-
     RedirectJump(0x51466B, patch_51466B);
     RedirectJump(0x5146C9, patch_5146C9);
     RedirectJump(0x5148C8, patch_5148C8);
     RedirectJump(0x5148E1, patch_5148E1);
-
     RedirectJump(0x512D58, patch_512D58);
     RedirectJump(0x516C30, patch_516C30);
 
