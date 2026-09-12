@@ -426,35 +426,16 @@ void PatchCoronasVC()
     CPatch::AdjustPointer(0x542671, &aCoronas[0], 0x815128, 0x815128 + 0x64);
     CPatch::AdjustPointer(0x542678, &aCoronas[0], 0x815128, 0x815128 + 0x65);
 
-    CPatch::RedirectJump(0x542434, patch_542434);
-    CPatch::RedirectJump(0x5425B7, patch_5425B7);
-    CPatch::RedirectJump(0x5425F4, patch_5425F4);
-    CPatch::SetUShort(0x542616, 0xDA8B); // mov ebx, edx
-    CPatch::Nop(0x542618, 1);
-    CPatch::SetUShort(0x542680, 0xC28B); // mov eax, edx
-    CPatch::Nop(0x542682, 1);
-    CPatch::SetUShort(0x5426B0, 0xCA8B); // mov ecx, edx
-    CPatch::Nop(0x5426B2, 1);
-    CPatch::SetUShort(0x542895, 0xDA8B); // mov ebx, edx
-    CPatch::Nop(0x542897, 1);
-    CPatch::SetUShort(0x5428B2, 0xD38B); // mov edx, ebx
-    CPatch::Nop(0x5428B4, 1);
-    CPatch::SetUShort(0x5428CF, 0xDA8B); // mov ebx, edx
-    CPatch::Nop(0x5428D1, 1);
-    CPatch::SetUShort(0x5428EC, 0xD38B); // mov edx, ebx
-    CPatch::Nop(0x5428EE, 1);
-    CPatch::SetUShort(0x542909, 0xDA8B); // mov ebx, edx
-    CPatch::Nop(0x54290B, 1);
-    CPatch::SetUShort(0x542926, 0xD38B); // mov edx, ebx
-    CPatch::Nop(0x542928, 1);
-    CPatch::SetUShort(0x542943, 0xDA8B); // mov ebx, edx
-    CPatch::Nop(0x542945, 1);
-    CPatch::RedirectJump(0x542955, patch_542955);
-    CPatch::RedirectJump(0x54310C, patch_54310C);
-    CPatch::RedirectJump(0x543497, patch_543497);
-    CPatch::RedirectJump(0x543E0C, patch_543E0C);
-    CPatch::RedirectJump(0x544086, patch_544086);
-    CPatch::RedirectJump(0x544214, patch_544214);
+    //something here leads to a crash on new game start, tested extensively
+    //CPatch::RedirectJump(0x542434, patch_542434);
+    //CPatch::RedirectJump(0x5425B7, patch_5425B7);
+    //CPatch::RedirectJump(0x5425F4, patch_5425F4);
+    //CPatch::RedirectJump(0x542955, patch_542955);
+    //CPatch::RedirectJump(0x54310C, patch_54310C);
+    //CPatch::RedirectJump(0x543497, patch_543497);
+    //CPatch::RedirectJump(0x543E0C, patch_543E0C);
+    //CPatch::RedirectJump(0x544086, patch_544086);
+    //CPatch::RedirectJump(0x544214, patch_544214);
 }
 
 void __declspec(naked)patch_542434()
@@ -598,7 +579,7 @@ void __declspec(naked)patch_544086()
     {
         mov _eax, eax
         mov eax, CORONAS_LIMIT
-        cmp dword ptr[esp + 0x34], eax
+        cmp word ptr[esp + 34h], ax
         mov eax, _eax
         mov jmpAddress, 0x54408C
         jmp jmpAddress
