@@ -175,7 +175,7 @@ struct ProceduralObjects : public Adjuster
         init(manager, 0);
         self.initObjectTracking.make_jmp(0x5A3EA0, InitObjectTracking);
         // CList_c::AddItem. Same free list the game uses for its own 512 entries.
-        void (__thiscall *addItem)(ObjectList*, ObjectEntry*) = injector::lazy_pointer<0x4A8DF0>().get();
+        auto addItem = (void (__thiscall*)(ObjectList*, ObjectEntry*)) injector::lazy_pointer<0x4A8DF0>().get<void>();
         for(auto& entry : self.extraTrackingEntries)
         {
             entry = {};
