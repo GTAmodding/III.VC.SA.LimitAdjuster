@@ -165,7 +165,12 @@ namespace
 class HandlingLinesSA : public SimpleAdjuster
 {
 public:
-    const char* GetLimitName() { return IsSA() ? "HandlingLines" : nullptr; }
+    // the addresses are those of 1.0 US
+    const char* GetLimitName()
+    {
+        auto& gvm = GetGVM();
+        return gvm.IsSA() && gvm.IsUS() && gvm.GetMajorVersion() == 1 && gvm.GetMinorVersion() == 0 ? "HandlingLines" : nullptr;
+    }
 
     void ChangeLimit(int, const std::string& value)
     {
