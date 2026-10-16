@@ -15,8 +15,9 @@
  *  [SALIMITS]
  *  HandlingLines = 255         ; number of standard lines (210 in the game, at most 255)
  *
- *  The references to the array were found by disassembling gta_sa.exe 1.0 US: 14 instructions
- *  with the absolute address, and four methods that address it through 'this' (the line loader,
+ *  The references to the array were found by disassembling gta_sa.exe 1.0 US: 15 instructions
+ *  with the absolute address (one of them in the check of the mod garages, which reads the model
+ *  flags of the car), and four methods that address it through 'this' (the line loader,
  *  GetVehiclePointer, HasFrontWheelDrive and HasRearWheelDrive), which are replaced. The bike
  *  array behind it is reached with a base inside the old array (0xC3491C + id * 64) and is left
  *  alone. The adjuster may be loaded before the game has constructed cHandlingDataMgr, so the
@@ -45,7 +46,7 @@ namespace
 
     // instructions holding an absolute address in the array (address of the 4 bytes)
     const uintptr_t kRefs[] = {
-        0x478518, 0x478565, 0x47AEB6, 0x4C7C27, 0x4C89CE, 0x4C8E7F, 0x6A2FD4,
+        0x447742, 0x478518, 0x478565, 0x47AEB6, 0x4C7C27, 0x4C89CE, 0x4C8E7F, 0x6A2FD4,
         0x6B0BA4, 0x6B2D28, 0x6B2D4A, 0x6BF526, 0x6F0D58, 0x6F2A2D, 0x6F6097,
     };
 
