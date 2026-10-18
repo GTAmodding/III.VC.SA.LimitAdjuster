@@ -193,7 +193,8 @@ void AdjustLimits(const std::map<std::string, std::string>& section)
  */
 
 static injector::hook_back<void(*)()> DrawHUD;
-static uint32_t current_limit         = 0;  // Index of the first limit we should draw
+static bool should_draw_limits        = false;
+static uint32_t current_page          = 0;  // Page of drawable limits
 static const uint32_t limits_per_page = 18; // Max number of limits in one page
 static float currposx;                      // Current drawing position
 static float currposy;                      // Current drawing position
@@ -278,8 +279,18 @@ void EndDraw()
     RenderFontBuffer();
 }
 
+// Limit lines are warm gray, or muted red at 90% of a numeric max. The header stays at 0.
+int UsageTone(const char* usage)
+{
+    unsigned used = 0, max = 0;
+    if(sscanf(usage, "%u / %u", &used, &max) == 2 && max != 0 &&
+       (unsigned long long)used * 10 >= (unsigned long long)max * 9)
+        return 2;
+    return 1;
+}
+
 // Draw a specific text at xy (local screen space) with the specified scale (too)
-void DrawText(const char* text, float x, float y, float scalex, float scaley)
+void DrawText(const char* text, float x, float y, float scalex, float scaley, int tone = 0)
 {
     // CRGBA structure
     struct CRGBA
@@ -324,8 +335,11 @@ void DrawText(const char* text, float x, float y, float scalex, float scaley)
     float screenx((float)((signed int)*(pRsGlobal + 1)) / 640.0f);
     float screeny((float)((signed int)*(pRsGlobal + 2)) / 448.0f);
 
-    // Setup the font style
-    SetFontStyle(1); 
+    // Setup the font style. Same colors on every game; only the existing SetColor call differs.
+    CRGBA color = rgba;
+    if(tone == 1) color = CRGBA(186, 186, 150, 255);
+    else if(tone == 2) color = CRGBA(196, 120, 120, 255);
+    SetFontStyle(1);
     SetJustify(0);
     SetBackground(0, 0);
     SetProportional(true);
@@ -334,7 +348,7 @@ void DrawText(const char* text, float x, float y, float scalex, float scaley)
     SetWrapx(640.0f * screenx);
     SetEdge(1);
     SetDropColor(CRGBA(0, 0, 0, 0xFF));
-    SetColor(Adjuster::IsSA() ? *(CRGBA**)&rgba : &rgba);
+    SetColor(Adjuster::IsSA() ? *(CRGBA**)&color : &color);
     SetScale(screenx * scalex, screeny * scaley);
 
     // Print the text
@@ -342,12 +356,12 @@ void DrawText(const char* text, float x, float y, float scalex, float scaley)
 }
 
 // Draw the specified text and advance the posy to draw the next text
-void DrawText(const char* text)
+void DrawText(const char* text, int tone = 0)
 {
     const float x = currposx, y = currposy;             // Pos
     const float sx = 0.60f * 0.65f, sy = 0.89f * 0.65f; // Scale
     currposy += sy * 20;                                // Advance current position
-    return DrawText(text, x, y, sx, sy);                // Drawzz
+    return DrawText(text, x, y, sx, sy, tone);          // Drawzz
 }
 
 // Draw the limit named 'name' with usage counter 'usage'
@@ -355,36 +369,30 @@ void DrawLimit(const char* name, const char* usage)
 {
     char buffer[1024];
     sprintf(buffer, "%s: %s", name, usage);
-    return DrawText(buffer);
+    return DrawText(buffer, UsageTone(usage));
 }
 
 // Test hotkeys and find out if we should draw the limits on screen
 bool TestShouldDraw()
 {
-    static bool should_draw = false;    // Should draw flag
     static bool prevF5 = false;         // Prev state of the debug text key
     static bool currF5 = false;         // Curr state of the debug text key
-    
+
     // Update key states and find if hot key pressed
     currF5 = (GetKeyState(vkDebugText) & 0x8000) != 0;
     if(currF5 && !prevF5)   // Hotkey pressed?!?
     {
-        if(!should_draw)
+        if(!should_draw_limits)
         {
-            // So it should draw since this key press
-            current_limit = 0;
-            should_draw = true;
+            current_page = 0;
+            should_draw_limits = true;
         }
         else
-        {
-            // Go to the next page, or stop drawing the limits
-            current_limit += limits_per_page;
-            should_draw = current_limit < limits.size();
-        }
+            ++current_page; // DrawLimits closes the overlay past the last page
     }
     prevF5 = currF5;
 
-    return should_draw;
+    return should_draw_limits;
 }
 
 // Draw the limits on screen
@@ -394,35 +402,50 @@ void DrawLimits()
     DrawHUD.fun? DrawHUD.fun() : void();
 
     // Draw our list of limits, if it overlaps with the hud (shouldn't) it will be drawn above it
-    if(TestShouldDraw() && BeginDraw())
+    if(!TestShouldDraw())
+        return;
+
+    // Page the limits that actually report usage. Indexing the whole map skipped
+    // and repeated lines, because many limits do not implement GetUsage.
+    struct Row { std::string name, usage; };
+    std::vector<Row> rows;
+    rows.reserve(limits.size());
+    for(auto it = limits.begin(); it != limits.end(); ++it)
     {
-        static DrawerTranslator dwt;
-        dwt.enable();
-
-        std::string usage;
-        unsigned int i = 0, drawn = 0;  // Limit index and num drawn limits
-
-        for(auto it = limits.begin(); it != limits.end(); ++it)
-        {
-			auto& pair = *it;
-
-            // Check if are already in the limit we should start drawing from and also 
-            // if we are still in the limits per page range OR we didn't draw enought stuff to complete limits per page
-            if(i >= current_limit && (i < current_limit + limits_per_page || drawn < limits_per_page))
-            {
-                if(pair.second.adjuster->GetUsage(pair.second.id, usage))
-                {
-                    ++drawn;
-                    DrawLimit(pair.first.c_str(), usage.c_str());
-                }
-            }
-
-            ++i;
-        }
-
-        EndDraw();
-        dwt.disable();
+        Row row;
+        row.name = it->first;
+        if(it->second.adjuster->GetUsage(it->second.id, row.usage))
+            rows.push_back(row);
     }
+
+    const uint32_t pages = rows.empty() ? 0 : (rows.size() + limits_per_page - 1) / limits_per_page;
+    if(current_page >= pages)
+    {
+        should_draw_limits = false;
+        return;
+    }
+
+    if(!BeginDraw())
+        return;
+
+    static DrawerTranslator dwt;
+    dwt.enable();
+
+    char header[64];
+    if(pages > 1)
+        sprintf(header, "Limits %u/%u", current_page + 1, pages);
+    else
+        sprintf(header, "Limits");
+    DrawText(header);
+
+    const uint32_t first = current_page * limits_per_page;
+    uint32_t last = first + limits_per_page;
+    if(last > rows.size()) last = (uint32_t)rows.size();
+    for(uint32_t i = first; i < last; ++i)
+        DrawLimit(rows[i].name.c_str(), rows[i].usage.c_str());
+
+    EndDraw();
+    dwt.disable();
 }
 
 // Patches CHud::Draw to draw additional stuff (limits details)
