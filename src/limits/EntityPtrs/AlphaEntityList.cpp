@@ -69,15 +69,30 @@ class AlphaEntityListSA : public LinkListAdjuster<AlphaObjectInfoSA>
 	    {
             if(Adjuster::IsUnlimited(value))
             {
-                AddInsertSortedPatch(0x733DF5);
-                AddInsertSortedPatch(0x7345F2);
+                AddInsertSortedPatch(0x733DF5); // m_alphaEntityList
+                AddInsertSortedPatch(0x7345F2); // m_alphaEntityList
+                AddInsertSortedPatch(0x733D35); // m_alphaList
+                AddInsertSortedPatch(0x733D75); // m_alphaBoatAtomicList
+                AddInsertSortedPatch(0x733DB5); // m_alphaUnderwaterEntityList
+                AddInsertSortedPatch(0x7345D9); // m_alphaUnderwaterEntityList
+                AddInsertSortedPatch(0x733E35); // m_alphaReallyDrawLastList
+                AddInsertSortedPatch(0x733E75); // m_alphaReallyDrawLastList
+                AddInsertSortedPatch(0x7345B6); // m_alphaReallyDrawLastList
             }
             else
             {
                 // initializer is inlined in in GTA SA, needs to multiply by sizeof(CLinkList<AlphaObjectInfo>::Link)
-                auto size = std::stoi(value) * 20; 
-	            injector::WriteMemory(0x733B05, size, true);
-	            injector::WriteMemory(0x733B55, size, true);
+                auto size = std::stoi(value) * 20;
+	            injector::WriteMemory(0x733B05, size, true); // m_alphaEntityList
+	            injector::WriteMemory(0x733B55, size, true); // m_alphaEntityList
+	            injector::WriteMemory(0x733A22, size, true); // m_alphaList
+	            injector::WriteMemory(0x733A5E, size, true); // m_alphaList
+	            injector::WriteMemory(0x733A87, size, true); // m_alphaBoatAtomicList
+	            injector::WriteMemory(0x733AD7, size, true); // m_alphaBoatAtomicList
+	            injector::WriteMemory(0x733B85, size, true); // m_alphaUnderwaterEntityList
+	            injector::WriteMemory(0x733BD5, size, true); // m_alphaUnderwaterEntityList
+	            injector::WriteMemory(0x733C05, size, true); // m_alphaReallyDrawLastList
+	            injector::WriteMemory(0x733C55, size, true); // m_alphaReallyDrawLastList
             }
 	    }
 
