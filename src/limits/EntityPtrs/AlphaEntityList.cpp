@@ -3,6 +3,7 @@
 * Copyright (c) 2014 ThirteenAG <thirteenag@gmail.com>
 * Copyright (c) 2014 Silent <zdanio95@gmail.com>
 * Copyright (c) 2014 LINK/2012 <dma_2012@hotmail.com>
+* Copyright (c) 2026 isonisx <dblazheski96@gmail.com>
 * Licensed under the MIT License (http://opensource.org/licenses/MIT)
 */
 #include "LimitAdjuster.h"

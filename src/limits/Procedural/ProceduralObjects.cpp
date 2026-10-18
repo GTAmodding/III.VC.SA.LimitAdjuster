@@ -1,15 +1,13 @@
 /*
- *  Procedural Objects Limit Adjuster
- *  Licensed under the MIT License (http://opensource.org/licenses/MIT)
- */
+* Procedural Objects Adjuster
+* Copyright (c) 2026 isonisx <dblazheski96@gmail.com>
+* Licensed under the MIT License (http://opensource.org/licenses/MIT)
+*/
 #include "LimitAdjuster.h"
 #include "ProceduralObjects.hpp"
-#include <injector/hooking.hpp>
 
 using namespace Procedural;
 
-// SA 1.0 US layouts. See gta-reversed's ProcObjectMan, ProcSurfaceInfo,
-// PlantLocTri, PlantColEntEntry and PlantMgr for the original list lifecycle.
 static_assert(sizeof(PlantTriangle) == 0x54, "CPlantLocTri layout");
 static_assert(offsetof(PlantTriangle, next) == 0x4C, "CPlantLocTri links");
 static_assert(sizeof(CollisionEntry) == 0x14, "CPlantColEntEntry layout");
@@ -23,12 +21,6 @@ static_assert(sizeof(ObjectManager) == 0x4C14, "ProcObjectMan layout");
 struct ProceduralObjects;
 extern ProceduralObjects adjuster_ProceduralObjects;
 
-/*
- *  Keys: ProcObjectEntries, ProcPlantTriangles, ProcCollisionEntries,
- *        ProcTempObjectThreshold, ProcMatrixAllowance
- *  Value: Storage total, or a creation threshold. The thresholds also accept unlimited.
- *  Game: SA 1.0 US
- */
 struct ProceduralObjects : public Adjuster
 {
     enum
@@ -46,7 +38,8 @@ struct ProceduralObjects : public Adjuster
     std::vector<ObjectEntry> extraTrackingEntries;
     std::vector<PlantTriangle> extraTriangles;
     std::vector<CollisionEntry> extraCollisionEntries;
-    injector::scoped_jmp initObjectTracking, reloadPlantCache;
+    bool (__fastcall *originalInit)(ObjectManager*, int) = nullptr;
+    bool (__cdecl *originalReload)() = nullptr;
 
     const Limit* GetLimits()
     {
@@ -69,58 +62,85 @@ struct ProceduralObjects : public Adjuster
         Setting& setting = settings[id];
         if(setting.threshold && IsUnlimited(value))
         {
-            DisableCheck(id);
             setting.value = -1;
             return;
         }
 
         const int limit = ParseLimit(value, setting.vanilla);
-        if(limit == setting.vanilla) return;
+        setting.value = limit;
+        if(limit == setting.vanilla || setting.threshold) return;
 
-        // Allocate before hooking. Linked storage keeps its address permanently.
         switch(id)
         {
-            case ProcObjectEntries:
-                extraTrackingEntries.resize(limit - setting.vanilla);
-                initObjectTracking.make_jmp(0x5A3EA0, InitObjectTracking);
-                break;
-            case ProcPlantTriangles:
-                extraTriangles.resize(limit - setting.vanilla);
-                reloadPlantCache.make_jmp(0x5DD780, ReloadPlantCache);
-                break;
-            case ProcCollisionEntries:
-                extraCollisionEntries.resize(limit - setting.vanilla);
-                reloadPlantCache.make_jmp(0x5DD780, ReloadPlantCache);
-                break;
-            case ProcTempObjectThreshold:
-                injector::WriteMemory<uint16_t>(FindCompare(0xBB4A70, 150, true), limit, true);
-                break;
-            case ProcMatrixAllowance:
-                injector::WriteMemory<int32_t>(FindCompare(0xBB7CB0, 200, false), limit, true);
-                break;
+            case ProcObjectEntries: extraTrackingEntries.resize(limit - setting.vanilla); break;
+            case ProcPlantTriangles: extraTriangles.resize(limit - setting.vanilla); break;
+            case ProcCollisionEntries: extraCollisionEntries.resize(limit - setting.vanilla); break;
         }
-        setting.value = limit;
+    }
+
+    void Process()
+    {
+        ApplyThreshold<uint16_t>(ProcTempObjectThreshold, 0x5A3353, 0x5A3355);
+        ApplyThreshold<int32_t>(ProcMatrixAllowance, 0x5A3326, 0x5A332A);
+
+        if(!extraTrackingEntries.empty())
+        {
+            originalInit = injector::MakeCALL(0x53BE53, &InitObjectTracking).get();
+            injector::MakeCALL(0x5BA468, &InitObjectTracking);
+        }
+        if(!extraTriangles.empty() || !extraCollisionEntries.empty())
+            originalReload = injector::MakeCALL(0x5DD913, &ReloadPlantCache).get();
+    }
+
+    template<class T>
+    void ApplyThreshold(int id, uintptr_t immediate, uintptr_t jump)
+    {
+        const Setting& setting = settings[id];
+        if(setting.value < 0)
+            injector::MakeNOP(jump, 2, true);
+        else if(setting.value != setting.vanilla)
+            injector::WriteMemory(immediate, static_cast<T>(setting.value), true);
     }
 
     bool GetUsage(int id, std::string& output)
     {
-        uint32_t used = 0;
         switch(id)
         {
-            case ProcObjectEntries:
-                return GetTrackingUsage(output);
+            case ProcObjectEntries: return GetTrackingUsage(output);
             case ProcPlantTriangles:
-                for(int i = 0; i < 4; ++i)
-                    used += Count(injector::lazy_pointer<0xC03988>().get<PlantTriangle*>()[i], settings[id].value);
-                break;
+            {
+                uint32_t used = 0;
+                auto* bands = TriangleBands();
+                for(int i = 0; i < 4; ++i) used += Count(bands[i]);
+                return ReportLinked(output, id, used, Count(UnusedTriangles()));
+            }
             case ProcCollisionEntries:
-                used = Count(ActiveCollisionEntries(), settings[id].value);
-                break;
+                return ReportLinked(output, id, Count(ActiveCollisionEntries()), Count(UnusedCollisions()));
             case ProcTempObjectThreshold:
-                used = *injector::lazy_pointer<0xBB4A70>().get<uint16_t>();
-                break;
-            case ProcMatrixAllowance: used = Manager().allocatedMatrices; break;
+                return Report(output, id, *injector::lazy_pointer<0xBB4A70>().get<uint16_t>());
+            case ProcMatrixAllowance:
+                return Report(output, id, static_cast<uint32_t>(Manager().allocatedMatrices));
         }
+        return false;
+    }
+
+    bool GetTrackingUsage(std::string& output)
+    {
+        auto& manager = Manager();
+        const uint32_t used = CountObjects(manager.objects, 512) +
+                              CountObjects(extraTrackingEntries.data(), extraTrackingEntries.size());
+        return ReportLinked(output, ProcObjectEntries, used, Count(manager.unused.head));
+    }
+
+    bool ReportLinked(std::string& output, int id, uint32_t used, uint32_t free)
+    {
+        const uint32_t linked = used + free;
+        const uint32_t total = linked ? linked : static_cast<uint32_t>(settings[id].value);
+        return Adjuster::GetUsage(output, used, total);
+    }
+
+    bool Report(std::string& output, int id, uint32_t used)
+    {
         if(settings[id].value < 0)
         {
             output = std::to_string(used) + " / unlimited";
@@ -129,19 +149,19 @@ struct ProceduralObjects : public Adjuster
         return Adjuster::GetUsage(output, used, static_cast<uint32_t>(settings[id].value));
     }
 
-    bool GetTrackingUsage(std::string& output)
-    {
-        // Count occupied tracking slots. Per-surface list counters are not reliable.
-        auto& manager = Manager();
-        const uint32_t total = 512 + static_cast<uint32_t>(extraTrackingEntries.size());
-        const uint32_t used = CountObjects(manager.objects, 512) +
-                              CountObjects(extraTrackingEntries.data(), extraTrackingEntries.size());
-        return Adjuster::GetUsage(output, used, total);
-    }
-
     static ObjectManager& Manager()
     {
         return *injector::lazy_pointer<0xBB7CB0>().get<ObjectManager>();
+    }
+
+    static PlantTriangle** TriangleBands()
+    {
+        return injector::lazy_pointer<0xC03988>().get<PlantTriangle*>();
+    }
+
+    static PlantTriangle*& UnusedTriangles()
+    {
+        return *injector::lazy_pointer<0xC03984>().get<PlantTriangle*>();
     }
 
     static CollisionEntry*& ActiveCollisionEntries()
@@ -149,66 +169,43 @@ struct ProceduralObjects : public Adjuster
         return *injector::lazy_pointer<0xC0399C>().get<CollisionEntry*>();
     }
 
-    static injector::memory_pointer_raw FindCompare(uint32_t counter, uint32_t limit, bool word)
+    static CollisionEntry*& UnusedCollisions()
     {
-        auto* code = injector::lazy_pointer<0x5A32D0>().get<uint8_t>();
-        return injector::raw_ptr(code + FindCounterCompare(code, 0x5A3850 - 0x5A32D0, counter, limit, word));
+        return *injector::lazy_pointer<0xC03998>().get<CollisionEntry*>();
     }
 
-    void DisableCheck(int id)
+    static bool __fastcall InitObjectTracking(ObjectManager* manager, int)
     {
-        const bool word = id == ProcTempObjectThreshold;
-        auto compare = FindCompare(word ? 0xBB4A70 : 0xBB7CB0, word ? 150 : 200, word);
-        auto jump = compare + CompareJumpOffset(0, word);
-        const uint8_t operation = injector::ReadMemory<uint8_t>(jump, true);
-        if(operation < 0x70 || operation > 0x7F)
-            throw std::runtime_error("Procedural check is not a short conditional jump");
-        injector::MakeNOP(jump, 2, true);
-    }
-
-    static void __fastcall InitObjectTracking(ObjectManager* manager, int)
-    {
-        // Restore the entry point while calling SA, then reinstall it.
         auto& self = adjuster_ProceduralObjects;
-        self.initObjectTracking.restore();
-        void (__fastcall *init)(ObjectManager*, int) = injector::lazy_pointer<0x5A3EA0>().get();
-        init(manager, 0);
-        self.initObjectTracking.make_jmp(0x5A3EA0, InitObjectTracking);
-        // CList_c::AddItem. Same free list the game uses for its own 512 entries.
+        const bool ok = self.originalInit(manager, 0);
         auto addItem = (void (__thiscall*)(ObjectList*, ObjectEntry*)) injector::lazy_pointer<0x4A8DF0>().get<void>();
         for(auto& entry : self.extraTrackingEntries)
         {
             entry = {};
             addItem(&manager->unused, &entry);
         }
+        return ok;
     }
 
     static bool __cdecl ReloadPlantCache()
     {
         auto& self = adjuster_ProceduralObjects;
-        self.reloadPlantCache.restore();
-
-        // ReloadConfig fails before touching lists when PLANTS.DAT cannot load.
-        // Do not release the live cache unless rebuilding will proceed.
+        // Release only when the reload will rebuild, or extras are abandoned.
         bool (*initialise)() = injector::lazy_pointer<0x5DD6C0>().get();
-        const bool ready = initialise();
-        if(ready)
+        if(initialise())
         {
             void (__fastcall *release)(CollisionEntry*, int) = injector::lazy_pointer<0x5DB8A0>().get();
             while(auto* entry = ActiveCollisionEntries()) release(entry, 0);
         }
 
-        bool (*reload)() = injector::lazy_pointer<0x5DD780>().get();
-        const bool loaded = ready && reload();
-        self.reloadPlantCache.make_jmp(0x5DD780, ReloadPlantCache);
+        const bool loaded = self.originalReload();
         if(!loaded) return false;
 
-        auto& triangles = *injector::lazy_pointer<0xC03984>().get<PlantTriangle*>();
-        AttachUnused(triangles, self.extraTriangles.data(), self.extraTriangles.size());
-        auto& collisions = *injector::lazy_pointer<0xC03998>().get<CollisionEntry*>();
-        AttachUnused(collisions, self.extraCollisionEntries.data(), self.extraCollisionEntries.size());
+        if(!self.extraTriangles.empty())
+            AttachUnused(UnusedTriangles(), self.extraTriangles.data(), self.extraTriangles.size());
+        if(!self.extraCollisionEntries.empty())
+            AttachUnused(UnusedCollisions(), self.extraCollisionEntries.data(), self.extraCollisionEntries.size());
         return true;
     }
 
-// Instantiate the adjuster on the global scope.
 } adjuster_ProceduralObjects;
