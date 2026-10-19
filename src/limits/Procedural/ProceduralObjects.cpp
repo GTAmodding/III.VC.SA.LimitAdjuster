@@ -25,15 +25,13 @@ struct ProceduralObjects : public Adjuster
 {
     enum
     {
-        ProcObjectEntries, ProcPlantTriangles, ProcCollisionEntries,
-        ProcTempObjectThreshold, ProcMatrixAllowance
+        ProcObjectEntries, ProcPlantTriangles, ProcCollisionEntries
     };
 
-    struct Setting { int vanilla, value; bool threshold; };
-    Setting settings[5] =
+    struct Setting { int vanilla, value; };
+    Setting settings[3] =
     {
-        { 512, 512, false }, { 256, 256, false }, { 40, 40, false },
-        { 150, 150, true }, { 200, 200, true }
+        { 512, 512 }, { 256, 256 }, { 40, 40 }
     };
     std::vector<ObjectEntry> extraTrackingEntries;
     std::vector<PlantTriangle> extraTriangles;
@@ -50,8 +48,6 @@ struct ProceduralObjects : public Adjuster
             DEFINE_LIMIT(ProcObjectEntries),
             DEFINE_LIMIT(ProcPlantTriangles),
             DEFINE_LIMIT(ProcCollisionEntries),
-            DEFINE_LIMIT(ProcTempObjectThreshold),
-            DEFINE_LIMIT(ProcMatrixAllowance),
             FINISH_LIMITS()
         };
         return limits;
@@ -60,15 +56,9 @@ struct ProceduralObjects : public Adjuster
     void ChangeLimit(int id, const std::string& value)
     {
         Setting& setting = settings[id];
-        if(setting.threshold && IsUnlimited(value))
-        {
-            setting.value = -1;
-            return;
-        }
-
         const int limit = ParseLimit(value, setting.vanilla);
         setting.value = limit;
-        if(limit == setting.vanilla || setting.threshold) return;
+        if(limit == setting.vanilla) return;
 
         switch(id)
         {
@@ -80,9 +70,6 @@ struct ProceduralObjects : public Adjuster
 
     void Process()
     {
-        ApplyThreshold<uint16_t>(ProcTempObjectThreshold, 0x5A3353, 0x5A3355);
-        ApplyThreshold<int32_t>(ProcMatrixAllowance, 0x5A3326, 0x5A332A);
-
         if(!extraTrackingEntries.empty())
         {
             originalInit = injector::MakeCALL(0x53BE53, &InitObjectTracking).get();
@@ -92,60 +79,34 @@ struct ProceduralObjects : public Adjuster
             originalReload = injector::MakeCALL(0x5DD913, &ReloadPlantCache).get();
     }
 
-    template<class T>
-    void ApplyThreshold(int id, uintptr_t immediate, uintptr_t jump)
-    {
-        const Setting& setting = settings[id];
-        if(setting.value < 0)
-            injector::MakeNOP(jump, 2, true);
-        else if(setting.value != setting.vanilla)
-            injector::WriteMemory(immediate, static_cast<T>(setting.value), true);
-    }
-
     bool GetUsage(int id, std::string& output)
     {
         switch(id)
         {
-            case ProcObjectEntries: return GetTrackingUsage(output);
-            case ProcPlantTriangles:
-            {
-                uint32_t used = 0;
-                auto* bands = TriangleBands();
-                for(int i = 0; i < 4; ++i) used += Count(bands[i]);
-                return ReportLinked(output, id, used, Count(UnusedTriangles()));
-            }
-            case ProcCollisionEntries:
-                return ReportLinked(output, id, Count(ActiveCollisionEntries()), Count(UnusedCollisions()));
-            case ProcTempObjectThreshold:
-                return Report(output, id, *injector::lazy_pointer<0xBB4A70>().get<uint16_t>());
-            case ProcMatrixAllowance:
-                return Report(output, id, static_cast<uint32_t>(Manager().allocatedMatrices));
+            case ProcObjectEntries: return Report(output, id, TrackingUsed());
+            case ProcPlantTriangles: return Report(output, id, TriangleUsed());
+            case ProcCollisionEntries: return Report(output, id, Count(ActiveCollisionEntries()));
         }
         return false;
     }
 
-    bool GetTrackingUsage(std::string& output)
+    uint32_t TrackingUsed()
     {
         auto& manager = Manager();
-        const uint32_t used = CountObjects(manager.objects, 512) +
-                              CountObjects(extraTrackingEntries.data(), extraTrackingEntries.size());
-        return ReportLinked(output, ProcObjectEntries, used, Count(manager.unused.head));
+        return CountObjects(manager.objects, 512) +
+               CountObjects(extraTrackingEntries.data(), extraTrackingEntries.size());
     }
 
-    bool ReportLinked(std::string& output, int id, uint32_t used, uint32_t free)
+    static uint32_t TriangleUsed()
     {
-        const uint32_t linked = used + free;
-        const uint32_t total = linked ? linked : static_cast<uint32_t>(settings[id].value);
-        return Adjuster::GetUsage(output, used, total);
+        uint32_t used = 0;
+        auto* bands = TriangleBands();
+        for(int i = 0; i < 4; ++i) used += Count(bands[i]);
+        return used;
     }
 
     bool Report(std::string& output, int id, uint32_t used)
     {
-        if(settings[id].value < 0)
-        {
-            output = std::to_string(used) + " / unlimited";
-            return true;
-        }
         return Adjuster::GetUsage(output, used, static_cast<uint32_t>(settings[id].value));
     }
 
