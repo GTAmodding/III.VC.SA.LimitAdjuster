@@ -170,6 +170,13 @@ struct Procedural : public Adjuster
             originalInit = injector::MakeCALL(0x53BE53, &InitObjectTracking).get();
             injector::MakeCALL(0x5BA468, &InitObjectTracking);
         }
+        if(!extraTrackingEntries.empty() || !extraTriangles.empty() || !extraCollisionEntries.empty())
+        {
+            // Both callers consume a boolean, but the original returns the low byte
+            // of the total count. A successful batch of 256 objects looks like zero.
+            injector::MakeCALL(0x5DCD31, &GenerateTriangleObjects);
+            injector::MakeCALL(0x5DBF6B, &GenerateTriangleObjects);
+        }
         if(!extraTriangles.empty() || !extraCollisionEntries.empty())
             originalReload = injector::MakeCALL(0x5DD913, &ReloadPlantCache).get();
     }
@@ -241,6 +248,22 @@ struct Procedural : public Adjuster
             addItem(&manager->unused, &entry);
         }
         return ok;
+    }
+
+    static bool __fastcall GenerateTriangleObjects(ObjectManager* manager, int, PlantTriangle* triangle)
+    {
+        auto addObjects = (int (__thiscall*)(SurfaceInfo*, PlantTriangle*)) injector::lazy_pointer<0x5A3850>().get<void>();
+        bool generated = false;
+        for(int i = 0; i < manager->numSurfaceInfos; ++i)
+        {
+            auto& surface = manager->surfaceInfos[i];
+            if(surface.properties[0] != triangle->surfaceId) continue;
+
+            // Always visit every matching rule, even after one succeeds. Preserve
+            // the original placement/density logic and RNG calls in AddObjects.
+            if(addObjects(&surface, triangle) > 0) generated = true;
+        }
+        return generated;
     }
 
     static bool __cdecl ReloadPlantCache()
