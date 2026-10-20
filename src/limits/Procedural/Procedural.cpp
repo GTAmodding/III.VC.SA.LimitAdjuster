@@ -1,12 +1,107 @@
 /*
-* Procedural Objects Adjuster
+* Procedural Adjuster
 * Copyright (c) 2026 isonisx <dblazheski96@gmail.com>
 * Licensed under the MIT License (http://opensource.org/licenses/MIT)
 */
 #include "LimitAdjuster.h"
-#include "ProceduralObjects.hpp"
+#include <cstddef>
+#include <cstdint>
+#include <stdexcept>
+#include <string>
 
-using namespace Procedural;
+namespace
+{
+    struct Vector { float x, y, z; };
+
+    struct PlantTriangle
+    {
+        Vector vertices[3], center;
+        float sphereRadius, seeds[3];
+        uint16_t numPlants[3];
+        uint8_t surfaceId, lighting, flags;
+        PlantTriangle *next, *prev;
+    };
+
+    struct CollisionEntry
+    {
+        void* entity;
+        PlantTriangle** triangles;
+        uint16_t numTriangles;
+        CollisionEntry *next, *prev;
+    };
+
+    struct ObjectEntry
+    {
+        ObjectEntry *prev, *next;
+        void* object;
+        PlantTriangle* triangle;
+        bool allocatedMatrix;
+    };
+
+    template<class T>
+    void Prepend(T*& head, T& item)
+    {
+        item.prev = nullptr;
+        item.next = head;
+        if(head) head->prev = &item;
+        head = &item;
+    }
+
+    struct ObjectList // CList_c: head, tail, count.
+    {
+        ObjectEntry *head, *tail;
+        uint32_t count;
+    };
+
+    struct SurfaceInfo
+    {
+        uint8_t properties[0x3C];
+        ObjectList objects;
+    };
+
+    struct ObjectManager
+    {
+        int32_t allocatedMatrices, numSurfaceInfos;
+        SurfaceInfo surfaceInfos[128];
+        ObjectEntry objects[512];
+        ObjectList unused;
+    };
+
+    inline uint32_t CountObjects(const ObjectEntry* entries, size_t count)
+    {
+        uint32_t used = 0;
+        for(size_t i = 0; i < count; ++i)
+            if(entries[i].object) ++used;
+        return used;
+    }
+
+    template<class T>
+    uint32_t Count(T* entry)
+    {
+        uint32_t count = 0;
+        for(; entry && count < 65536; entry = entry->next) ++count;
+        return count;
+    }
+
+    template<class T>
+    void AttachUnused(T*& head, T* entries, size_t count)
+    {
+        while(count)
+        {
+            const size_t i = --count;
+            entries[i] = {};
+            Prepend(head, entries[i]);
+        }
+    }
+
+    inline int ParseLimit(const std::string& value, int minimum)
+    {
+        const int limit = std::stoi(value);
+        if(limit < minimum || limit > 65535)
+            throw std::out_of_range("Expected a total capacity between " + std::to_string(minimum) + " and 65535");
+        return limit;
+    }
+}
 
 static_assert(sizeof(PlantTriangle) == 0x54, "CPlantLocTri layout");
 static_assert(offsetof(PlantTriangle, next) == 0x4C, "CPlantLocTri links");
@@ -18,14 +113,14 @@ static_assert(sizeof(SurfaceInfo) == 0x48, "ProcSurfaceInfo layout");
 static_assert(offsetof(ObjectManager, unused) == 0x4C08, "ProcObjectMan free list");
 static_assert(sizeof(ObjectManager) == 0x4C14, "ProcObjectMan layout");
 
-struct ProceduralObjects;
-extern ProceduralObjects adjuster_ProceduralObjects;
+struct Procedural;
+extern Procedural adjuster_Procedural;
 
-struct ProceduralObjects : public Adjuster
+struct Procedural : public Adjuster
 {
     enum
     {
-        ProcObjectEntries, ProcPlantTriangles, ProcCollisionEntries
+        ProcObjects, PlantTriangles, PlantCollisionEntries
     };
 
     struct Setting { int vanilla, value; };
@@ -45,9 +140,9 @@ struct ProceduralObjects : public Adjuster
             return nullptr;
         static const Limit limits[] =
         {
-            DEFINE_LIMIT(ProcObjectEntries),
-            DEFINE_LIMIT(ProcPlantTriangles),
-            DEFINE_LIMIT(ProcCollisionEntries),
+            DEFINE_LIMIT(ProcObjects),
+            DEFINE_LIMIT(PlantTriangles),
+            DEFINE_LIMIT(PlantCollisionEntries),
             FINISH_LIMITS()
         };
         return limits;
@@ -62,9 +157,9 @@ struct ProceduralObjects : public Adjuster
 
         switch(id)
         {
-            case ProcObjectEntries: extraTrackingEntries.resize(limit - setting.vanilla); break;
-            case ProcPlantTriangles: extraTriangles.resize(limit - setting.vanilla); break;
-            case ProcCollisionEntries: extraCollisionEntries.resize(limit - setting.vanilla); break;
+            case ProcObjects: extraTrackingEntries.resize(limit - setting.vanilla); break;
+            case PlantTriangles: extraTriangles.resize(limit - setting.vanilla); break;
+            case PlantCollisionEntries: extraCollisionEntries.resize(limit - setting.vanilla); break;
         }
     }
 
@@ -83,9 +178,9 @@ struct ProceduralObjects : public Adjuster
     {
         switch(id)
         {
-            case ProcObjectEntries: return Report(output, id, TrackingUsed());
-            case ProcPlantTriangles: return Report(output, id, TriangleUsed());
-            case ProcCollisionEntries: return Report(output, id, Count(ActiveCollisionEntries()));
+            case ProcObjects: return Report(output, id, TrackingUsed());
+            case PlantTriangles: return Report(output, id, TriangleUsed());
+            case PlantCollisionEntries: return Report(output, id, Count(ActiveCollisionEntries()));
         }
         return false;
     }
@@ -137,7 +232,7 @@ struct ProceduralObjects : public Adjuster
 
     static bool __fastcall InitObjectTracking(ObjectManager* manager, int)
     {
-        auto& self = adjuster_ProceduralObjects;
+        auto& self = adjuster_Procedural;
         const bool ok = self.originalInit(manager, 0);
         auto addItem = (void (__thiscall*)(ObjectList*, ObjectEntry*)) injector::lazy_pointer<0x4A8DF0>().get<void>();
         for(auto& entry : self.extraTrackingEntries)
@@ -150,7 +245,7 @@ struct ProceduralObjects : public Adjuster
 
     static bool __cdecl ReloadPlantCache()
     {
-        auto& self = adjuster_ProceduralObjects;
+        auto& self = adjuster_Procedural;
         // Release only when the reload will rebuild, or extras are abandoned.
         bool (*initialise)() = injector::lazy_pointer<0x5DD6C0>().get();
         if(initialise())
@@ -169,4 +264,4 @@ struct ProceduralObjects : public Adjuster
         return true;
     }
 
-} adjuster_ProceduralObjects;
+} adjuster_Procedural;
