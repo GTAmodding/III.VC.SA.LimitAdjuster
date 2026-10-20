@@ -2,6 +2,7 @@
  *  Grand Theft Auto Limit Adjuster - Base Code
  *      Copyright (C) 2013-2014 ThirteenAG <thirteenag@gmail.com>
  *      Copyright (C) 2014 LINK/2012 <dma_2012@hotmail.com>
+ *      Copyright (c) 2026 isonisx <dblazheski96@gmail.com>
  *      Licensed under the MIT License (http://opensource.org/licenses/MIT)
  */
 #include <windows.h>
@@ -12,7 +13,7 @@
 
 // Stores an handler for a specific limit
 struct LimitHandler
-{ 
+{
     int         id;         // Id for the key
     Adjuster*   adjuster;   // Adjuster to handle the key
 };
@@ -33,7 +34,7 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD reason, LPVOID lpReserved)
     if(reason == DLL_PROCESS_ATTACH)
     {
         auto& gvm = injector::address_manager::singleton();
-        
+
         if(gvm.IsUnknown()) // Game could not be detected?
             gvm.RaiseCouldNotDetect();  // Ops...
         else
@@ -96,7 +97,7 @@ int AdjustLimits()
     {
         auto& pair = *it;
         try {
-            
+
             if(!pair.first.compare("DebugTextKey"))
                 vkDebugText = std::stoi(pair.second, nullptr, 0);
 
@@ -126,7 +127,7 @@ void FindHandlers(std::map<std::string, LimitHandler>& handlers)
 {
     LimitHandler k;
     auto& adjusters = Adjuster::GetAdjusters();
-    
+
     // Find all adjusters present on this build and build the map of handlers
     for(auto it = adjusters.begin(); it != adjusters.end(); ++it)
     {
@@ -152,7 +153,7 @@ void AdjustLimits(const std::map<std::string, std::string>& section)
 {
     // Find the handler for each limit
     FindHandlers(::limits);
-    
+
     // Parse the section and call the handler for each limit
     for(auto it = section.begin(); it != section.end(); ++it)
     {
