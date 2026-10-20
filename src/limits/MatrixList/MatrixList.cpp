@@ -1,11 +1,11 @@
 /*
  *  Matrices Limit Adjuster
  *  Copyright (C) 2014 LINK/2012 <dma_2012@hotmail.com>
+ *  Copyright (c) 2026 isonisx <dblazheski96@gmail.com>
  *  Licensed under the MIT License (http://opensource.org/licenses/MIT)
  */
 #include "LimitAdjuster.h"
 #include "utility/dummy_object.hpp"
-#include <injector/utility.hpp>
 #include <memory>
 
 
@@ -18,13 +18,10 @@ struct MatrixList : public SimpleAdjuster
 {
     typedef dummy_object<0x54> CMatrixLink;     // dummy CMatrixLink
 
-    injector::hook_back<void*(__fastcall*)(void*)> hbRemoveMatrix_1S;
-    injector::hook_back<void*(__fastcall*)(void*)> hbRemoveMatrix_1T;
-
     // Additional matrices, if asked for unlimited storage
     int total;                                              // Total amount of allocated matrices (by the game and by ourselves)
     std::vector<std::unique_ptr<CMatrixLink[]>> matrices;   // Our additional matrices
-    
+
 
 
     // Limit Name
@@ -39,8 +36,9 @@ struct MatrixList : public SimpleAdjuster
         if(Adjuster::IsUnlimited(value))
         {
             total = -1;     // We don't know how much yet
-            hbRemoveMatrix_1T.fun = injector::MakeCALL(0x54F5B6, CheckMatrix1T).get();
-            hbRemoveMatrix_1S.fun = injector::MakeCALL(0x54F548, CheckMatrix1S).get();
+            // Handle exhaustion in AllocateMatrix and AllocateStaticMatrix.
+            injector::MakeCALL(0x54F5B6, OnFreeListEmpty);
+            injector::MakeCALL(0x54F548, OnFreeListEmpty);
         }
         else
         {
@@ -71,7 +69,7 @@ struct MatrixList : public SimpleAdjuster
         // We'll need to insert more CMatrixLinkz to the FreeMatrices linked list, get necessary pointers to perform this operation
         auto FreeMatricesHead = (CMatrixLink*)((uintptr_t)(gMatrixList()) + 0x150);
         auto CMatrixLink__Insert = (CMatrixLink* (__thiscall*)(CMatrixLink*, CMatrixLink*)) injector::lazy_pointer<0x54E8F0>().get<void>();
-        
+
         // Allocate more matrices
         matrices.push_back(std::unique_ptr<CMatrixLink[]>( new CMatrixLink[grow_by] ));
         CMatrixLink *last = nullptr, *m = matrices.back().get();
@@ -88,25 +86,11 @@ struct MatrixList : public SimpleAdjuster
     }
 
 
-    // Hooks at call to CPlaceable::RemoveMatrix to check if no more matrices available
-    // When there are no more matrices available the game end up sending a null CPlaceable as the this pointer
-    // because it gets a null CMatrixLink::m_pPlaceable from the temp matrix list since there's no more temp matrices to be used
-    // So whenever this happens we should add more matrices to the free matrix list
-
-    static void* __fastcall CheckMatrix1T(void* placeable)  // @CPlaceable::AllocateMatrix
+    // Replace RemoveMatrix with growth instead of evicting a temporary matrix.
+    // The caller then allocates from the replenished free list.
+    static void* __fastcall OnFreeListEmpty(void*)
     {
-        if(placeable == nullptr && GetTempMatrixUsage() == 0)
-            return adjuster_MatrixList.GrowFreeLinkedList();
-        else
-            return adjuster_MatrixList.hbRemoveMatrix_1T.fun(placeable);
-    }
-
-    static void* __fastcall CheckMatrix1S(void* placeable)    // @CPlaceable::AllocateStaticMatrix
-    {
-        if(placeable == nullptr && GetTempMatrixUsage() == 0)
-            return adjuster_MatrixList.GrowFreeLinkedList();
-        else
-            return adjuster_MatrixList.hbRemoveMatrix_1S.fun(placeable);
+        return adjuster_MatrixList.GrowFreeLinkedList();
     }
 
 
