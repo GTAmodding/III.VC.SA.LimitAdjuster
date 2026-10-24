@@ -1,21 +1,7 @@
 --[[
-    OpenLA Build Script
+    Open Limit Adjuster build script
     Use 'premake5 --help' for help
 --]]
-
-
---[[
-    Options and Actions
---]]
-
-newoption {
-    trigger     = "outdir",
-    value       = "path",
-    description = "Output directory for the build files"
-}
-if not _OPTIONS["outdir"] then
-    _OPTIONS["outdir"] = "build"
-end
 
 newoption {
     trigger     = "with-version",
@@ -23,24 +9,63 @@ newoption {
     description = "Current version"
 }
 
+-- The game folders a build is copied to, and the game started when debugging, are the paths of one machine. They are
+-- read from a `.env` file next to this script (not tracked by git), one `<KEY>=<folder>` line per game.
+local envkeys = nil
+function envdir(key)
+    if not envkeys then
+        envkeys = {}
+        local text = io.readfile(path.join(_SCRIPT_DIR, ".env")) or ""
+        for line in text:gmatch("[^\r\n]+") do
+            local k, v = line:match("^%s*([%w_]+)%s*=%s*(.-)%s*$")
+            if k and v ~= "" then
+                v = v:gsub('^"', ""):gsub('"$', ""):gsub("^'", ""):gsub("'$", "")
+                envkeys[k] = v
+            end
+        end
+    end
 
---[[
-    The Solution
---]]
-solution "OpenLA"
+    local value = envkeys[key]
+    if not value then return nil end
 
+    value = value:gsub("[%s\\/]+$", "")
+    if value == "" then return nil end
+
+    return path.translate(value)
+end
+
+-- Copies the built .asi into the scripts folder of each game named in the .env file, only where it's already installed.
+function setpaths(keys)
+    for _, key in ipairs(keys) do
+        local gamepath = envdir(key)
+        if gamepath then
+            local target = gamepath .. "\\scripts\\"
+            postbuildcommands {
+                "if exist \"" .. target .. "$(TargetFileName)\" copy /y \"$(TargetPath)\" \"" .. target .. "\"",
+            }
+        end
+    end
+end
+
+workspace "OpenLA"
     configurations { "Release", "Debug" }
+    platforms { "Win32" }
+    architecture "x86"
+    location "build"
+    objdir ("build/obj")
+    buildlog ("build/log/%{prj.name}.log")
+    cppdialect "C++latest"
+    toolset "v145"
+    buildoptions { "/Zc:__cplusplus /utf-8" }
+    multiprocessorcompile ("On")
+    characterset ("Unicode")
+    staticruntime "On"
 
-    location( _OPTIONS["outdir"] )
-    targetprefix "" -- no 'lib' prefix on gcc
-    targetdir "bin"
-    implibdir "bin"
-    
-    defines { "rsc_CompanyName=\"LimitAdjuster\"" }
-    defines { "rsc_LegalCopyright=\"MIT License\""}
+    defines { "rsc_CompanyName=\"ThirteenAG\"" }
+    defines { "rsc_LegalCopyright=\"MIT License\"" }
     defines { "rsc_InternalName=\"%{prj.name}\"", "rsc_ProductName=\"%{prj.name}\"", "rsc_OriginalFilename=\"%{cfg.buildtarget.name}\"" }
-    defines { "rsc_FileDescription=\"This is a open source limit adjuster for Grand Theft Auto III, Vice City and San Andreas\"" }
-    defines { "rsc_UpdateUrl=\"https://github.com/ThirteenAG/III.VC.SA.LimitAdjuster\"" }
+    defines { "rsc_FileDescription=\"Open Limit Adjuster for GTA III, Vice City and San Andreas\"" }
+    defines { "rsc_UpdateUrl=\"https://github.com/GTAmodding/III.VC.SA.LimitAdjuster\"" }
 
     local major = os.date("%d")
     local minor = os.date("%m")
@@ -80,56 +105,45 @@ solution "OpenLA"
     defines { "rsc_GitSHA1=\"" .. githash .. "\"" }
     defines { "rsc_GitSHA1W=L\"" .. githash .. "\"" }
 
-    staticruntime "On"
-    rtti "Off"
-    useimportlib "Off"
-    buffersecuritycheck "Off"
+    defines { "_CRT_SECURE_NO_WARNINGS" }
 
-    defines {
-        "INJECTOR_GVM_HAS_TRANSLATOR",
-        'INJECTOR_GVM_PLUGIN_NAME=\"Open Limit Adjuster\"'    -- (additional quotes needed for gmake)
-    }
-
-    defines {
-        "_CRT_SECURE_NO_WARNINGS",
-        "_SCL_SECURE_NO_WARNINGS"
-    }
-
-    includedirs {
-        "src",
-        "src/shared",
-        "src/shared/cpatch",
-        "src/shared/structs",
-    }
-
-    filter "configurations:Debug*"
+    filter "configurations:Debug"
+        defines { "DEBUG" }
         symbols "On"
 
-    filter "configurations:Release*"
+    filter "configurations:Release"
         defines { "NDEBUG" }
-        optimize "Speed"
-
-    filter "action:vs*"
-        buildoptions { "/arch:IA32" }           -- disable the use of SSE/SSE2 instructions
+        optimize "On"
+        symbols "On"
 
     filter {}
 
-    project "III.VC.SA.LimitAdjuster"
-        language "C++"
-        kind "SharedLib"
-        targetname "III.VC.SA.LimitAdjuster"
-        targetextension ".asi"
-        
-        enablepch "Off"
-        
-        files {
-            "src/**.cpp",
-            "src/**.hpp",
-            "src/**.h",
-            "doc/**"
-        }
-        files { "src/resources/Versioninfo.rc" }
-        excludes { "sample.cpp" }
-        
-        
+project "III.VC.SA.LimitAdjuster"
+    kind "SharedLib"
+    language "C++"
+    targetdir "bin"
+    targetname "III.VC.SA.LimitAdjuster"
+    targetextension ".asi"
 
+    files { "source/**.h", "source/**.cpp" }
+    files { "resources/*.rc", "resources/*.h" }
+    files { "doc/III.VC.SA.LimitAdjuster.ini" }
+    files { "external/hooking/Hooking.Patterns.h", "external/hooking/Hooking.Patterns.cpp" }
+    files { "external/injector/safetyhook/include/**.hpp", "external/injector/safetyhook/src/**.cpp" }
+    files { "external/injector/zydis/**.h", "external/injector/zydis/**.c" }
+
+    includedirs { "source" }
+    includedirs { "external/FusionFixUtils/include" }
+    includedirs { "external/hooking" }
+    includedirs { "external/injector/include" }
+    includedirs { "external/injector/safetyhook/include" }
+    includedirs { "external/injector/zydis" }
+
+    vpaths {
+        ["source/*"] = { "source/**.*" },
+        ["resources/*"] = { "resources/*" },
+        ["doc/*"] = { "doc/*" },
+        ["external/*"] = { "external/**" },
+    }
+
+    setpaths({ "GTAIII_DIR", "GRAND_THEFT_AUTO_VICE_CITY_DIR", "GTA_SAN_ANDREAS_DIR" })

@@ -1,3 +1,12 @@
+v2.0
+---------------
+ * Rewritten. Every limit grows on demand by default, nothing has to be configured
+ * New limits: SA LOD render lists, invisible entity lists, alpha lists, stored shadows, point and bright lights, shiny texts, particles, model stores for all three games, handling.cfg entries, collision buffer for all three games, cutscene directory, SA quadtree, env map and vehicle struct pools
+ * Ped and vehicle pools also raise the checks outside the pool code
+ * Streaming memory "auto" depends on whether the exe is large address aware
+ * Limits another mod already changed are left alone, see the log
+ * Built with Visual Studio 2026
+
 v1.5
 ---------------
  * Added coronas and static shadows limits

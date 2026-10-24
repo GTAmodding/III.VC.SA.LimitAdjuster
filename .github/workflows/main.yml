@@ -39,7 +39,7 @@ permissions:
 
 jobs:
   build:
-    runs-on: windows-latest
+    runs-on: windows-2025-vs2026
 
     steps:
     - name: Checkout Repository
@@ -64,7 +64,7 @@ jobs:
 
     - name: Build
       run: |
-        msbuild -m build/OpenLA.sln /property:Configuration=Release /property:Platform=Win32
+        msbuild -m build/OpenLA.slnx /property:Configuration=Release /property:Platform=Win32
 
     - name: Copy Configuration File
       run: |
@@ -80,7 +80,7 @@ jobs:
         New-Item -ItemType Directory -Path release | Out-Null
         $sourcePath = (Resolve-Path 'bin').Path
         $releasePath = (Resolve-Path 'release').Path
-        Get-ChildItem -Path bin -Recurse -File | Where-Object { $_.Extension -ne '.pdb' } | ForEach-Object {
+        Get-ChildItem -Path bin -Recurse -File | Where-Object { $_.Extension -notin '.pdb', '.lib', '.exp' } | ForEach-Object {
           $target = $_.FullName.Replace($sourcePath, $releasePath)
           New-Item -ItemType Directory -Force -Path (Split-Path $target) | Out-Null
           Copy-Item $_.FullName $target -Force
@@ -94,6 +94,8 @@ jobs:
         path: |
           bin\*
           !bin\*.pdb
+          !bin\*.lib
+          !bin\*.exp
 
     - name: Upload Release
       if: (github.event_name == 'workflow_dispatch' && github.event.inputs.release == 'true' && github.ref_name == 'master')

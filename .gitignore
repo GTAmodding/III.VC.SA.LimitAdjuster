@@ -222,3 +222,6 @@ pip-log.txt
 
 #Mr Developer
 .mr.developer.cfg
+
+# Local game paths for premake
+.env
