@@ -195,11 +195,23 @@ namespace
         return core::IsSA() ? (int)(slot << 24) : 1;
     }
 
+    // Mod Loader streams IMG files itself through the game's own archive arrays, and it loads after this plugin
+    bool ModLoaderInstalled()
+    {
+        return GetModuleHandleW(L"modloader.asi") || GetFileAttributesW(L"scripts\\modloader.asi") != INVALID_FILE_ATTRIBUTES ||
+            GetFileAttributesW(L"modloader.asi") != INVALID_FILE_ATTRIBUTES || GetFileAttributesW(L"plugins\\modloader.asi") != INVALID_FILE_ATTRIBUTES;
+    }
+
     void SetImgArchives()
     {
         auto setting = core::GetSetting("ImgArchives", "unlimited");
         if (!setting.apply)
             return;
+        if (ModLoaderInstalled())
+        {
+            core::Log("ImgArchives: Mod Loader found, archives are left to it");
+            return;
+        }
         // CdStream encodes the archive in the high byte; SA also sign-extends that byte.
         imageMaximum = std::max(core::IsSA() ? 32u : 8u, core::MaxCapacity(setting, 128));
         auto handles = core::IsIII() ? std::span<const mem::Expect>(imageHandlesIII) : core::IsVC() ? std::span<const mem::Expect>(imageHandlesVC) : (core::hoodlum ? std::span<const mem::Expect>(imageHandlesHoodlum) : std::span<const mem::Expect>(imageHandlesSA));

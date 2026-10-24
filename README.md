@@ -17,7 +17,7 @@ bytes (rounded to four); `0` retains the game's 200000/69000. In III and Vice Ci
 so the adjuster leaves it alone there.
 Saves from vanilla-size scripts keep the vanilla
 layout; saves using larger scripts need the same scripts to reload. Files that exceed a fixed size are rejected before copying.
-Custom maps: `ImgArchives` (room for 128 IMG archives), `TxdStore` (III up to 4096, VC up to 20000), `ObjectData`
+Custom maps: `ImgArchives` (room for 128 IMG archives; left to Mod Loader when it is installed), `TxdStore` (III up to 4096, VC up to 20000), `ObjectData`
 (object.dat physics records) and, in San Andreas, `WaterQuads`/`WaterTris`/`WaterVertices` (water.dat planes) grow as
 needed. San Andreas `Peds` and `PedIntelligence` share one count. Replays are turned off while the ped or vehicle pool
 is larger than the game's own.
