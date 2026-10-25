@@ -195,19 +195,13 @@ namespace
         return core::IsSA() ? (int)(slot << 24) : 1;
     }
 
-    // Mod Loader streams IMG files itself through the game's own archive arrays, and it loads after this plugin
-    bool ModLoaderInstalled()
-    {
-        return GetModuleHandleW(L"modloader.asi") || GetFileAttributesW(L"scripts\\modloader.asi") != INVALID_FILE_ATTRIBUTES ||
-            GetFileAttributesW(L"modloader.asi") != INVALID_FILE_ATTRIBUTES || GetFileAttributesW(L"plugins\\modloader.asi") != INVALID_FILE_ATTRIBUTES;
-    }
-
     void SetImgArchives()
     {
         auto setting = core::GetSetting("ImgArchives", "unlimited");
         if (!setting.apply)
             return;
-        if (ModLoaderInstalled())
+        // Mod Loader streams IMG files itself through the game's own archive arrays
+        if (core::PluginInstalled(L"modloader.asi"))
         {
             core::Log("ImgArchives: Mod Loader found, archives are left to it");
             return;

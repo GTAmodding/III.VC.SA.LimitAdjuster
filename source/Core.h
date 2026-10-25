@@ -1,5 +1,7 @@
 #pragma once
 #include "stdafx.h"
+#include <filesystem>
+#include <fstream>
 
 enum class Game
 {
@@ -25,6 +27,54 @@ namespace core
     }
 
     bool DetectGame();
+
+    // Where another plugin (e.g. L"modloader.asi") is installed: loaded, or where the ASI loader or Mod Loader picks it
+    // up later (Mod Loader loads plugins from any folder inside "modloader"). Empty when it isn't.
+    inline std::filesystem::path PluginPath(const wchar_t* file)
+    {
+        if (auto module = GetModuleHandleW(file))
+        {
+            wchar_t path[MAX_PATH]{};
+            GetModuleFileNameW(module, path, MAX_PATH);
+            return path;
+        }
+        for (auto dir : { L"", L"scripts\\", L"plugins\\" })
+        {
+            std::filesystem::path path = std::wstring(dir) + file;
+            if (GetFileAttributesW(path.c_str()) != INVALID_FILE_ATTRIBUTES)
+                return path;
+        }
+        std::error_code error;
+        for (std::filesystem::recursive_directory_iterator it(L"modloader", std::filesystem::directory_options::skip_permission_denied, error), end;
+             !error && it != end; it.increment(error))
+        {
+            if (it->is_regular_file(error) && _wcsicmp(it->path().filename().c_str(), file) == 0)
+                return it->path();
+        }
+        return {};
+    }
+
+    inline bool PluginInstalled(const wchar_t* file)
+    {
+        return !PluginPath(file).empty();
+    }
+
+    // skygfx reads a few game arrays at their fixed addresses (III/VC the visible entity list, SA the point lights);
+    // builds that export SkyGfx_FollowsMovedArrays read them through the game's code. skygfx loads after this plugin,
+    // so its file is checked.
+    inline bool OlderSkyGfxInstalled()
+    {
+        static const bool older = []
+        {
+            auto path = PluginPath(L"skygfx.asi");
+            if (path.empty())
+                return false;
+            std::ifstream file(path, std::ios::binary);
+            std::string data((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
+            return data.find("SkyGfx_FollowsMovedArrays") == std::string::npos;
+        }();
+        return older;
+    }
 
     void Log(std::string_view text);
 

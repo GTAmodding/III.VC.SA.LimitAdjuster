@@ -6,6 +6,15 @@
 
 namespace
 {
+    // An older skygfx for III/VC draws the world from the game's own visible entity array
+    bool OlderSkyGfxInstalled()
+    {
+        if (!core::OlderSkyGfxInstalled())
+            return false;
+        core::Log("VisibleEntityPtrs: an older skygfx was found, the game's own list is kept");
+        return true;
+    }
+
     // Visible entity lists: the game never checks their bound. Moved into space that commits itself as it fills.
     void MoveVisibleList(const char* key, uintptr_t base, uint32_t vanilla, uintptr_t counter, std::span<const uintptr_t> refs)
     {
@@ -226,7 +235,8 @@ namespace limits
     {
         if (core::IsIII())
         {
-            MoveVisibleList("VisibleEntityPtrs", 0x6E9920, 2000, 0x940730, visibleRefsIII);
+            if (!OlderSkyGfxInstalled())
+                MoveVisibleList("VisibleEntityPtrs", 0x6E9920, 2000, 0x940730, visibleRefsIII);
             MoveInvisibleList(0x880B50, 0x8F1B78, invisibleRefsIII, invisibleBoundsIII);
             AddLinkLists(linkListsIII);
             HookLinkListInsert(0x529290); // CLinkList<AlphaObjectInfo>::InsertSorted
@@ -234,7 +244,8 @@ namespace limits
         }
         else if (core::IsVC())
         {
-            MoveVisibleList("VisibleEntityPtrs", 0x7D54F8, 2000, 0xA0D1E4, visibleRefsVC);
+            if (!OlderSkyGfxInstalled())
+                MoveVisibleList("VisibleEntityPtrs", 0x7D54F8, 2000, 0xA0D1E4, visibleRefsVC);
             MoveInvisibleList(0x94D8E8, 0x978790, invisibleRefsVC, invisibleBoundsVC);
             AddLinkLists(linkListsVC);
             HookLinkListInsert(0x582BD0);

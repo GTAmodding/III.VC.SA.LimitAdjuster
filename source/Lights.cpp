@@ -451,7 +451,11 @@ namespace
 
         HookPolyBunches(0xC403D8, 0x68, 0x54, 360, 0x709902);
         MoveList("ShadowsStored", 0xC40430, 0x34, 48, 4096, 0xC403DC, true, storedShadowRefsSA, storedShadowFullSA);
-        MoveList("PointLights", 0xC3F0E0, 0x30, 32, 1024, 0xC3F0D0, false, pointLightRefsSA, pointLightFullSA);
+        // An older skygfx colours the point light fog from the game's own array
+        if (core::OlderSkyGfxInstalled())
+            core::Log("PointLights: an older skygfx was found, the game's own list is kept");
+        else
+            MoveList("PointLights", 0xC3F0E0, 0x30, 32, 1024, 0xC3F0D0, false, pointLightRefsSA, pointLightFullSA);
         MoveList("BrightLights", 0xC7CB58, 0x38, 32, 4096, 0xC7C6FC, false, brightLightRefsSA, brightLightFullSA);
         MoveList("ShinyTexts", 0xC7D258, 0x58, 32, 4096, 0xC7C6F8, false, shinyTextRefsSA, shinyTextFullSA);
     }

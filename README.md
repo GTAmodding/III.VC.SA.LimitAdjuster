@@ -37,6 +37,10 @@ Other versions are left alone; the log says so.
 Put `III.VC.SA.LimitAdjuster.asi` (and the .ini if you want to change something) in the game folder or in `scripts`,
 with an ASI loader. Not inside the `modloader` folder: it has to start before Mod Loader patches the game.
 
+Compatibility: with Mod Loader, IMG archives are left to Mod Loader. With an older skygfx (one that reads a few game
+arrays at their fixed addresses), the III/VC visible entity list and the SA point lights keep the game's size; current
+skygfx builds work with the moved arrays.
+
 With `Log = 1` in the ini's `[OPTIONS]`, `III.VC.SA.LimitAdjuster.log` next to the plugin lists what was changed. A limit that another mod already changed is
 left to that mod.
 
