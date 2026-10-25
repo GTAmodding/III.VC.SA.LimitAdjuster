@@ -9,6 +9,8 @@ namespace
     constexpr uint32_t NativeMain{ 200000 };
     constexpr uint32_t NativeMission{ 69000 };
     constexpr uint32_t MaxScriptBytes{ 0x7FFFFFFC };
+    // Space behind the allocation: byte scanners (e.g. SilentPatch mission fixes) reading dwords near the end fault if unmapped.
+    constexpr size_t Tail{ 0x1000 };
     core::Setting mainSetting, missionSetting;
     uint8_t* scriptSpace{ (uint8_t*)NativeBase };
     uint32_t mainCapacity{ NativeMain }, missionCapacity{ NativeMission };
@@ -102,7 +104,7 @@ namespace
             ScriptError("The combined MAIN and mission size exceeds the game's offset range.");
         if (mainSize == mainCapacity && missionSize == missionCapacity)
             return;
-        auto data = (uint8_t*)VirtualAlloc(nullptr, (size_t)mainSize + missionSize, MEM_RESERVE | MEM_COMMIT, PAGE_READWRITE);
+        auto data = (uint8_t*)VirtualAlloc(nullptr, (size_t)mainSize + missionSize + Tail, MEM_RESERVE | MEM_COMMIT, PAGE_READWRITE);
         if (!data)
             ScriptError("Cannot allocate SCM script space.");
         // Init has already stopped and reset all script threads before reading the selected SCM.
