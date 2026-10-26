@@ -22,7 +22,7 @@ namespace
         auto moved = limits::MoveArray("CollisionSize", base, 1, size, bytes, refs, false);
         if (moved)
         {
-            moved->reserve.Commit(bytes);
+            moved->Commit(bytes);
             core::RegisterLimit({ "CollisionSize", [] { return -1; }, [bytes] { return (int)(bytes / 1024); }, [bytes] { return (int)(bytes / 1024); } });
         }
     }

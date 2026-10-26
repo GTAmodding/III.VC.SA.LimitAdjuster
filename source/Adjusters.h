@@ -22,11 +22,18 @@ namespace limits
 
     // A static array of the game moved into reserved address space. Pages are committed when the game writes past
     // what's committed, so arrays the game fills without a bound check can't overflow into other variables.
+    // A zeroed page sits in front of the data: the game reads entries before some arrays (index -1), which is
+    // harmless in its static data but would fault at the start of a fresh allocation.
     struct MovedArray
     {
+        static constexpr size_t Front = 0x1000;
+
         uint8_t* data = nullptr;
         uint32_t capacity = 0;
         mem::Reserve reserve;
+
+        // Makes sure the first `bytes` after `data` are usable.
+        bool Commit(size_t bytes) { return reserve.Commit(Front + bytes); }
     };
 
     // Moves `count` elements at `base` to new space for `capacity` elements and rewrites `refs` (operands pointing into

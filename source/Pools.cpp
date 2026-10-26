@@ -706,6 +706,96 @@ namespace
         }
     }
 
+    // SA: a handle asked for a pointer that isn't in the pool (a script asking for a missing second player's ped
+    // passes null) indexes the flags with pointer / size, far in front of the storage. That read lands in the game's
+    // heap with the native pools, but faults in front of the reserved storage: such pointers get handle -1.
+    struct RefFunction
+    {
+        const char* pool;
+        uintptr_t compact;
+        uintptr_t hoodlumAddress;
+        bool member; // CPool<T>::GetIndex (thiscall) or CPools::Get*Ref (cdecl)
+    };
+
+    const RefFunction refFunctionsSA[] =
+    {
+        { "Vehicles", 0x424160, 0x15667F0, true },
+        { "Peds",     0x4442D0, 0x156CD40, true },
+        { "Objects",  0x465070, 0x1561010, true },
+        { "Peds",     0x54FF60, 0x54FF60,  false },
+        { "Vehicles", 0x54FFC0, 0x54FFC0,  false },
+        { "Objects",  0x550020, 0x550020,  false },
+    };
+
+    constexpr size_t RefCount = std::size(refFunctionsSA);
+    std::array<SafetyHookInline, RefCount> refHooks;
+    std::array<PoolState*, RefCount> refPools{};
+
+    bool OutsidePool(PoolState& state, CPool* pool, uintptr_t object)
+    {
+        if (!pool || pool != GetPool(state) || !OwnsStorage(state))
+            return false;
+        auto begin = (uintptr_t)pool->objects;
+        return object < begin || object >= begin + (size_t)pool->size * state.def->elemSize;
+    }
+
+    template <size_t I>
+    int __fastcall MemberRefHook(CPool* pool, void*, uintptr_t object)
+    {
+        if (OutsidePool(*refPools[I], pool, object))
+            return -1;
+        return refHooks[I].thiscall<int>(pool, object);
+    }
+
+    template <size_t I>
+    int __cdecl StaticRefHook(uintptr_t object)
+    {
+        auto& state = *refPools[I];
+        if (OutsidePool(state, GetPool(state), object))
+            return -1;
+        return refHooks[I].ccall<int>(object);
+    }
+
+    template <size_t... I>
+    constexpr auto MakeRefHooks(std::index_sequence<I...>, bool member)
+    {
+        return member ? std::array<void*, sizeof...(I)>{ (void*)&MemberRefHook<I>... } : std::array<void*, sizeof...(I)>{ (void*)&StaticRefHook<I>... };
+    }
+
+    bool NativeRef(const RefFunction& ref, uintptr_t address, const PoolState& state)
+    {
+        if (ref.member)
+        {
+            // mov eax, [ecx]; mov edx, [esp+4]; mov ecx, [ecx+4]; sub edx, eax
+            static const uint8_t expected[] = { 0x8B, 0x01, 0x8B, 0x54, 0x24, 0x04, 0x8B, 0x49, 0x04, 0x2B, 0xD0 };
+            return memcmp((const void*)address, expected, sizeof(expected)) == 0;
+        }
+        // mov ecx, [esp+4]; push esi; mov esi, [pool]
+        static const uint8_t expected[] = { 0x8B, 0x4C, 0x24, 0x04, 0x56, 0x8B, 0x35 };
+        return memcmp((const void*)address, expected, sizeof(expected)) == 0 && mem::ReadDword(address + 7) == state.def->global;
+    }
+
+    void GuardPoolRefsSA()
+    {
+        static const auto memberHooks = MakeRefHooks(std::make_index_sequence<RefCount>(), true);
+        static const auto staticHooks = MakeRefHooks(std::make_index_sequence<RefCount>(), false);
+        for (size_t i = 0; i < RefCount; i++)
+        {
+            auto& ref = refFunctionsSA[i];
+            auto state = FindPool(ref.pool);
+            auto address = core::SA(ref.compact, ref.hoodlumAddress);
+            if (!state || !state->active)
+                continue;
+            if (!NativeRef(ref, address, *state))
+            {
+                core::Log("{}: handle lookup at {:X} changed, left as it is", ref.pool, address);
+                continue;
+            }
+            refPools[i] = state;
+            refHooks[i] = safetyhook::create_inline(address, ref.member ? memberHooks[i] : staticHooks[i]);
+        }
+    }
+
     // GTA III 1.0
     const PoolDef poolsIII[] =
     {
@@ -797,6 +887,7 @@ namespace limits
             AddGroup(quadTreeSA, 0x552C00, 0);
             AddGroup(envMapSA, 0x5DA020, 0x5DA130);
             FollowSize("Peds", { 0x5E4252 });
+            GuardPoolRefsSA();
         }
         GuardObjectLoading();
     }

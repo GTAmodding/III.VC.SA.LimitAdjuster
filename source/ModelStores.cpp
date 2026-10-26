@@ -47,7 +47,7 @@ namespace
             return;
 
         auto slot = state.moved->data + 4 + (size_t)index * def->elemSize;
-        if (!state.moved->reserve.Commit(4 + ((size_t)index + 1) * def->elemSize))
+        if (!state.moved->Commit(4 + ((size_t)index + 1) * def->elemSize))
             Reject(state, "not enough memory for another definition");
         if (*(uintptr_t*)slot == 0)
             memcpy(slot, (void*)(def->base + 4), def->elemSize);

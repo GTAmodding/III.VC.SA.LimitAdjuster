@@ -13,11 +13,12 @@ namespace limits
             return nullptr;
 
         auto moved = std::make_unique<MovedArray>();
-        if (!moved->reserve.Create(elemSize * capacity, std::min<size_t>(elemSize * capacity, oldSize * 2)))
+        auto front = MovedArray::Front;
+        if (!moved->reserve.Create(front + elemSize * capacity, front + std::min<size_t>(elemSize * capacity, oldSize * 2)))
             return nullptr;
 
         mem::InstallCommitHandler();
-        moved->data = moved->reserve.data();
+        moved->data = moved->reserve.data() + front;
         moved->capacity = capacity;
         if (copy)
             memcpy(moved->data, (void*)base, oldSize);
