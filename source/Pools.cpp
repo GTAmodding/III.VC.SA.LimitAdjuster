@@ -515,15 +515,11 @@ namespace
 
     SafetyHookMid objectLoadHook;
 
-    void BeforeObjectLookup(SafetyHookContext& context)
+    void CheckSavedObject(int32_t handle, int32_t model)
     {
         auto state = FindPool("Objects");
         if (!state || !OwnsStorage(*state))
             return;
-        auto offset = core::IsIII() ? 0x14 : core::IsVC() ? 0x10 : 0x20;
-        auto handle = *(int32_t*)(context.esp + offset);
-        auto modelOffset = core::IsIII() ? 0x1A : core::IsVC() ? 0x16 : 0x24;
-        auto model = core::IsSA() ? *(int32_t*)(context.esp + modelOffset) : *(int16_t*)(context.esp + modelOffset);
         auto ids = core::IsIII() ? 5500 : core::IsVC() ? 6500 : 20000;
         if (handle < 0 || (handle & 0x80) || model < 0 || model >= ids || !state || !Grow(*state, (handle >> 8) + 1))
         {
@@ -534,16 +530,54 @@ namespace
         }
     }
 
+    void BeforeObjectLookup(SafetyHookContext& context)
+    {
+        auto handle = *(int32_t*)(context.esp + (core::IsIII() ? 0x14 : 0x10));
+        auto model = *(int16_t*)(context.esp + (core::IsIII() ? 0x1A : 0x16));
+        CheckSavedObject(handle, model);
+    }
+
+    // SA: the call that reads a saved object's model. Only this call is replaced: the instruction after it
+    // (the object pool load) is rewritten by other plugins.
+    constexpr uintptr_t SavedObjectModelCallSA = 0x5D4A83;
+    uintptr_t loadSavedObjectModel = 0;
+
+    void __cdecl LoadSavedObjectModel(int32_t* model, uint32_t size)
+    {
+        ((void(__cdecl*)(void*, uint32_t))loadSavedObjectModel)(model, size);
+        // The handle was read into the variable right before it.
+        CheckSavedObject(model[-1], model[0]);
+    }
+
+    bool HookSavedObjectModelSA()
+    {
+        // lea edx, [esp+1Ch]; push 4; push edx; call
+        static const uint8_t expected[] = { 0x8D, 0x54, 0x24, 0x1C, 0x6A, 0x04, 0x52, 0xE8 };
+        auto address = SavedObjectModelCallSA - 7;
+        if (memcmp((const void*)address, expected, sizeof(expected)) != 0)
+            return false;
+        loadSavedObjectModel = injector::GetBranchDestination(SavedObjectModelCallSA).as_int();
+        injector::MakeCALL(SavedObjectModelCallSA, LoadSavedObjectModel, true);
+        return true;
+    }
+
     void GuardObjectLoading()
     {
         auto state = FindPool("Objects");
         if (!state)
             return;
-        auto address = core::IsIII() ? 0x4A27AFu : core::IsVC() ? 0x4BF203u : 0x5D4A88u;
-        auto expected = core::IsIII() ? 0x0E280D8Bu : core::IsVC() ? 0xDBE00D8Bu : 0x2024448Bu;
-        if (mem::ReadDword(address) == expected)
-            objectLoadHook = safetyhook::create_mid(address, BeforeObjectLookup);
-        if (!objectLoadHook)
+        bool guarded = false;
+        if (core::IsSA())
+            guarded = HookSavedObjectModelSA();
+        else
+        {
+            auto address = core::IsIII() ? 0x4A27AFu : 0x4BF203u;
+            auto expected = core::IsIII() ? 0x0E280D8Bu : 0xDBE00D8Bu;
+            if (mem::ReadDword(address) == expected)
+                objectLoadHook = safetyhook::create_mid(address, BeforeObjectLookup);
+            guarded = (bool)objectLoadHook;
+        }
+        if (!guarded)
         {
             state->active = false;
             core::Log("Objects: loader preflight unavailable, pool left as it is");
