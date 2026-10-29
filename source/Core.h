@@ -38,18 +38,32 @@ namespace core
             GetModuleFileNameW(module, path, MAX_PATH);
             return path;
         }
+        // From the game's folder, whatever the working directory; the long-path prefix lets deep mod folders be read
+        wchar_t exe[MAX_PATH]{};
+        GetModuleFileNameW(nullptr, exe, MAX_PATH);
+        const auto root = std::filesystem::path(L"\\\\?\\" + std::filesystem::path(exe).parent_path().wstring());
         for (auto dir : { L"", L"scripts\\", L"plugins\\" })
         {
-            std::filesystem::path path = std::wstring(dir) + file;
+            auto path = root / (std::wstring(dir) + file);
             if (GetFileAttributesW(path.c_str()) != INVALID_FILE_ATTRIBUTES)
                 return path;
         }
-        std::error_code error;
-        for (std::filesystem::recursive_directory_iterator it(L"modloader", std::filesystem::directory_options::skip_permission_denied, error), end;
-             !error && it != end; it.increment(error))
+        // A folder that can't be read is skipped, not the end of the search
+        std::vector<std::filesystem::path> folders{ root / L"modloader" };
+        while (!folders.empty())
         {
-            if (it->is_regular_file(error) && _wcsicmp(it->path().filename().c_str(), file) == 0)
-                return it->path();
+            const auto folder = std::move(folders.back());
+            folders.pop_back();
+            std::error_code error;
+            for (std::filesystem::directory_iterator it(folder, std::filesystem::directory_options::skip_permission_denied, error), end;
+                 !error && it != end; it.increment(error))
+            {
+                std::error_code entry;
+                if (it->is_directory(entry) && !it->is_symlink(entry))
+                    folders.push_back(it->path());
+                else if (_wcsicmp(it->path().filename().c_str(), file) == 0)
+                    return it->path();
+            }
         }
         return {};
     }
