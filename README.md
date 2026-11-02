@@ -3,9 +3,9 @@ Open Limit Adjuster
 
 An open source limit adjuster for Grand Theft Auto III, Vice City and San Andreas.
 
-Every limit is unlimited by default: pools, render lists, model definitions, coronas, shadows and the rest grow when the
-game needs more, and cost nothing until then. Nothing has to be configured. `III.VC.SA.LimitAdjuster.ini` only matters
-to cap a limit; see the comments in it for what each limit is.
+Every limit is unlimited by default: it grows when the game needs more, and costs nothing until then. Pools are the
+exception: `unlimited` allocates their ceiling when they are created. Nothing has to be configured.
+`III.VC.SA.LimitAdjuster.ini` only matters to cap a limit; see the comments in it for what each limit is.
 
 `OutsideWorldWaterBlocks = unlimited` follows the game's current view distance, including changes made by
 Project2DFX. The sea reaches the visible horizon; its storage grows when needed. A number keeps a fixed count
