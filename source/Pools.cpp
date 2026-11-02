@@ -387,11 +387,18 @@ namespace
     }
 
     // A fixed (not unlimited) setting larger than vanilla: grow right after the pool is created.
+    // void ApplyFixedSize(PoolState& state)
+    // {
+    //     auto setting = core::GetSetting(state.def->key, "unlimited");
+    //     auto partnerSetting = state.def->partner ? core::GetSetting(state.def->partner, "unlimited") : setting;
+    //     if (state.active && (!setting.unlimited || !partnerSetting.unlimited))
+    //         Grow(state, (int32_t)state.maximum);
+    // }
+
+    // Allocate the configured size, the ceiling when unlimited, as soon as the pool is created.
     void ApplyFixedSize(PoolState& state)
     {
-        auto setting = core::GetSetting(state.def->key, "unlimited");
-        auto partnerSetting = state.def->partner ? core::GetSetting(state.def->partner, "unlimited") : setting;
-        if (state.active && (!setting.unlimited || !partnerSetting.unlimited))
+        if (state.active)
             Grow(state, (int32_t)state.maximum);
     }
 
