@@ -78,21 +78,21 @@ namespace
         core::RegisterLimit({ "Particles", [] { return -1; }, [] { return (int)particles.total; }, [] { return (int)particles.maximum; } });
     }
 
-    // SA effects: the emitter particles live in the FX memory pool, so both grow together.
-    void SetFxParticlesSA()
+    // SA effects: the emitter particles live in the FX memory pool (FxMemoryPool_c, g_fxMan + 0xAC), so both grow
+    // together. Returns the extra pool bytes the particles need.
+    uint32_t SetFxParticlesSA()
     {
         auto setting = core::GetSetting("FxParticles", "4000");
         if (!setting.apply)
-            return;
+            return 0;
 
         const mem::Expect expected[] =
         {
             { 0x4A992E, 1000 * 0x3C + 4 }, { 0x4A9951, 1000 }, { 0x4A995D, 1000 }, { 0x4A998A, 1000 * 0x3C },
             { 0x4A9B30, 1000 * 0x3C + 4 }, { 0x4A9B57, 1000 }, { 0x4A9B63, 1000 }, { 0x4A9B92, 1000 * 0x3C },
-            { 0x4A9C37, 0x100000 }, { 0x4A9C3E, 0x100000 },
         };
         if (!mem::CheckValues(expected, "FxParticles"))
-            return;
+            return 0;
 
         auto count = std::clamp<uint32_t>(setting.unlimited ? 4000 : setting.value, 1000, 100000);
         for (auto operand : { 0x4A992E, 0x4A9B30 })
@@ -101,10 +101,51 @@ namespace
             mem::WriteDword(operand, count);
         for (auto operand : { 0x4A998A, 0x4A9B92 })
             mem::WriteDword(operand, count * 0x3C);
-        for (auto operand : { 0x4A9C37, 0x4A9C3E })
-            mem::WriteDword(operand, 0x100000 + (count - 1000) * 0x3C);
 
         core::RegisterLimit({ "FxParticles", [] { return -1; }, [count] { return (int)count; }, [count] { return (int)count; } });
+        return (count - 1000) * 0x3C;
+    }
+
+    // FxMemoryPool_c: data, size, position. The pool has no bounds check: effects loaded past its end write over
+    // the heap.
+    constexpr uintptr_t fxMemoryPool = 0xA9AF2C;
+    SafetyHookInline fxOptimiseHook;
+
+    // FxMemoryPool_c::Optimise shrinks the pool to what effects.fxp used, once the project is loaded (the game's
+    // LoadFxProject and EffectLoader's replacement both call it). Skipped so the room stays for effects loaded or
+    // reloaded later.
+    void __fastcall KeepFxMemory(void*)
+    {
+        core::Log("FxMemory: effects loaded, {} of {} bytes used", mem::ReadDword(fxMemoryPool + 8), mem::ReadDword(fxMemoryPool + 4));
+    }
+
+    void SetFxMemorySA(uint32_t particleBytes)
+    {
+        auto setting = core::GetSetting("FxMemory", "0");
+        uint32_t extra = 0;
+        if (setting.apply)
+        {
+            // Megabytes of effect definitions; the game's own is 1.
+            auto megabytes = std::clamp<uint32_t>(setting.unlimited ? 16 : setting.value, 1, 256);
+            extra = (megabytes - 1) * 0x100000;
+        }
+        if (particleBytes == 0 && extra == 0)
+            return;
+
+        const mem::Expect expected[] = { { 0x4A9C37, 0x100000 }, { 0x4A9C3E, 0x100000 } };
+        if (!mem::CheckValues(expected, "FxMemory"))
+            return;
+        for (auto operand : { 0x4A9C37, 0x4A9C3E })
+            mem::WriteDword(operand, 0x100000 + particleBytes + extra);
+        if (!setting.apply)
+            return;
+
+        fxOptimiseHook = safetyhook::create_inline(0x4A9CD0, KeepFxMemory);
+        core::Log("FxMemory: {} bytes, kept after loading", 0x100000 + particleBytes + extra);
+        core::RegisterLimit({ "FxMemory",
+            [] { return (int)mem::ReadDword(fxMemoryPool + 8); },
+            [] { return (int)mem::ReadDword(fxMemoryPool + 4); },
+            [] { return (int)mem::ReadDword(fxMemoryPool + 4); } });
     }
 
     struct WaterStorage
@@ -472,7 +513,7 @@ namespace limits
         }
         else if (core::IsSA())
         {
-            SetFxParticlesSA();
+            SetFxMemorySA(SetFxParticlesSA());
             SetWaterBlocksSA();
             SetWaterPlanesSA();
         }

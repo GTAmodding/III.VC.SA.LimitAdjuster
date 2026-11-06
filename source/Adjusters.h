@@ -15,6 +15,7 @@ namespace limits
     void InstallVehicleAudio();
     void InstallProcedural();
     void InstallScm();
+    void InstallExplosions();
     void InstallOverlay();
 
     // Streaming memory chosen by the adjuster, in bytes (0 when the game's own value is used).

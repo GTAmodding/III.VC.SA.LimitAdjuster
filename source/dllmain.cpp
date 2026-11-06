@@ -31,6 +31,7 @@ namespace
         limits::InstallVehicleAudio();
         limits::InstallProcedural();
         limits::InstallScm();
+        limits::InstallExplosions();
         limits::InstallOverlay();
         core::Log("Ready");
     }
