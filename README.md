@@ -23,6 +23,10 @@ needed. San Andreas `Peds` and `PedIntelligence` share one count. Replays are tu
 is larger than the game's own.
 `ScriptSearchLights = unlimited` grows the opcode 06B1 pool when full, within the game's 65535-slot handle range.
 A number fixes its size, and `0` keeps the native eight slots. All three names are available through `OpenLA_GetLimit`.
+`Explosions = unlimited` grows San Andreas' 16 explosion slots when full, up to 255; a number fixes the count. Mods
+that read the explosion array directly find it at the operand of `add esi, aExplosions` (0x736AD1).
+`FxMemory = unlimited` gives San Andreas 16 MB for effect definitions instead of 1 MB and keeps the room free
+after loading, so effects added or reloaded later (EffectLoader, live editors) fit; a number sets the megabytes.
 
 ### Supported games
 
@@ -39,7 +43,7 @@ with an ASI loader. Not inside the `modloader` folder: it has to start before Mo
 
 Compatibility: with Mod Loader, IMG archives are left to Mod Loader. With an older skygfx (one that reads a few game
 arrays at their fixed addresses), the III/VC visible entity list and the SA point lights keep the game's size; current
-skygfx builds work with the moved arrays.
+skygfx builds work with the moved arrays. With Proper Shaders the SA point lights keep the game's size as well.
 
 With `Log = 1` in the ini's `[OPTIONS]`, `III.VC.SA.LimitAdjuster.log` next to the plugin lists what was changed. A limit that another mod already changed is
 left to that mod.
