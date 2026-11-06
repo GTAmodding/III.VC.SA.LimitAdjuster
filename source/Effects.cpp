@@ -114,7 +114,10 @@ namespace
     // FxMemoryPool_c::Optimise shrinks the pool to what effects.fxp used, once the project is loaded (the game's
     // LoadFxProject and EffectLoader's replacement both call it). Skipped so the room stays for effects loaded or
     // reloaded later.
-    void __fastcall KeepFxMemory(void*) {}
+    void __fastcall KeepFxMemory(void*)
+    {
+        core::Log("FxMemory: effects loaded, {} of {} bytes used", mem::ReadDword(fxMemoryPool + 8), mem::ReadDword(fxMemoryPool + 4));
+    }
 
     void SetFxMemorySA(uint32_t particleBytes)
     {
@@ -138,6 +141,7 @@ namespace
             return;
 
         fxOptimiseHook = safetyhook::create_inline(0x4A9CD0, KeepFxMemory);
+        core::Log("FxMemory: {} bytes, kept after loading", 0x100000 + particleBytes + extra);
         core::RegisterLimit({ "FxMemory",
             [] { return (int)mem::ReadDword(fxMemoryPool + 8); },
             [] { return (int)mem::ReadDword(fxMemoryPool + 4); },
