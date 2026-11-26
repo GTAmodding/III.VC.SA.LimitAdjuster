@@ -18,7 +18,8 @@ namespace limits
     void InstallExplosions();
     void InstallOverlay();
 
-    // Streaming memory chosen by the adjuster, in bytes (0 when the game's own value is used).
+    // Streaming memory chosen by the adjuster, in bytes (0 when the game's own value is used); auto changes it while
+    // the game runs.
     uint32_t StreamingBudget();
 
     // A static array of the game moved into reserved address space. Pages are committed when the game writes past

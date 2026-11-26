@@ -6,19 +6,94 @@
 
 namespace
 {
+    constexpr uint32_t MB = 1024 * 1024;
     uint32_t streamingBudget = 0;
 
-    bool IsLargeAddressAware()
+    struct AddressSpace
     {
+        uint32_t totalMB;   // what the process can address: 2048, 3072 or 4096 (large address aware)
+        uint32_t freeMB;
+        uint32_t largestMB; // the largest free block
+    };
+
+    // The free total is cheap (a few microseconds); the largest block needs a walk over every region (milliseconds).
+    AddressSpace MeasureAddressSpace(bool largest)
+    {
+        MEMORYSTATUSEX status{ sizeof(status) };
+        GlobalMemoryStatusEx(&status);
+        AddressSpace space{ (uint32_t)((status.ullTotalVirtual + MB - 1) / MB), (uint32_t)(status.ullAvailVirtual / MB), 0 };
+        if (!largest)
+            return space;
         SYSTEM_INFO info{};
         GetSystemInfo(&info);
-        return (uintptr_t)info.lpMaximumApplicationAddress > 0x80000000u;
+        auto last = (uintptr_t)info.lpMaximumApplicationAddress;
+        MEMORY_BASIC_INFORMATION region{};
+        for (auto p = (uintptr_t)info.lpMinimumApplicationAddress; p < last && VirtualQuery((void*)p, &region, sizeof(region));)
+        {
+            if (region.State == MEM_FREE)
+                space.largestMB = std::max(space.largestMB, (uint32_t)(region.RegionSize / MB));
+            auto next = (uintptr_t)region.BaseAddress + region.RegionSize;
+            if (next <= p)
+                break;
+            p = next;
+        }
+        return space;
     }
 
-    // Streaming memory: the budget for models and textures kept loaded. Too much runs a 32-bit game out of address
-    // space (Direct3D keeps a second copy of managed textures), so the automatic value depends on whether the exe can
-    // use more than 2 GB.
-    void SetMemoryAvailable(uintptr_t operand, uint32_t vanilla, uintptr_t forceJump)
+    // A MB of streaming memory can take up to two of address space: a texture is kept once (D3D's managed copy; the
+    // RenderWare raster has none of its own), a model keeps its geometry next to D3D's copy in the vertex buffers.
+    // So the budget is half of the space left for it, and auto on a large address aware exe measures that space while
+    // the game runs: it grows by half of what is free beyond a headroom (Direct3D device resets, drivers, mods that
+    // allocate later), and gives memory back when other allocations eat into the headroom.
+    constexpr uint32_t HeadroomMB = 512;
+    constexpr uint32_t FragmentedMB = 64; // no growth while the largest free block is smaller (big textures need one)
+    constexpr uint32_t StepMB = 16;
+    uint32_t* memoryAvailable = nullptr;  // CStreaming::ms_memoryAvailable
+    const uint32_t* memoryUsed = nullptr; // CStreaming::ms_memoryUsed
+    uint32_t floorMB = 0;
+    uint32_t ceilingMB = 0;
+
+    void CALLBACK FollowAddressSpace(PVOID, BOOLEAN)
+    {
+        static bool started = false;
+        auto current = *(volatile uint32_t*)memoryAvailable;
+        if (!started && current != streamingBudget) // CStreaming::Init hasn't set the starting value yet
+            return;
+        started = true;
+        auto currentMB = current / MB;
+        auto usedMB = *(volatile const uint32_t*)memoryUsed / MB;
+        auto space = MeasureAddressSpace(false);
+        auto slack = (int32_t)space.freeMB - (int32_t)HeadroomMB;
+        auto targetMB = currentMB;
+        if (slack < 0)
+            targetMB = std::min(currentMB, (uint32_t)std::max<int32_t>(floorMB, (int32_t)usedMB + slack / 2));
+        else
+            targetMB = std::max(currentMB, std::min(ceilingMB, usedMB + slack / 2));
+        static uint32_t fragmentedTicks = 0;
+        if (targetMB >= currentMB + StepMB)
+        {
+            if (fragmentedTicks && --fragmentedTicks)
+                return;
+            space = MeasureAddressSpace(true);
+            if (space.largestMB < FragmentedMB)
+            {
+                fragmentedTicks = 40; // look again in ten seconds
+                return;
+            }
+        }
+        if (targetMB < currentMB || targetMB >= currentMB + StepMB)
+        {
+            *(volatile uint32_t*)memoryAvailable = targetMB * MB;
+            streamingBudget = targetMB * MB;
+            core::Log("MemoryAvailable: {} MB (used {} MB, address space free {} MB)", targetMB, usedMB, space.freeMB);
+        }
+    }
+
+    // Streaming memory: the budget for models and textures kept loaded. A number is capped at half of the address space
+    // left after 1 GB for the exe, DLLs, drivers and the game's other memory: 512 MB, or 1536 MB for a large address
+    // aware exe on 64-bit Windows. Auto is a fixed 256/384 MB (III and VC/SA) without large address awareness;
+    // with it, the budget follows the free address space up to half of all of it.
+    void SetMemoryAvailable(uintptr_t operand, uint32_t vanilla, uintptr_t forceJump, uintptr_t usedRef, uint32_t used)
     {
         auto setting = core::GetSetting("MemoryAvailable", "auto");
         if (!setting.apply || mem::ReadDword(operand) != vanilla)
@@ -28,33 +103,50 @@ namespace
             return;
         }
 
-        auto largeAddressAware = IsLargeAddressAware();
-        uint32_t limitMB = largeAddressAware ? 1536 : 512;
+        auto space = MeasureAddressSpace(false);
+        auto largeAddressAware = space.totalMB > 2048;
+        auto limitMB = (space.totalMB - 1024) / 2;
+        auto adaptive = false;
         uint32_t mb = 0;
         if (setting.automatic || setting.unlimited)
         {
-            if (core::IsSA())
-                mb = largeAddressAware ? 1024 : 384;
-            else
-                mb = largeAddressAware ? 512 : 256;
+            floorMB = core::IsSA() ? 384 : 256;
+            mb = largeAddressAware ? (core::IsSA() ? 1024 : 512) : floorMB;
+            adaptive = largeAddressAware && *(uint16_t*)(operand - 6) == 0x05C7 && mem::ReadDword(usedRef) == used;
         }
         else if (setting.percent)
         {
             MEMORYSTATUSEX status{ sizeof(status) };
             GlobalMemoryStatusEx(&status);
-            mb = (uint32_t)std::min<uint64_t>(status.ullTotalPhys / 100 * setting.value / (1024 * 1024), limitMB);
+            mb = (uint32_t)std::min<uint64_t>(status.ullTotalPhys / 100 * setting.value / MB, limitMB);
         }
         else
         {
             mb = std::min(setting.value, limitMB);
         }
 
-        auto bytes = std::max(mb * 1024 * 1024, vanilla);
+        auto bytes = std::max(mb * MB, vanilla);
         mem::WriteDword(operand, bytes);
         if (forceJump)
             injector::MakeNOP(forceJump, 2, true);
         streamingBudget = bytes;
-        core::Log("MemoryAvailable: {} MB{}", bytes / (1024 * 1024), largeAddressAware ? " (large address aware exe)" : "");
+        if (adaptive)
+        {
+            memoryAvailable = (uint32_t*)mem::ReadDword(operand - 4);
+            memoryUsed = (const uint32_t*)used;
+            ceilingMB = space.totalMB / 2;
+            HANDLE timer = nullptr;
+            adaptive = CreateTimerQueueTimer(&timer, nullptr, FollowAddressSpace, nullptr, 250, 250, WT_EXECUTEDEFAULT);
+        }
+        if (adaptive)
+            core::Log("MemoryAvailable: auto, starts at {} MB and follows the free address space ({} MB kept free) up to {} MB "
+                      "(large address aware exe)", bytes / MB, HeadroomMB, ceilingMB);
+        else
+            core::Log("MemoryAvailable: {} MB{}", bytes / MB, largeAddressAware ? " (large address aware exe)" : "");
+        core::RegisterLimit({ "MemoryAvailable",
+            [used] { return (int)(*(const uint32_t*)used / MB); },
+            [] { return (int)(streamingBudget / MB); },
+            [adaptive, bytes] { return (int)((adaptive ? ceilingMB * MB : bytes) / MB); } });
     }
 
     // CDirectory grows when an entry is added to a full one (extra objects: IMG models without an IDE definition).
@@ -491,19 +583,19 @@ namespace limits
         SetImgArchives();
         if (core::IsIII())
         {
-            SetMemoryAvailable(0x406ADA, 0x3200000, 0x406AD2);
+            SetMemoryAvailable(0x406ADA, 0x3200000, 0x406AD2, 0x409BA9, 0x940568);
             HookDirectories(0x473600, 0x5BD500, 0x5BD530, false, 0x95CB90, 0x8F5F88, 0x40460C);
             SetTxdStoreIII();
         }
         else if (core::IsVC())
         {
-            SetMemoryAvailable(0x41079F, 0x2D00000, 0);
+            SetMemoryAvailable(0x41079F, 0x2D00000, 0, 0x40B7E9, 0xA0CFDC);
             HookDirectories(0x4873F0, 0x640250, 0x645BB0, false, 0xA10730, 0x9B5F88, 0x407483);
             SetTxdStoreVC();
         }
         else if (core::IsSA())
         {
-            SetMemoryAvailable(0x5B8E6A, 0x3200000, 0);
+            SetMemoryAvailable(0x5B8E6A, 0x3200000, 0, 0x40E14B, 0x8E4CB4);
             HookDirectories(0x532310, 0x82119A, 0x8214BD, true, 0x8E48D0, 0xB5F848, 0x4D5A7A);
         }
     }
